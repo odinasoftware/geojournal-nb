@@ -1,12 +1,12 @@
 // 
-//  Category.m
+//  GCategory.m
 //  GeoJournal
 //
 //  Created by Jae Han on 7/6/09.
 //  Copyright 2009 Home. All rights reserved.
 //
 
-#import "Category.h"
+#import "GCategory.h"
 
 #import "Journal.h"
 
@@ -19,7 +19,7 @@
  When you create a new managed object, you insert it into a context.
  You fetch existing records in the database into the context as managed objects.
  */
-@implementation Category 
+@implementation GCategory 
 
 @dynamic name;
 @dynamic contents;

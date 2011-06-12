@@ -7,10 +7,10 @@
 //
 
 #import <CoreData/CoreData.h>
-#import "Category.h"
+#import "GCategory.h"
 
 
-@interface DefaultCategory :  Category  
+@interface DefaultCategory :  GCategory  
 {
 }
 

@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 
 @class MailRecipients;
-@class Category;
+@class GCategory;
 @class DefaultCategory;
 @class Journal;
 @class PictureFrame;
@@ -27,9 +27,9 @@
 	MailRecipients					*mailRecipient;
 	NSString						*defaultRecipient;
 	
-	// Category DB entities
+	// GCategory DB entities
 	NSMutableArray					*categoryArray;
-	Category						*categoryEntity;
+	GCategory						*categoryEntity;
 	DefaultCategory					*defaultCategoryEntity;
 	
 	// to store journal entries
@@ -48,7 +48,7 @@
 @property (nonatomic, readonly) NSString				*defaultRecipient;
 
 @property (nonatomic, retain, readonly) NSMutableArray	*categoryArray;
-@property (nonatomic, readonly) Category				*categoryEntity;
+@property (nonatomic, readonly) GCategory				*categoryEntity;
 @property (nonatomic, readonly) DefaultCategory			*defaultCategoryEntity;
 @property (nonatomic, readonly) Journal					*journalEntity;
 @property (nonatomic, retain)	NSMutableDictionary		*journalDict;
@@ -59,8 +59,8 @@
 // Methods
 - (void)save;
 - (void)deleteObject:(NSManagedObject*)object;
-- (NSArray*)journalByCategory:(Category*)category;
-- (void)deleteJournalObject:(Journal*)journal forCategory:(Category*)category;
+- (NSArray*)journalByCategory:(GCategory*)category;
+- (void)deleteJournalObject:(Journal*)journal forCategory:(GCategory*)category;
 - (NSMutableArray*)picturesForJournal:(NSString*)journalPicture;
 - (PictureFrame*)pictureFrameEntity;
 - (Pictures*)picturesEntity;

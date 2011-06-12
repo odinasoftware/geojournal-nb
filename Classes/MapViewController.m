@@ -11,7 +11,7 @@
 #import "GeoDatabase.h"
 #import "GeoDefaults.h"
 #import "ItineraryMark.h"
-#import "Category.h"
+#import "GCategory.h"
 #import "Journal.h"
 #import "GeoJournalHeaders.h"
 #import "JournalEntryViewController.h"
@@ -236,16 +236,16 @@ NSInteger getNumberOfLocation(int index)
 	TRACE("%s, %d\n", __func__, self.interfaceOrientation);
 }
 
-- (Category*)getCategoryFromString:(NSString*)string 
+- (GCategory*)getCategoryFromString:(NSString*)string 
 {
-	Category *c = nil;
+	GCategory *c = nil;
 	/*
 	if ([string compare:NO_ACTIVE_CATEGORY] == NSOrderedSame) {
 		c = [categoryArray objectAtIndex:0];
 	}
 	else {
 	 */
-		for (Category *t in self.categoryArray) {
+		for (GCategory *t in self.categoryArray) {
 			if ([t.name compare:string] == NSOrderedSame) {
 				TRACE("%s, found category: %s\n", __func__, [string UTF8String]);
 				c = t;
@@ -257,9 +257,9 @@ NSInteger getNumberOfLocation(int index)
 	return c;
 }
 
-- (Category*)getViewCategory
+- (GCategory*)getViewCategory
 {
-	Category *c = nil;
+	GCategory *c = nil;
 	NSString *categoryString = nil;
 	
 	categoryString = [GeoDefaults sharedGeoDefaultsInstance].activeCategory;

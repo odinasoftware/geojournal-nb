@@ -11,7 +11,7 @@
 #import <CoreData/CoreData.h>
 
 @class AddCategory;
-@class Category;
+@class GCategory;
 @class GeoTakeController;
 @class JournalViewController;
 @class ButtonScrollView;
@@ -35,7 +35,7 @@
 	AddCategory						*addCategoryController;
 	NSMutableArray					*categoryArray;
 	NSInteger						selectedButton;
-	Category						*selectedCategory;
+	GCategory						*selectedCategory;
 	GeoTakeController				*journalController;
 	
 	@private
@@ -49,7 +49,7 @@
 @property (nonatomic, readonly)		NSInteger				numberOfCategory;
 @property (nonatomic, retain)		AddCategory				*addCategoryController;
 @property (nonatomic, retain)		NSMutableArray			*categoryArray;
-@property (nonatomic, retain)		Category				*selectedCategory;
+@property (nonatomic, retain)		GCategory				*selectedCategory;
 @property (nonatomic, retain)		GeoTakeController		*journalController;
 @property (nonatomic, retain)		NSArray					*defaultCategory;
 @property (nonatomic, retain)		ButtonScrollView		*buttonFrame;
@@ -81,8 +81,8 @@
 - (void)restoreLevel;
 - (void)selectButton:(NSSet*)touches;
 - (void)deleteFromCategory:(NSInteger)index;
-- (Category*)getCategory:(NSString*)name;
-- (Category*)getCategory:(NSString*)name withIndex:(NSInteger)i;
+- (GCategory*)getCategory:(NSString*)name;
+- (GCategory*)getCategory:(NSString*)name withIndex:(NSInteger)i;
 - (UIButton*)getScrollableButton:(NSString*)title;
 - (void)addNewScrollableButton:(NSString*)title;
 - (void)removeFromScrollableButtons:(NSInteger)index;

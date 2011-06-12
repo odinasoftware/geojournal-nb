@@ -11,7 +11,7 @@
 #import "GeoJournalHeaders.h"
 #import "GeoDatabase.h"
 #import "AddCategory.h"
-#import "Category.h"
+#import "GCategory.h"
 #import "Journal.h"
 #import "GeoDefaults.h"
 #import "DefaultCategory.h"
@@ -149,7 +149,7 @@ NSString *getOrigFilename(NSString *filename)
 - (void)insertTestDBEntities
 {
 	//if ([[GeoDefaults sharedGeoDefaultsInstance].testJournalCreated boolValue] == NO) {
-	Category *chicago = [self getCategory:@"Chicago Travel"];
+	GCategory *chicago = [self getCategory:@"Chicago Travel"];
 		NSString *path = [[NSBundle mainBundle] pathForResource:@"JournalTest" ofType:@"plist"];
 		NSMutableArray *testJournal = [[NSMutableArray alloc] initWithContentsOfFile:path];
 		path = [[NSBundle mainBundle] pathForResource:@"1" ofType:@"png"];
@@ -200,7 +200,7 @@ NSString *getOrigFilename(NSString *filename)
 	//}
 	
 	// Insert Florida Test
-	Category *florida = [self getCategory:@"Florida Travel"];
+	GCategory *florida = [self getCategory:@"Florida Travel"];
 	path = [[NSBundle mainBundle] pathForResource:@"Florida_test" ofType:@"plist"];
 	testJournal = [[NSMutableArray alloc] initWithContentsOfFile:path];
 	path = [[NSBundle mainBundle] pathForResource:@"1074077865" ofType:@"aif"];
@@ -505,7 +505,7 @@ NSString *getOrigFilename(NSString *filename)
 	c = [self.categoryArray count];
 	
 	for (int i=0; i<c; ++i) {
-		Category *category = [categoryArray objectAtIndex:i];
+		GCategory *category = [categoryArray objectAtIndex:i];
 		//frame.size.width = GET_BUTTON_WIDTH(category.name);
 		button = [self getScrollableButton:category.name];
 		button.frame = frame;
@@ -517,12 +517,12 @@ NSString *getOrigFilename(NSString *filename)
 }
 #pragma mark -
 
-- (Category*)getCategory:(NSString*)name withIndex:(NSInteger)i
+- (GCategory*)getCategory:(NSString*)name withIndex:(NSInteger)i
 {
-	Category *ret = nil;
+	GCategory *ret = nil;
 	int n = 0;
 	
-	for (Category *c in categoryArray) {
+	for (GCategory *c in categoryArray) {
 		if (([c.name compare:name] == NSOrderedSame) && (i == n)) {
 			ret = c;
 			break;
@@ -533,12 +533,12 @@ NSString *getOrigFilename(NSString *filename)
 	return ret;
 }
 
-- (Category*)getCategory:(NSString*)name
+- (GCategory*)getCategory:(NSString*)name
 {
-	Category *ret = nil;
+	GCategory *ret = nil;
 	int n = 0;
 	
-	for (Category *c in categoryArray) {
+	for (GCategory *c in categoryArray) {
 		if ([c.name compare:name] == NSOrderedSame) {
 			ret = c;
 			break;
@@ -601,7 +601,7 @@ NSString *getOrigFilename(NSString *filename)
 		NSLog(@"%s, button is null. Setting default category", __func__);
 		button = [buttons objectAtIndex:0];
 		selectedButton = 0;
-		Category *c = [self.categoryArray objectAtIndex:0];
+		GCategory *c = [self.categoryArray objectAtIndex:0];
 		active = c.name;
 		[GeoDefaults sharedGeoDefaultsInstance].activeCategory = active;
 		self.selectedCategory = [self getCategory:active withIndex:0];
@@ -730,7 +730,7 @@ NSString *getOrigFilename(NSString *filename)
 	if (editingStyle == UITableViewCellEditingStyleDelete) {
 		// remove this entry from database
 		if ([self.categoryArray count] > 1) {
-			Category *c = [self.categoryArray objectAtIndex:indexPath.row];
+			GCategory *c = [self.categoryArray objectAtIndex:indexPath.row];
 			if ([c.contents count] > 0) {
 				self._deleteIndex = indexPath;
 				UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Deleting Category" message:@"This category has more than one item. Do you want to delete this category?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK",nil];
@@ -768,7 +768,7 @@ NSString *getOrigFilename(NSString *filename)
 		[controller release];
 	}
 	else if (indexPath.row < c) {
-		Category *category = [categoryArray objectAtIndex:indexPath.row];
+		GCategory *category = [categoryArray objectAtIndex:indexPath.row];
 		[GeoDefaults sharedGeoDefaultsInstance].activeCategory = category.name;
 		[self showSelectedCategory:category.name];
 		[tableView reloadData];
@@ -813,7 +813,7 @@ NSString *getOrigFilename(NSString *filename)
 	
 	int c = [self.categoryArray count]; //[defaultCategory count];
 	if (indexPath.row < c) {
-		Category *c = (Category*) [self.categoryArray objectAtIndex:indexPath.row];
+		GCategory *c = (GCategory*) [self.categoryArray objectAtIndex:indexPath.row];
 		//cell.textLabel.text = c.name;
 		
 		UILabel *textLabel = (UILabel*) [cell.contentView viewWithTag:JOURNAL_CONTENT_VIEW_TAG];
@@ -862,7 +862,7 @@ NSString *getOrigFilename(NSString *filename)
 	}
 	/*
 	else if (indexPath.row < [categoryArray count]) {
-		Category *category = (Category*)[categoryArray objectAtIndex:indexPath.row];
+		GCategory *category = (GCategory*)[categoryArray objectAtIndex:indexPath.row];
 		cell.textLabel.text = category.name;
 	}
 	 */
@@ -1091,7 +1091,7 @@ NSString *getOrigFilename(NSString *filename)
 
 - (void)saveCategory
 {
-	Category *category = [GeoDatabase sharedGeoDatabaseInstance].categoryEntity;
+	GCategory *category = [GeoDatabase sharedGeoDatabaseInstance].categoryEntity;
 	
 	if ([addCategoryController.textInputField.text length] > 0) {
 		[category setName:addCategoryController.textInputField.text];

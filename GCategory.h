@@ -1,5 +1,5 @@
 //
-//  Category.h
+//  GCategory.h
 //  GeoJournal
 //
 //  Created by Jae Han on 7/6/09.
@@ -10,7 +10,7 @@
 
 @class Journal;
 
-@interface Category :  NSManagedObject  
+@interface GCategory :  NSManagedObject  
 {
 }
 
@@ -21,7 +21,7 @@
 @end
 
 
-@interface Category (CoreDataGeneratedAccessors)
+@interface GCategory (CoreDataGeneratedAccessors)
 - (void)addContentsObject:(Journal *)value;
 - (void)removeContentsObject:(Journal *)value;
 - (void)addContents:(NSSet *)value;

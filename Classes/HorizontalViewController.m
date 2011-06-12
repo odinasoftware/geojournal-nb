@@ -9,7 +9,7 @@
 #import "HorizontalViewController.h"
 #import "GeoDatabase.h"
 #import "Journal.h"
-#import "Category.h"
+#import "GCategory.h"
 #import "GeoJournalHeaders.h"
 #import "HorizontalImageViewController.h"
 #import "GeoDefaults.h"
@@ -192,7 +192,7 @@
 {
 	NSArray *array = nil;
 	
-	for (Category *c in categoryArray) {
+	for (GCategory *c in categoryArray) {
 		if ([c.name compare:[GeoDefaults sharedGeoDefaultsInstance].activeCategory] == NSOrderedSame) {
 			array = [[GeoDatabase sharedGeoDatabaseInstance] journalByCategory:c];
 		}

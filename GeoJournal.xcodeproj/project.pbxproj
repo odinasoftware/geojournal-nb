@@ -104,7 +104,7 @@
 		19A372FC102DD1DA00DFF866 /* JournalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19A372FB102DD1DA00DFF866 /* JournalViewController.xib */; };
 		19A37497102E3EE500DFF866 /* SearchNavigation.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19A37496102E3EE500DFF866 /* SearchNavigation.xib */; };
 		19A3749C102E3F6F00DFF866 /* SearchNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19A3749B102E3F6F00DFF866 /* SearchNavigationController.m */; };
-		19A3812610026BBB00EB4573 /* Category.m in Sources */ = {isa = PBXBuildFile; fileRef = 19A3812310026BBB00EB4573 /* Category.m */; };
+		19A3812610026BBB00EB4573 /* GCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 19A3812310026BBB00EB4573 /* GCategory.m */; };
 		19A3812710026BBB00EB4573 /* Journal.m in Sources */ = {isa = PBXBuildFile; fileRef = 19A3812510026BBB00EB4573 /* Journal.m */; };
 		19A381A6100278FE00EB4573 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19A381A5100278FE00EB4573 /* CoreData.framework */; };
 		19A382F3100296EB00EB4573 /* DefaultCategory.plist in Resources */ = {isa = PBXBuildFile; fileRef = 19A382F2100296EB00EB4573 /* DefaultCategory.plist */; };
@@ -226,7 +226,7 @@
 		193436B1100E6A5000E7E4AA /* GeoSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoSession.m; sourceTree = "<group>"; };
 		19343805100EAC2500E7E4AA /* SearchController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchController.xib; sourceTree = "<group>"; };
 		19343809100EAF4900E7E4AA /* SearchController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchController.h; sourceTree = "<group>"; };
-		1934380A100EAF4900E7E4AA /* SearchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchController.m; sourceTree = "<group>"; };
+		1934380A100EAF4900E7E4AA /* SearchController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SearchController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		193438D7100F594300E7E4AA /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		19343DAA1010FBD600E7E4AA /* facebook.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = facebook.png; sourceTree = "<group>"; };
 		19343DB91010FD9200E7E4AA /* mail1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mail1.png; sourceTree = "<group>"; };
@@ -278,9 +278,9 @@
 		198E04920FC84E6000D3E5E1 /* NoteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoteController.m; sourceTree = "<group>"; };
 		198E049D0FC851E000D3E5E1 /* NoteView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoteView.xib; sourceTree = "<group>"; };
 		198E04A50FC8527D00D3E5E1 /* MapView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MapView.xib; sourceTree = "<group>"; };
-		198E04AB0FC8535B00D3E5E1 /* NoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoteViewController.h; sourceTree = "<group>"; };
-		198E04AC0FC8535B00D3E5E1 /* NoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoteViewController.m; sourceTree = "<group>"; };
-		198FCBC00FDB009300162195 /* GeoJournalHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeoJournalHeaders.h; path = Classes/GeoJournalHeaders.h; sourceTree = "<group>"; };
+		198E04AB0FC8535B00D3E5E1 /* NoteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NoteViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		198E04AC0FC8535B00D3E5E1 /* NoteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = NoteViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		198FCBC00FDB009300162195 /* GeoJournalHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = GeoJournalHeaders.h; path = Classes/GeoJournalHeaders.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		19901832125CB23C002A09F1 /* Pictures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pictures.h; sourceTree = "<group>"; };
 		19901833125CB23C002A09F1 /* Pictures.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Pictures.m; sourceTree = "<group>"; };
 		19901834125CB23C002A09F1 /* PictureFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PictureFrame.h; sourceTree = "<group>"; };
@@ -318,34 +318,34 @@
 		19A247F91060769F00BE4807 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		19A285E5103429D700BFEE5C /* text-background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "text-background.png"; sourceTree = "<group>"; };
 		19A2C1CC102BAE5300B5BDE9 /* Mike2-stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Mike2-stop.png"; sourceTree = "<group>"; };
-		19A2EE991007EB6700456D7C /* JournalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JournalViewController.h; sourceTree = "<group>"; };
-		19A2EE9A1007EB6700456D7C /* JournalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JournalViewController.m; sourceTree = "<group>"; };
+		19A2EE991007EB6700456D7C /* JournalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = JournalViewController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		19A2EE9A1007EB6700456D7C /* JournalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = JournalViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		19A2F13810090EB700456D7C /* TableCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableCellView.h; sourceTree = "<group>"; };
 		19A2F13910090EB700456D7C /* TableCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableCellView.m; sourceTree = "<group>"; };
-		19A2F25310093EC500456D7C /* DefaultCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultCategory.h; sourceTree = "<group>"; };
+		19A2F25310093EC500456D7C /* DefaultCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DefaultCategory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		19A2F25410093EC500456D7C /* DefaultCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DefaultCategory.m; sourceTree = "<group>"; };
 		19A372FB102DD1DA00DFF866 /* JournalViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = JournalViewController.xib; sourceTree = "<group>"; };
 		19A37496102E3EE500DFF866 /* SearchNavigation.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SearchNavigation.xib; sourceTree = "<group>"; };
 		19A3749A102E3F6F00DFF866 /* SearchNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchNavigationController.h; sourceTree = "<group>"; };
 		19A3749B102E3F6F00DFF866 /* SearchNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchNavigationController.m; sourceTree = "<group>"; };
 		19A3810F100254D900EB4573 /* GeoJournal.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; name = GeoJournal.xcdatamodel; path = ../GeoJournal.xcdatamodel; sourceTree = "<group>"; };
-		19A3812210026BBB00EB4573 /* Category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Category.h; sourceTree = "<group>"; };
-		19A3812310026BBB00EB4573 /* Category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Category.m; sourceTree = "<group>"; };
+		19A3812210026BBB00EB4573 /* GCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GCategory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		19A3812310026BBB00EB4573 /* GCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GCategory.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		19A3812410026BBB00EB4573 /* Journal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Journal.h; sourceTree = "<group>"; };
 		19A3812510026BBB00EB4573 /* Journal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Journal.m; sourceTree = "<group>"; };
 		19A381A5100278FE00EB4573 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		19A382F2100296EB00EB4573 /* DefaultCategory.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = DefaultCategory.plist; sourceTree = "<group>"; };
 		19A42A25101549CE003C4A3B /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
-		19A42A26101549CE003C4A3B /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
+		19A42A26101549CE003C4A3B /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MapViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		19A42A2A10154B1C003C4A3B /* SlideShowNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideShowNavigation.h; sourceTree = "<group>"; };
 		19A42A2B10154B1C003C4A3B /* SlideShowNavigation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideShowNavigation.m; sourceTree = "<group>"; };
 		19A42A2D10154B4A003C4A3B /* SlideShowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideShowViewController.h; sourceTree = "<group>"; };
-		19A42A2E10154B4A003C4A3B /* SlideShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideShowViewController.m; sourceTree = "<group>"; };
+		19A42A2E10154B4A003C4A3B /* SlideShowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SlideShowViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		19A42A3010154B68003C4A3B /* SlideShowView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SlideShowView.xib; sourceTree = "<group>"; };
 		19A42B0C1015DA27003C4A3B /* GeoMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoMark.h; sourceTree = "<group>"; };
 		19A42B0D1015DA27003C4A3B /* GeoMark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoMark.m; sourceTree = "<group>"; };
-		19A44DB61004D85E006AB024 /* GeoDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoDatabase.h; sourceTree = "<group>"; };
-		19A44DB71004D85E006AB024 /* GeoDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoDatabase.m; sourceTree = "<group>"; };
+		19A44DB61004D85E006AB024 /* GeoDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GeoDatabase.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		19A44DB71004D85E006AB024 /* GeoDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = GeoDatabase.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		19A44E201004E949006AB024 /* AddCategory.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddCategory.xib; sourceTree = "<group>"; };
 		19A44E251004EE2F006AB024 /* AddCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AddCategory.h; path = ../AddCategory.h; sourceTree = "<group>"; };
 		19A44E261004EE2F006AB024 /* AddCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AddCategory.m; path = ../AddCategory.m; sourceTree = "<group>"; };
@@ -410,7 +410,7 @@
 		19CB44E510B6331D000C17A5 /* list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = list.png; sourceTree = "<group>"; };
 		19CC4ABF102275B60062CB52 /* HorizontalViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HorizontalViewController.xib; sourceTree = "<group>"; };
 		19CC4AD810227B010062CB52 /* HorizontalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizontalViewController.h; sourceTree = "<group>"; };
-		19CC4AD910227B010062CB52 /* HorizontalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HorizontalViewController.m; sourceTree = "<group>"; };
+		19CC4AD910227B010062CB52 /* HorizontalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HorizontalViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		19D9437C1024CF76000FCDAA /* HorizontalImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizontalImageViewController.h; sourceTree = "<group>"; };
 		19D9437D1024CF76000FCDAA /* HorizontalImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HorizontalImageViewController.m; sourceTree = "<group>"; };
 		19D943F41024DAA7000FCDAA /* HorizontalImageViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HorizontalImageViewController.xib; sourceTree = "<group>"; };
@@ -625,8 +625,8 @@
 				1934366D100E5AEE00E7E4AA /* MailRecipients.m */,
 				19A2F25310093EC500456D7C /* DefaultCategory.h */,
 				19A2F25410093EC500456D7C /* DefaultCategory.m */,
-				19A3812210026BBB00EB4573 /* Category.h */,
-				19A3812310026BBB00EB4573 /* Category.m */,
+				19A3812210026BBB00EB4573 /* GCategory.h */,
+				19A3812310026BBB00EB4573 /* GCategory.m */,
 				19A3812410026BBB00EB4573 /* Journal.h */,
 				19A3812510026BBB00EB4573 /* Journal.m */,
 				1975EB8812649467009A65F6 /* GeoJournal.xcdatamodeld */,
@@ -1002,7 +1002,7 @@
 				199EBBFB0FF66EDC00914776 /* LevelMeter.m in Sources */,
 				19AB9ECC0FFE5A2B0057953C /* CommonObject.m in Sources */,
 				1975EB8912649467009A65F6 /* GeoJournal.xcdatamodeld in Sources */,
-				19A3812610026BBB00EB4573 /* Category.m in Sources */,
+				19A3812610026BBB00EB4573 /* GCategory.m in Sources */,
 				19A3812710026BBB00EB4573 /* Journal.m in Sources */,
 				19A44DB81004D85E006AB024 /* GeoDatabase.m in Sources */,
 				19A44E271004EE2F006AB024 /* AddCategory.m in Sources */,

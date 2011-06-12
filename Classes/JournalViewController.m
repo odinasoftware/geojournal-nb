@@ -7,7 +7,7 @@
 //
 
 #import "JournalViewController.h"
-#import "Category.h"
+#import "GCategory.h"
 #import "GeoDatabase.h"
 #import "Journal.h"
 #import "GeoJournalHeaders.h"
@@ -246,7 +246,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	}
 }
 
-- (void)fetchJournalForCategory:(Category*)category 
+- (void)fetchJournalForCategory:(GCategory*)category 
 {
 	if (category == nil) {
 		NSLog(@"%s, category object is null.", __func__);
@@ -444,12 +444,12 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	TRACE("%s, %d, %f\n", __func__, index, rect.origin.x);
 }
 
-- (Category*)getCategory:(NSString*)name withIndex:(NSInteger)i
+- (GCategory*)getCategory:(NSString*)name withIndex:(NSInteger)i
 {
-	Category *ret = nil;
+	GCategory *ret = nil;
 	int n = 0;
 	
-	for (Category *c in categoryArray) {
+	for (GCategory *c in categoryArray) {
 		if (([c.name compare:name] == NSOrderedSame) && (i == n)) {
 			ret = c;
 			break;
@@ -460,12 +460,12 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	return ret;
 }
 
-- (Category*)getCategory:(NSString*)name
+- (GCategory*)getCategory:(NSString*)name
 {
-	Category *ret = nil;
+	GCategory *ret = nil;
 	int n = 0;
 	
-	for (Category *c in categoryArray) {
+	for (GCategory *c in categoryArray) {
 		if ([c.name compare:name] == NSOrderedSame) {
 			ret = c;
 			break;
@@ -527,7 +527,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 		NSLog(@"%s, button is null. Setting default category", __func__);
 		button = [buttons objectAtIndex:0];
 		selectedButton = 0;
-		Category *c = [self.categoryArray objectAtIndex:0];
+		GCategory *c = [self.categoryArray objectAtIndex:0];
 		active = c.name;
 		[GeoDefaults sharedGeoDefaultsInstance].activeCategory = active;
 		self.selectedCategory = [self getCategory:active withIndex:0];
@@ -564,7 +564,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	c = [self.categoryArray count];
 	
 	for (int i=0; i<c; ++i) {
-		Category *category = [categoryArray objectAtIndex:i];
+		GCategory *category = [categoryArray objectAtIndex:i];
 		//frame.size.width = GET_BUTTON_WIDTH(category.name);
 		button = [self getScrollableButton:category.name];
 		button.frame = frame;
@@ -610,7 +610,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 - (void)addIntroEntry
 {
 	//if ([[GeoDefaults sharedGeoDefaultsInstance].testJournalCreated boolValue] == NO) {
-	Category *chicago = [self getCategory:@"Daily Journal"];
+	GCategory *chicago = [self getCategory:@"Daily Journal"];
 	//NSString *path = [[NSBundle mainBundle] pathForResource:@"JournalTest" ofType:@"plist"];
 	//NSMutableArray *testJournal = [[NSMutableArray alloc] initWithContentsOfFile:path];
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"intro" ofType:@"png"];

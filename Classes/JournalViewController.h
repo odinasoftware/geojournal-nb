@@ -13,7 +13,7 @@
 #import "QWAdView.h"
 #endif
 
-@class Category;
+@class GCategory;
 @class GeoTakeController;
 @class JournalEntryViewController;
 @class ButtonScrollView;
@@ -55,7 +55,7 @@
 	UIColor							*selectedColor;
 	NSMutableArray					*categoryArray;
 	NSInteger						selectedButton;
-	Category						*selectedCategory;
+	GCategory						*selectedCategory;
 
 	@private
 	UIImage							*picasaIcon;
@@ -86,7 +86,7 @@
 @property (nonatomic, retain)	UIImage						*backgroundLabel2;
 @property (nonatomic, retain)	UIView						*categoryEditView;
 @property (nonatomic, retain)	NoteViewController			*editCategoryController;
-@property (nonatomic, retain)	Category					*selectedCategory;
+@property (nonatomic, retain)	GCategory					*selectedCategory;
 @property (nonatomic, retain)	NSMutableArray				*categoryArray;
 @property (nonatomic, retain)	ButtonScrollView			*buttonFrame;
 @property (nonatomic, retain)	UIImage						*infoButtonImage;
@@ -113,10 +113,10 @@
 - (void)reloadJournalArray;
 - (void)saveJournalToDatabase;
 - (void)setReload:(BOOL)reload;
-- (void)fetchJournalForCategory:(Category*)category;
+- (void)fetchJournalForCategory:(GCategory*)category;
 
-- (Category*)getCategory:(NSString*)name withIndex:(NSInteger)i;
-- (Category*)getCategory:(NSString*)name;
+- (GCategory*)getCategory:(NSString*)name withIndex:(NSInteger)i;
+- (GCategory*)getCategory:(NSString*)name;
 - (UIButton*)getScrollableButton:(NSString*)title;
 
 - (void)picasaSync;

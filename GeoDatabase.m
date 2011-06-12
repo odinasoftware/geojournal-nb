@@ -11,7 +11,7 @@
 #import "GeoDatabase.h"
 #import "GeoDefaults.h"
 #import "MailRecipients.h"
-#import "Category.h"
+#import "GCategory.h"
 #import "Journal.h"
 #import "GeoJournalHeaders.h"
 #import "PictureFrame.h"
@@ -314,9 +314,9 @@ int change_file_name_to(NSString *from, NSString *to)
 	return categoryArray;
 }
 
-- (Category*)categoryEntity 
+- (GCategory*)categoryEntity 
 {
-	return (Category*) [NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:self.managedObjectContext];
+	return (GCategory*) [NSEntityDescription insertNewObjectForEntityForName:@"Category" inManagedObjectContext:self.managedObjectContext];
 }
 
 - (DefaultCategory*)defaultCategoryEntity
@@ -339,7 +339,7 @@ int change_file_name_to(NSString *from, NSString *to)
 	return (Pictures*)[NSEntityDescription insertNewObjectForEntityForName:@"Pictures" inManagedObjectContext:self.managedObjectContext];
 }
 
-- (NSArray*)journalByCategory:(Category*)category
+- (NSArray*)journalByCategory:(GCategory*)category
 {
 	BOOL reload = NO;
 	NSArray *array = [self.journalDict objectForKey:category.name];
@@ -587,7 +587,7 @@ int change_file_name_to(NSString *from, NSString *to)
 
 #pragma mark JOURNAL DB
 
-- (void)deleteJournalObject:(Journal*)journal forCategory:(Category*)category 
+- (void)deleteJournalObject:(Journal*)journal forCategory:(GCategory*)category 
 {
 	[category removeContentsObject:journal];
 	[self deleteObject:journal];

@@ -8,7 +8,7 @@
 
 #import "SearchController.h"
 #import "GeoJournalHeaders.h"
-#import "Category.h"
+#import "GCategory.h"
 #import "GeoDatabase.h"
 #import "GeoDefaults.h"
 #import "Journal.h"
@@ -109,7 +109,7 @@
 	[self.searchResult removeAllObjects];
 	[self.searchResultIndex removeAllObjects];
 	
-	for (Category *c in self.categoryArray) {
+	for (GCategory *c in self.categoryArray) {
 		array = [[GeoDatabase sharedGeoDatabaseInstance] journalByCategory:c];
 		for (Journal *j in array) {
 			found = NO;

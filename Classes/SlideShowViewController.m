@@ -8,7 +8,7 @@
 
 #import "SlideShowViewController.h"
 #import "GeoDatabase.h"
-#import "Category.h"
+#import "GCategory.h"
 #import "Journal.h"
 #import "GeoJournalHeaders.h"
 #import "GeoDefaults.h"
@@ -89,7 +89,7 @@ extern int getNumberFromIndex(int i);
 	
 	TRACE("%s, %d\n", __func__, pages);
 	
-	for (Category *c in categoryArray) {
+	for (GCategory *c in categoryArray) {
 		if ([c.name compare:[GeoDefaults sharedGeoDefaultsInstance].activeCategory] == NSOrderedSame) {
 			array = [[GeoDatabase sharedGeoDatabaseInstance] journalByCategory:c];
 		}
@@ -208,16 +208,16 @@ extern int getNumberFromIndex(int i);
 	self._scrollView.responder = self;
 }
 
-- (Category*)getCategoryFromString:(NSString*)string 
+- (GCategory*)getCategoryFromString:(NSString*)string 
 {
-	Category *c = nil;
+	GCategory *c = nil;
 	/*
 	 if ([string compare:NO_ACTIVE_CATEGORY] == NSOrderedSame) {
 	 c = [categoryArray objectAtIndex:0];
 	 }
 	 else {
 	 */
-	for (Category *t in self.categoryArray) {
+	for (GCategory *t in self.categoryArray) {
 		if ([t.name compare:string] == NSOrderedSame) {
 			TRACE("%s, found category: %s\n", __func__, [string UTF8String]);
 			c = t;
@@ -229,9 +229,9 @@ extern int getNumberFromIndex(int i);
 	return c;
 }
 
-- (Category*)getViewCategory
+- (GCategory*)getViewCategory
 {
-	Category *c = nil;
+	GCategory *c = nil;
 	NSString *categoryString = nil;
 	
 	categoryString = [GeoDefaults sharedGeoDefaultsInstance].activeCategory;
