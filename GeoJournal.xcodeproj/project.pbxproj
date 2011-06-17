@@ -48,6 +48,7 @@
 		1947F97E0FD36A4D00B7B016 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1947F97D0FD36A4D00B7B016 /* MapKit.framework */; };
 		1947F9820FD36A5200B7B016 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1947F9810FD36A5200B7B016 /* CoreLocation.framework */; };
 		195810C41014A98300D0C029 /* info-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 195810C31014A98300D0C029 /* info-button.png */; };
+		1969531A13A783C0004D75E9 /* icloude-Entitlements.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1969531913A783C0004D75E9 /* icloude-Entitlements.entitlements */; };
 		19725F691088F83A0037BD55 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19725F681088F83A0037BD55 /* SystemConfiguration.framework */; };
 		1975EB8912649467009A65F6 /* GeoJournal.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1975EB8812649467009A65F6 /* GeoJournal.xcdatamodeld */; };
 		1989513E12B26DA600DD1FF1 /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 1989512912B26DA600DD1FF1 /* NSObject+SBJSON.m */; };
@@ -243,6 +244,7 @@
 		1947F97D0FD36A4D00B7B016 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		1947F9810FD36A5200B7B016 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		195810C31014A98300D0C029 /* info-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "info-button.png"; sourceTree = "<group>"; };
+		1969531913A783C0004D75E9 /* icloude-Entitlements.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "icloude-Entitlements.entitlements"; sourceTree = "<group>"; };
 		19725F681088F83A0037BD55 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		1975EB8A1264946F009A65F6 /* GeoJournal 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; name = "GeoJournal 2.xcdatamodel"; path = "../GeoJournal.xcdatamodeld/GeoJournal 2.xcdatamodel"; sourceTree = "<group>"; };
 		1989512712B26DA600DD1FF1 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
@@ -640,6 +642,7 @@
 				199B49B810064D03008542F1 /* GeoDefaults.m */,
 				193436B0100E6A5000E7E4AA /* GeoSession.h */,
 				193436B1100E6A5000E7E4AA /* GeoSession.m */,
+				1969531913A783C0004D75E9 /* icloude-Entitlements.entitlements */,
 			);
 			name = Database;
 			sourceTree = "<group>";
@@ -974,6 +977,7 @@
 				1989531312B3DB0A00DD1FF1 /* StatusViewController.xib in Resources */,
 				1989531612B3DB3700DD1FF1 /* close-mark.png in Resources */,
 				190077FD12CAD95B00347CA4 /* Icon-high.png in Resources */,
+				1969531A13A783C0004D75E9 /* icloude-Entitlements.entitlements in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
