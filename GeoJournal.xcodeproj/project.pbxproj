@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -48,7 +48,6 @@
 		1947F97E0FD36A4D00B7B016 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1947F97D0FD36A4D00B7B016 /* MapKit.framework */; };
 		1947F9820FD36A5200B7B016 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1947F9810FD36A5200B7B016 /* CoreLocation.framework */; };
 		195810C41014A98300D0C029 /* info-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 195810C31014A98300D0C029 /* info-button.png */; };
-		1969531A13A783C0004D75E9 /* icloude-Entitlements.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1969531913A783C0004D75E9 /* icloude-Entitlements.entitlements */; };
 		19725F691088F83A0037BD55 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19725F681088F83A0037BD55 /* SystemConfiguration.framework */; };
 		1975EB8912649467009A65F6 /* GeoJournal.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1975EB8812649467009A65F6 /* GeoJournal.xcdatamodeld */; };
 		1989513E12B26DA600DD1FF1 /* NSObject+SBJSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 1989512912B26DA600DD1FF1 /* NSObject+SBJSON.m */; };
@@ -244,8 +243,8 @@
 		1947F97D0FD36A4D00B7B016 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		1947F9810FD36A5200B7B016 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		195810C31014A98300D0C029 /* info-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "info-button.png"; sourceTree = "<group>"; };
-		1969531913A783C0004D75E9 /* icloude-Entitlements.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "icloude-Entitlements.entitlements"; sourceTree = "<group>"; };
 		19725F681088F83A0037BD55 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		19744DED13C8FDC500D0D6F6 /* iGeoJournal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = iGeoJournal.entitlements; sourceTree = "<group>"; };
 		1975EB8A1264946F009A65F6 /* GeoJournal 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; name = "GeoJournal 2.xcdatamodel"; path = "../GeoJournal.xcdatamodeld/GeoJournal 2.xcdatamodel"; sourceTree = "<group>"; };
 		1989512712B26DA600DD1FF1 /* JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSON.h; sourceTree = "<group>"; };
 		1989512812B26DA600DD1FF1 /* NSObject+SBJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJSON.h"; sourceTree = "<group>"; };
@@ -636,13 +635,12 @@
 				19901833125CB23C002A09F1 /* Pictures.m */,
 				19901834125CB23C002A09F1 /* PictureFrame.h */,
 				19901835125CB23C002A09F1 /* PictureFrame.m */,
-				19A44DB61004D85E006AB024 /* GeoDatabase.h */,
 				19A44DB71004D85E006AB024 /* GeoDatabase.m */,
+				19A44DB61004D85E006AB024 /* GeoDatabase.h */,
 				199B49B710064D03008542F1 /* GeoDefaults.h */,
 				199B49B810064D03008542F1 /* GeoDefaults.m */,
 				193436B0100E6A5000E7E4AA /* GeoSession.h */,
 				193436B1100E6A5000E7E4AA /* GeoSession.m */,
-				1969531913A783C0004D75E9 /* icloude-Entitlements.entitlements */,
 			);
 			name = Database;
 			sourceTree = "<group>";
@@ -695,6 +693,7 @@
 		29B97314FDCFA39411CA2CEA /* GeoJournal */ = {
 			isa = PBXGroup;
 			children = (
+				19744DED13C8FDC500D0D6F6 /* iGeoJournal.entitlements */,
 				1989514B12B26DC400DD1FF1 /* FBConnect */,
 				19A3810E100252EA00EB4573 /* Database */,
 				199C67C30FD4ABD700516B6F /* AudioViews */,
@@ -723,10 +722,7 @@
 				19A372FB102DD1DA00DFF866 /* JournalViewController.xib */,
 				19A37496102E3EE500DFF866 /* SearchNavigation.xib */,
 				19AA23111062E57500DA42D8 /* AudioView.xib */,
-				19725F681088F83A0037BD55 /* SystemConfiguration.framework */,
 				19F8763D1090951A003628D4 /* EditText.xib */,
-				19B74FF410CB4F0100D21E97 /* MediaPlayer.framework */,
-				19B7500810CB500D00D21E97 /* libsqlite3.dylib */,
 				193403501257BEF5003C0DC5 /* FullImageViewController.xib */,
 			);
 			name = GeoJournal;
@@ -824,6 +820,9 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				19B7500810CB500D00D21E97 /* libsqlite3.dylib */,
+				19B74FF410CB4F0100D21E97 /* MediaPlayer.framework */,
+				19725F681088F83A0037BD55 /* SystemConfiguration.framework */,
 				193438D7100F594300E7E4AA /* MessageUI.framework */,
 				193431EF100CEE4B00E7E4AA /* AVFoundation.framework */,
 				19A381A5100278FE00EB4573 /* CoreData.framework */,
@@ -864,8 +863,11 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "GeoJournal" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -977,7 +979,6 @@
 				1989531312B3DB0A00DD1FF1 /* StatusViewController.xib in Resources */,
 				1989531612B3DB3700DD1FF1 /* close-mark.png in Resources */,
 				190077FD12CAD95B00347CA4 /* Icon-high.png in Resources */,
-				1969531A13A783C0004D75E9 /* icloude-Entitlements.entitlements in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1068,13 +1069,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos4.2]" = "iPhone Distribution: Odina Software, LLC";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jae Han (WEEA473VPB)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos4.2]" = "iPhone Developer: Jae Han (WEEA473VPB)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
 				PRODUCT_NAME = iGeoJournal;
-				"PROVISIONING_PROFILE[sdk=iphoneos4.2]" = "9DF3CAB3-0916-4BEE-8B50-8063223FF9C4";
+				PROVISIONING_PROFILE = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
+				"PROVISIONING_PROFILE[sdk=iphoneos4.2]" = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
 				SDKROOT = iphoneos;
 			};
 			name = Distribution;
@@ -1083,10 +1085,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = iGeoJournal.entitlements;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = GeoJournal_Prefix.pch;
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
@@ -1100,6 +1104,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = iGeoJournal.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1107,6 +1112,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = GeoJournal_Prefix.pch;
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
@@ -1121,10 +1127,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = iGeoJournal.entitlements;
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = GeoJournal_Prefix.pch;
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
@@ -1138,18 +1146,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Jae Han (WEEA473VPB)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jae Han (WEEA473VPB)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = _DEBUG;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
 				PRODUCT_NAME = iGeoJournal;
-				PROVISIONING_PROFILE = "";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos4.2;
+				PROVISIONING_PROFILE = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
+				SDKROOT = iphoneos;
 			};
 			name = Debug;
 		};
@@ -1162,9 +1169,10 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
 				PRODUCT_NAME = iGeoJournal;
-				SDKROOT = iphoneos3.0;
+				PROVISIONING_PROFILE = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
+				"PROVISIONING_PROFILE[sdk=iphoneos3.0]" = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
+				SDKROOT = iphoneos;
 			};
 			name = Release;
 		};
