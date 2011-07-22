@@ -16,7 +16,17 @@
 #import "GeoJournalHeaders.h"
 #import "PictureFrame.h"
 #import "Pictures.h"
+                                            
+#define UBIQUITY_CONTAINER_URL @"WV3CVJV89H.com.odinasoftware.igeojournal" 
 
+/*
+ * iCloud todos:
+ *    1. Create and save the file locally in the sandbox
+ *    2. Use UIDocument class to manage the file
+ *    3. Create NSURL object that specifies the destination of the file in a user's iCloud storage.
+ *        Use "Documents" subdirectory.
+ *    4. Call 'setUbiquitous' to move the file to the iCloud. 
+ */
 extern NSString *getThumbnailFilename(NSString *filename);
 
 static GeoDatabase	*sharedGeoDatabase = nil;
@@ -53,14 +63,70 @@ void remove_file(NSString *file)
 	pthread_create(&thread, nil, (void*)(remove_file_in_thread), (void*)file);
 }
 
-int change_file_name_to(NSString *from, NSString *to) 
+@implementation GeoCloudDocument
+
+/*
+- (NSManagedObjectModel *) managedObjectModel 
 {
-	
+    // Need to have this, otherwise UIManagedDocument is not properly loaded.
+    if (managedObjectModel) {
+        return managedObjectModel;
+    }
+    
+    TRACE("%s\n", __func__);
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"GeoJournal"ofType:@"momd"];
+	NSURL *momURL = [NSURL fileURLWithPath:path];
+    
+    managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
+    
+    return managedObjectModel;
 }
+*/
+
+- (id)contentsForType:(NSString *)typeName error:(NSError **)outError
+{
+    id me;
+    
+    NSLog(@"%s, %@", __func__, typeName);
+    
+    NSData *data = [[NSData alloc] initWithBytes:"test" length:4];
+    
+    me = data;
+    return nil;
+}
+
+- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError **)outError
+{
+    BOOL res = FALSE;
+    
+    NSLog(@"%s", __func__);
+    // Getting data from the local sandbox, save it to cloud
+    
+    //NSData *data = contents;
+    
+    //NSFileManager *fileManager = [NSFileManager defaultManager];
+    //NSURL *ubiquityContainerURL = [[fileManager URLForUbiquityContainerIdentifier:UBIQUITY_CONTAINER_URL] URLByAppendingPathComponent:@"Documents"];
+    
+    /*
+    int i=0;
+    const char* c = [data bytes];
+    for (i=0; i<[data length]; ++i) {
+        printf("%c \n", c[i]);
+    }
+     */
+    
+    
+    return res;
+}
+
+@end
 
 @implementation GeoDatabase
 
 @synthesize journalDict;
+@synthesize managedDocument;
+@synthesize storeURL;
+@synthesize metaQuery;
 
 + (GeoDatabase*)sharedGeoDatabaseInstance
 {
@@ -94,7 +160,116 @@ int change_file_name_to(NSString *from, NSString *to)
 }
 
 #pragma mark -
+#pragma mark Setting up Cloud
+- (void)setupCloud
+{
+    GeoCloudDocument *cloudDoc = [[GeoCloudDocument alloc] initWithFileURL:storeURL];
+    
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+							 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+							 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+    
+    // Creating managed document
+    // ??? this managed document is somehow connected to the file in the local storage.
+    // ??? why does it need to have the option.
+    
+    cloudDoc.persistentStoreOptions = options;
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[storeURL path]]) {
+        NSLog(@"file exists.");
+        [cloudDoc openWithCompletionHandler:^(BOOL success){
+            NSLog(@"%s, %d", __func__, success);
+            printf("done in file exists.\n");
+            if (!success) {
+                // Handle the error.
+            }
+        }];
+    }
+    else {
+        NSLog(@"file doesn't exist.");
+        
+        [cloudDoc saveToURL:storeURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
+            NSLog(@"%s, %d", __func__, success);
+            printf("done in file doesn't exist.");
+            
+            if (!success) {
+                // Handle the error.
+            }
+        }];
+    }
+
+}
+#pragma mark -
 #pragma mark Core Data stack
+
+- (void)queryDidFinishGathering:(NSNotification *)notification
+{
+    [self.metaQuery stopQuery];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSMetadataQueryDidFinishGatheringNotification
+                                                  object:self.metaQuery];
+    TRACE("%s: Result count: %d", __func__, [self.metaQuery resultCount]);
+    
+    if ([self.metaQuery resultCount] > 0) {
+        // Document(s) found by query
+        for (int i=0; i<[self.metaQuery resultCount]; i++) {
+            // Results are NSMetadataItem instances
+            NSMetadataItem *result = [self.metaQuery resultAtIndex:i];
+            NSLog(@"Result: %@", [result valuesForAttributes:[result attributes]]);
+        }
+        
+        NSURL *documentFileURL = [[self.metaQuery resultAtIndex:0] valueForAttribute:NSMetadataItemURLKey];
+        NSLog(@"%s, %@", __func__, [documentFileURL description]);
+        //UIManagedDocument *document = [[UIManagedDocument alloc] initWithFileURL:documentFileURL];
+        //[self setMyManagedDocument:document];
+        
+        //[[self myManagedDocument] openWithCompletionHandler:^(BOOL success) { 
+        //    NSLog(@"Open success flag: %d", success);
+        //}];
+    }
+#if 0
+    else {
+        // No documents found, create one.
+        NSURL *localDocumentsDirectory = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+        NSURL *localFileURL = [localDocumentsDirectory URLByAppendingPathComponent:(NSString *)myFilename];
+        [self setMyManagedDocument:[[UIManagedDocument alloc] initWithFileURL:localFileURL]];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:[localFileURL path]]) {
+            // Local file already exists
+            [[self myManagedDocument] openWithCompletionHandler:^(BOOL success) {
+                NSLog(@"Open success flag: %d", success);
+            }];
+        } else {
+            // Local file does not already exist
+            [[self myManagedDocument] saveToURL:localFileURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success) {
+                NSLog(@"Save success flag: %d", success);
+            }];
+        }
+        
+        NSURL *cloudURL = [[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:(NSString *)containerID];
+        NSURL *cloudFileURL = [cloudURL URLByAppendingPathComponent:(NSString *)myFilename];
+        NSError *setUBError = nil;
+        
+        if (![[NSFileManager defaultManager] setUbiquitous:YES itemAtURL:localFileURL destinationURL:cloudFileURL error:&setUBError]) {
+            NSLog(@"Error setting UB: %@", setUBError);
+        }
+    }
+#endif
+}
+
+// NSNotifications are posted synchronously on the caller's thread
+// make sure to vector this back to the thread we want, in this case
+// the main thread for our views & controller
+- (void)mergeChangesFrom_iCloud:(NSNotification *)notification {
+    NSDictionary* ui = [notification userInfo];
+	NSManagedObjectContext* moc = [self managedObjectContext];
+    
+    // this only works if you used NSMainQueueConcurrencyType
+    // otherwise use a dispatch_async back to the main thread yourself
+    [moc performBlock:^{
+        // TODO: need to work on it later
+        //[self mergeiCloudChanges:ui forContext:moc];
+    }];
+}
 
 /**
  Returns the managed object context for the application.
@@ -102,16 +277,117 @@ int change_file_name_to(NSString *from, NSString *to)
  */
 - (NSManagedObjectContext *) managedObjectContext {
 	
-    if (managedObjectContext != nil) {
-        return managedObjectContext;
+    if (managedObjectContext__ != nil) {
+        return managedObjectContext__;
     }
 	
+
     NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
-        managedObjectContext = [[[NSManagedObjectContext alloc] init] retain];
-        [managedObjectContext setPersistentStoreCoordinator: coordinator];
+        // Make life easier by adopting the new NSManagedObjectContext concurrency API
+        // the NSMainQueueConcurrencyType is good for interacting with views and controllers since
+        // they are all bound to the main thread anyway
+        NSManagedObjectContext* moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+        
+        [moc performBlockAndWait:^{
+            // even the post initialization needs to be done within the Block
+            [moc setPersistentStoreCoordinator: coordinator];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mergeChangesFrom_iCloud:) 
+                                                         name:NSPersistentStoreDidImportUbiquitousContentChangesNotification 
+                                                       object:coordinator];
+        }];
+        managedObjectContext__ = moc;
+
+#ifdef ORIGINAL_CODE
+        managedObjectContext__ = [[[NSManagedObjectContext alloc] init] retain];
+        [managedObjectContext__ setPersistentStoreCoordinator: coordinator];
+#endif
     }
-    return managedObjectContext;
+
+    return managedObjectContext__;
+    
+#if 0
+    /*
+    storeURL = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
+                                               stringByAppendingPathComponent: @"GeoJournal.sqlite"]];
+    NSURL *cloudURL = [[[[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:UBIQUITY_CONTAINER_URL] URLByAppendingPathComponent:@"Documents"] 
+                       URLByAppendingPathComponent:@"GeoJournal.sqlite"];
+    
+	TRACE("%s, db: %s\n", __func__, [[storeURL absoluteString] UTF8String]);
+    TRACE("%s, cloud URL: %s\n", __func__, [[cloudURL absoluteString] UTF8String]);
+	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+							 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+							 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, 
+                             cloudURL, NSPersistentStoreUbiquitousContentURLKey,
+                             @"GeoJournal.sqlite", NSPersistentStoreUbiquitousContentNameKey, nil];
+    
+    // Creating managed document
+    // ??? this managed document is somehow connected to the file in the local storage.
+    // ??? why does it need to have the option.
+    
+    GeoCloudDocument *doc = [[GeoCloudDocument alloc] initWithFileURL:storeURL];
+    doc.persistentStoreOptions = options;
+    
+        
+    //[doc.managedObjectContext performBlockAndWait:^() {
+    //    NSLog(@"managed object created."); 
+    //}];
+    //sleep(10);
+    
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[storeURL path]]) {
+        [doc openWithCompletionHandler:^(BOOL success){
+            if (!success) {
+                // Handle the error.
+                NSLog(@"failed in opening.");
+            }
+        }];
+    }
+    else {
+        [doc saveToURL:storeURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
+            if (!success) {
+                // Handle the error.
+                NSLog(@"failed in save for creating.");
+            }
+        }];
+    }
+    
+    NSError *error=nil;
+    
+    if (![doc configurePersistentStoreCoordinatorForURL:storeURL ofType:NSSQLiteStoreType modelConfiguration:nil storeOptions:options error:&error]) {
+        NSLog(@"Error in persistent store: %@", error);
+        return nil;
+    }
+
+    managedObjectContext = doc.managedObjectContext;
+    managedDocument = doc;
+
+    TRACE("%s, filetype: %s, %s\n", __func__, [doc.fileType UTF8String], [[doc.fileURL absoluteString] UTF8String]);
+    
+    // Look for this is in the cloud or not
+    NSMetadataQuery *query = [[NSMetadataQuery alloc] init];
+    //[self setDocumentQuery:query];
+    [query setSearchScopes:[NSArray arrayWithObject:NSMetadataQueryUbiquitousDocumentsScope]];
+    [query setPredicate:[NSPredicate predicateWithFormat:@"%K == %@", NSMetadataItemFSNameKey, @"GeoJournal.sqlite"]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryDidFinishGathering:) name:NSMetadataQueryDidFinishGatheringNotification object:query];
+    [query startQuery];
+    
+    metaQuery = query;
+    [query release];
+    
+
+    
+    //[[NSFileManager defaultManager] setUbiquitous:YES itemAtURL:storeURL destinationURL:cloudURL error:&error];
+    //if (error) {
+    //    NSLog(@"%s, %@", __func__, [error description]);
+    //}
+  
+    [doc release];
+    
+    //[self setupCloud];
+     */
+#endif
+    
 }
 
 
@@ -121,16 +397,16 @@ int change_file_name_to(NSString *from, NSString *to)
  */
 - (NSManagedObjectModel *)managedObjectModel {
 	
-    if (managedObjectModel != nil) {
-        return managedObjectModel;
+    if (managedObjectModel__ != nil) {
+        return managedObjectModel__;
     }
 	
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"GeoJournal"ofType:@"momd"];
 	NSURL *momURL = [NSURL fileURLWithPath:path];
-	managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
+	managedObjectModel__ = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
 	
     //managedObjectModel = [[NSManagedObjectModel mergedModelFromBundles:nil] retain];    
-    return managedObjectModel;
+    return managedObjectModel__;
 }
 
 /*
@@ -209,23 +485,55 @@ int change_file_name_to(NSString *from, NSString *to)
  */
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
 	
-    if (persistentStoreCoordinator != nil) {
-        return persistentStoreCoordinator;
+    if (persistentStoreCoordinator__ != nil) {
+        return persistentStoreCoordinator__;
     }
 	
-    NSURL *storeUrl = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
+    storeURL = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
 														stringByAppendingPathComponent: @"GeoJournal.sqlite"]];
-	TRACE("%s, db: %s\n", __func__, [[storeUrl absoluteString] UTF8String]);
+	TRACE("%s, db: %s\n", __func__, [[storeURL absoluteString] UTF8String]);
 	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
 							 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
 							 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+    
+    // Creating managed document
+    // ??? this managed document is somehow connected to the file in the local storage.
+    // ??? why does it need to have the option.
+    /*
+    UIManagedDocument *doc = [[UIManagedDocument alloc] initWithFileURL:storeUrl];
+    doc.persistentStoreOptions = options;
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[storeUrl path]]) {
+        [doc openWithCompletionHandler:^(BOOL success){
+            if (!success) {
+                // Handle the error.
+                NSLog(@"failed in opening.");
+            }
+        }];
+    }
+    else {
+        [doc saveToURL:storeUrl forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
+            if (!success) {
+                // Handle the error.
+                NSLog(@"failed in save for creating.");
+            }
+        }];
+    }
+	
+    //[doc.managedObjectContext performBlockAndWait:^() {
+    //    NSLog(@"Here, created.");
+    //}];
+     */
+    
 	NSError *error=nil;
+    
     persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel: [self managedObjectModel]];
-    if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+    if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
         // Handle the error.
 		NSLog(@"Error in persistent store: %@", error);
-    }    
-	
+    }   
+    
+        
     return persistentStoreCoordinator;
 }
 

@@ -16,11 +16,25 @@
 @class PictureFrame;
 @class Pictures;
 
+@interface GeoCloudDocument : UIManagedDocument {
+
+   // NSManagedObjectModel    *managedObjectModel;
+    
+}
+
+//@property (nonatomic, retain, readonly) NSManagedObjectModel *managedObjectModel;
+
+//- (id)contentsForType:(NSString *)typeName error:(NSError **)outError;
+//- (BOOL)loadFromContents:(id)contents ofType:(NSString *)typeName error:(NSError **)outError;
+@end
+
 @interface GeoDatabase : NSObject {
 	// For management
-	NSPersistentStoreCoordinator	*persistentStoreCoordinator;
-    NSManagedObjectModel			*managedObjectModel;
-    NSManagedObjectContext			*managedObjectContext;	    
+	NSPersistentStoreCoordinator	*persistentStoreCoordinator__;
+    NSManagedObjectModel			*managedObjectModel__;
+    NSManagedObjectContext			*managedObjectContext__;
+    NSMetadataQuery                 *ubiquitousQuery__;
+    UIManagedDocument               *managedDocument;
 	
 	// MAIL Database entities
 	NSMutableArray					*mailRecipientArray;
@@ -37,21 +51,27 @@
 	
 	// Journal entities
 	Journal							*journalEntity;
+    NSURL                           *storeURL;
+    NSMetadataQuery                 *metaQuery;
 }
 
 @property (nonatomic, retain, readonly)	NSManagedObjectModel			*managedObjectModel;
 @property (nonatomic, retain, readonly) NSManagedObjectContext			*managedObjectContext;
 @property (nonatomic, retain, readonly) NSPersistentStoreCoordinator	*persistentStoreCoordinator;
+@property (nonatomic, retain)           NSMetadataQuery                 *ubiquitousQuery;
+@property (nonatomic, retain, readonly) UIManagedDocument               *managedDocument;
 
 @property (nonatomic, retain, readonly) NSMutableArray	*mailRecipientArray;
 @property (nonatomic, readonly) MailRecipients			*mailRecipient;
 @property (nonatomic, readonly) NSString				*defaultRecipient;
+@property (nonatomic, retain) NSURL                     *storeURL;
 
 @property (nonatomic, retain, readonly) NSMutableArray	*categoryArray;
 @property (nonatomic, readonly) GCategory				*categoryEntity;
 @property (nonatomic, readonly) DefaultCategory			*defaultCategoryEntity;
 @property (nonatomic, readonly) Journal					*journalEntity;
 @property (nonatomic, retain)	NSMutableDictionary		*journalDict;
+@property (nonatomic, retain)   NSMetadataQuery         *metaQuery;
 
 // Class definitions
 + (GeoDatabase*)sharedGeoDatabaseInstance;
@@ -69,5 +89,9 @@
 - (void)removeJournalPicture:(Journal*)journal;
 - (void)replacePicture:(NSString*)picture forJournal:(Journal*)journal;
 - (PictureFrame*)getFrameForJournal:(Journal*)journal;
+- (void)setupCloud;
+- (void)queryDidFinishGathering:(NSNotification *)notification;
+
+- (void)mergeChangesFrom_iCloud:(NSNotification *)notification;
 
 @end
