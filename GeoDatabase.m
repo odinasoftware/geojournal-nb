@@ -125,8 +125,8 @@ void remove_file(NSString *file)
 
 @synthesize journalDict;
 @synthesize managedDocument;
-@synthesize storeURL;
 @synthesize metaQuery;
+@synthesize ubiquitousQuery=ubiquitousQuery__;
 
 + (GeoDatabase*)sharedGeoDatabaseInstance
 {
@@ -163,6 +163,7 @@ void remove_file(NSString *file)
 #pragma mark Setting up Cloud
 - (void)setupCloud
 {
+#if ORIGINAL_CODE
     GeoCloudDocument *cloudDoc = [[GeoCloudDocument alloc] initWithFileURL:storeURL];
     
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -197,7 +198,7 @@ void remove_file(NSString *file)
             }
         }];
     }
-
+#endif
 }
 #pragma mark -
 #pragma mark Core Data stack
@@ -489,53 +490,164 @@ void remove_file(NSString *file)
         return persistentStoreCoordinator__;
     }
 	
-    storeURL = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
-														stringByAppendingPathComponent: @"GeoJournal.sqlite"]];
-	TRACE("%s, db: %s\n", __func__, [[storeURL absoluteString] UTF8String]);
+    persistentStoreCoordinator__ = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel: [self managedObjectModel]];
+    
+    // prep the store path and bundle stuff here since NSBundle isn't totally thread safe
+    NSPersistentStoreCoordinator* psc = persistentStoreCoordinator__;
+    NSURL *storeUrl = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
+                                        stringByAppendingPathComponent: @"GeoJournal.sqlite"]];
+    NSString* bundleid = [[[NSBundle mainBundle] bundleIdentifier] lowercaseString];
+    NSString *defaultStorePath = [[NSBundle mainBundle] pathForResource:@"GeoJournal" ofType:@"sqlite"];
+
+    // do this asynchronously since if this is the first time this particular device is syncing with preexisting
+    // iCloud content it may take a long long time to download
+    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+    {
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        
+        // we're not going to illustrate this today
+#if 0
+        /*
+         Set up the store.
+         For the sake of illustration, provide a pre-populated default store.
+         */
+        // If the expected store doesn't exist, copy the default store.
+        if (![fileManager fileExistsAtPath:storePath]) {
+            if (defaultStorePath) {
+                //			[fileManager copyItemAtPath:defaultStorePath toPath:storePath error:NULL];
+            }
+        }
+#endif
+        
+        //NSURL *storeUrl = [NSURL fileURLWithPath:storePath];
+        // this needs to match the entitlements and provisioning profile
+        NSURL *cloudURL = [fileManager URLForUbiquityContainerIdentifier:UBIQUITY_CONTAINER_URL];
+        NSString* coreDataCloudContent = [[cloudURL path] stringByAppendingPathComponent:@"GeoJournal"];
+        
+        TRACE("%s, %s, %s\n", __func__, [[cloudURL absoluteString] UTF8String], [coreDataCloudContent UTF8String]);
+        
+        cloudURL = [NSURL fileURLWithPath:coreDataCloudContent];
+        
+        //  The API to turn on Core Data iCloud support here.
+        NSDictionary* options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 @"com.odinasoftware.igeojournal", NSPersistentStoreUbiquitousContentNameKey, 
+                                 cloudURL, NSPersistentStoreUbiquitousContentURLKey, 
+                                 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, 
+                                 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption,nil];
+        
+        // Needed on iOS seed 3, but not Mac OS X
+        [self workaround_weakpackages_9653904:options];
+        
+        NSError *error = nil;
+        
+        [psc lock];
+        if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+            /*
+             Replace this implementation with code to handle the error appropriately.
+             
+             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
+             
+             Typical reasons for an error here include:
+             * The persistent store is not accessible
+             * The schema for the persistent store is incompatible with current managed object model
+             Check the error message to determine what the actual problem was.
+             */
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        }    
+        [psc unlock];
+        
+        // tell the UI on the main thread we finally added the store and then
+        // post a custom notification to make your views do whatever they need to such as tell their
+        // NSFetchedResultsController to -performFetch again now there is a real store
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"asynchronously added persistent store!");
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
+        });
+    }
+    //);
+
+	TRACE("%s, returning, db: %s\n", __func__, [[storeUrl absoluteString] UTF8String]);
+#ifdef ORIGINAL_CODE
 	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
 							 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
 							 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
     
-    // Creating managed document
-    // ??? this managed document is somehow connected to the file in the local storage.
-    // ??? why does it need to have the option.
-    /*
-    UIManagedDocument *doc = [[UIManagedDocument alloc] initWithFileURL:storeUrl];
-    doc.persistentStoreOptions = options;
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[storeUrl path]]) {
-        [doc openWithCompletionHandler:^(BOOL success){
-            if (!success) {
-                // Handle the error.
-                NSLog(@"failed in opening.");
-            }
-        }];
-    }
-    else {
-        [doc saveToURL:storeUrl forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
-            if (!success) {
-                // Handle the error.
-                NSLog(@"failed in save for creating.");
-            }
-        }];
-    }
-	
-    //[doc.managedObjectContext performBlockAndWait:^() {
-    //    NSLog(@"Here, created.");
-    //}];
-     */
-    
 	NSError *error=nil;
     
-    persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel: [self managedObjectModel]];
+    
     if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
         // Handle the error.
 		NSLog(@"Error in persistent store: %@", error);
     }   
-    
+#endif
         
-    return persistentStoreCoordinator;
+    return persistentStoreCoordinator__;
 }
+
+// Needed on iOS seed 3 as a workaround for known issues, but not Mac OS X ---------------------------------------------------
+static dispatch_queue_t polling_queue;
+
+- (void)workaround_weakpackages_9653904:(NSDictionary*)options {
+#if 1
+    TRACE("%s\n", __func__);
+    NSURL* cloudURL = [options objectForKey:NSPersistentStoreUbiquitousContentURLKey];
+    NSString* name = [options objectForKey:NSPersistentStoreUbiquitousContentNameKey];
+    NSString* cloudPath = [cloudURL path];
+    
+    NSMetadataQuery *query = [[NSMetadataQuery alloc] init];
+    [query setSearchScopes:[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDataScope, NSMetadataQueryUbiquitousDocumentsScope, nil]];
+    [query setPredicate:[NSPredicate predicateWithFormat:@"kMDItemFSName == '*'"]]; // Just get everything.
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pollnewfiles_weakpackages:) name:NSMetadataQueryGatheringProgressNotification object:query];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pollnewfiles_weakpackages:) name:NSMetadataQueryDidUpdateNotification object:query];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pollnewfiles_weakpackages:) name:NSMetadataQueryDidFinishGatheringNotification object:query];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pollnewfiles_weakpackages:) name:NSMetadataQueryDidStartGatheringNotification object:query];
+    
+    // May also register for NSMetadataQueryDidFinishGatheringNotification if you want to update any user interface items when the initial result-gathering phase of the query is complete.
+    
+    self.ubiquitousQuery = query;
+    
+    polling_queue = dispatch_queue_create("workaround_weakpackages_9653904", DISPATCH_QUEUE_SERIAL);
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (![query startQuery]) {
+            NSLog(@"NSMetadataQuery failed to start!");
+        } else {
+            NSLog(@"started NSMetadataQuery!");
+        };
+    });
+    
+#endif
+}
+
+- (void)pollnewfiles_weakpackages:(NSNotification*)note {
+    
+    TRACE("%s\n", __func__);
+    [self.ubiquitousQuery disableUpdates];
+    NSArray *results = [self.ubiquitousQuery results];
+    NSFileManager* fm = [NSFileManager defaultManager];
+    NSFileCoordinator* fc = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
+    
+    for (NSMetadataItem *item in results) {
+        NSURL* itemurl = [item valueForAttribute:NSMetadataItemURLKey];
+        
+        NSString* filepath = [itemurl path];
+        TRACE("%s, filepath: %s\n", __func__, [filepath UTF8String]);
+        if (![fm fileExistsAtPath:filepath]) {
+            dispatch_async(polling_queue, ^(void) {
+                NSLog(@"coordinated reading of URL '%@'", itemurl);
+                [fc coordinateReadingItemAtURL:itemurl options:0 error:nil byAccessor:^(NSURL* url) { }];
+            });
+        }
+    }
+    
+    [fc release];
+    [self.ubiquitousQuery enableUpdates];
+    
+}
+// Needed on iOS seed 3 as a workaround for known issues, but not Mac OS X ---------------------------------------------------
+
 
 #pragma mark MAIL RECIPIENT
 - (NSMutableArray*)mailRecipientArray
@@ -552,7 +664,7 @@ void remove_file(NSString *file)
 		[sortDescriptor release];
 		
 		NSError *error;
-		NSMutableArray* mutableFetchResults = [[managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+		NSMutableArray* mutableFetchResults = [[managedObjectContext__ executeFetchRequest:request error:&error] mutableCopy];
 		if (mutableFetchResults == nil) {
 			// Handle the error.
 			NSLog(@"%s, %@", __func__, error);
@@ -571,7 +683,7 @@ void remove_file(NSString *file)
 
 - (MailRecipients*)mailRecipient 
 {
-	return (MailRecipients *)[NSEntityDescription insertNewObjectForEntityForName:@"MailRecipients" inManagedObjectContext:managedObjectContext];
+	return (MailRecipients *)[NSEntityDescription insertNewObjectForEntityForName:@"MailRecipients" inManagedObjectContext:managedObjectContext__];
 }
 
 - (NSString*)defaultRecipient

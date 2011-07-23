@@ -51,7 +51,6 @@
 	
 	// Journal entities
 	Journal							*journalEntity;
-    NSURL                           *storeURL;
     NSMetadataQuery                 *metaQuery;
 }
 
@@ -64,7 +63,6 @@
 @property (nonatomic, retain, readonly) NSMutableArray	*mailRecipientArray;
 @property (nonatomic, readonly) MailRecipients			*mailRecipient;
 @property (nonatomic, readonly) NSString				*defaultRecipient;
-@property (nonatomic, retain) NSURL                     *storeURL;
 
 @property (nonatomic, retain, readonly) NSMutableArray	*categoryArray;
 @property (nonatomic, readonly) GCategory				*categoryEntity;
@@ -93,5 +91,6 @@
 - (void)queryDidFinishGathering:(NSNotification *)notification;
 
 - (void)mergeChangesFrom_iCloud:(NSNotification *)notification;
-
+- (void)workaround_weakpackages_9653904:(NSDictionary*)options;
+- (void)pollnewfiles_weakpackages:(NSNotification*)note;
 @end
