@@ -64,7 +64,7 @@ void AQPlayer::AQBufferCallback(void *					inUserData,
 	OSStatus result = AudioFileReadPackets(THIS->GetAudioFileID(), false, &numBytes, inCompleteAQBuffer->mPacketDescriptions, THIS->GetCurrentPacket(), &nPackets, 
 										   inCompleteAQBuffer->mAudioData);
 	if (result)
-		printf("AudioFileReadPackets failed: %d", result);
+		printf("AudioFileReadPackets failed: %ld", result);
 	if (nPackets > 0) {
 		inCompleteAQBuffer->mAudioDataByteSize = numBytes;		
 		inCompleteAQBuffer->mPacketDescriptionCount = nPackets;		
@@ -167,7 +167,7 @@ OSStatus AQPlayer::StartQueue(Boolean inResume)
 	 */
 	UInt32 category = kAudioSessionCategory_MediaPlayback;
 	OSStatus result = AudioSessionSetProperty(kAudioSessionProperty_AudioCategory, sizeof(category), &category);
-	if (result) printf("ERROR SETTING AUDIO CATEGORY! 0x%x\n", result);
+	if (result) printf("ERROR SETTING AUDIO CATEGORY! 0x%ld\n", result);
 	
 	result = AudioSessionSetActive(true);
 	if (result) printf("ERROR SETTING AUDIO SESSION ACTIVE!\n");

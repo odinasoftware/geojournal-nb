@@ -98,22 +98,22 @@ static AudioService *sharedAudioService = nil;
 	self = [super init];
 	if (self) {
 		OSStatus error = AudioSessionInitialize(NULL, NULL, interruptionListener, self);
-		if (error) printf("ERROR INITIALIZING AUDIO SESSION! %d\n", error);
+		if (error) printf("ERROR INITIALIZING AUDIO SESSION! %ld\n", error);
 		else 
 		{										
 			error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, propListener, self);
-			if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", error);
+			if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %ld\n", error);
 			UInt32 binputAvailable = 0;
 			UInt32 size = sizeof(binputAvailable);
 			
 			// we do not want to allow recording if input is not available
 			error = AudioSessionGetProperty(kAudioSessionProperty_AudioInputAvailable, &size, &binputAvailable);
-			if (error) printf("ERROR GETTING INPUT AVAILABILITY! %d\n", error);
+			if (error) printf("ERROR GETTING INPUT AVAILABILITY! %ld\n", error);
 			self.inputAvailable = (binputAvailable) ? YES : NO;
 			
 			// we also need to listen to see if input availability changes
 			error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioInputAvailable, propListener, self);
-			if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", error);
+			if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %ld\n", error);
 		}
 		
 		
@@ -124,22 +124,22 @@ static AudioService *sharedAudioService = nil;
 - (void)reInitialize
 {
 	OSStatus error = AudioSessionInitialize(NULL, NULL, interruptionListener, self);
-	if (error) printf("ERROR INITIALIZING AUDIO SESSION! %d\n", error);
+	if (error) printf("ERROR INITIALIZING AUDIO SESSION! %ld\n", error);
 	else 
 	{										
 		error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioRouteChange, propListener, self);
-		if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", error);
+		if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %ld\n", error);
 		UInt32 binputAvailable = 0;
 		UInt32 size = sizeof(binputAvailable);
 		
 		// we do not want to allow recording if input is not available
 		error = AudioSessionGetProperty(kAudioSessionProperty_AudioInputAvailable, &size, &binputAvailable);
-		if (error) printf("ERROR GETTING INPUT AVAILABILITY! %d\n", error);
+		if (error) printf("ERROR GETTING INPUT AVAILABILITY! %ld\n", error);
 		self.inputAvailable = (binputAvailable) ? YES : NO;
 		
 		// we also need to listen to see if input availability changes
 		error = AudioSessionAddPropertyListener(kAudioSessionProperty_AudioInputAvailable, propListener, self);
-		if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %d\n", error);
+		if (error) printf("ERROR ADDING AUDIO SESSION PROP LISTENER! %ld\n", error);
 	}
 	
 }
@@ -197,7 +197,7 @@ void propListener(	void *                  inClientData,
 				  const void *            inData)
 {
 	SpeakHereController *THIS = (SpeakHereController*)inClientData;
-	TRACE("%s, %d\n", __func__, inID);
+	TRACE("%s, %lu\n", __func__, inID);
 	if (inID == kAudioSessionProperty_AudioRouteChange)
 	{
 		TRACE("%s, kAudioSessionProperty_AudioRouteChange.\n", __func__);
@@ -416,7 +416,7 @@ char *OSTypeToStr(char *buf, OSType t)
 	
 	// TODO: how to resume playing.
 	if ((error = player->ResumeQueue()) < 0) {
-		NSLog(@"%s, error. %d", error);
+		NSLog(@"%s, error. %d", __func__, error);
 	}
 }
 				

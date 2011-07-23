@@ -176,7 +176,7 @@ CAStreamBasicDescription AQRecorder::SetupAudioFormat(UInt32 inFormatID)
 										&size, 
 										&recordFormat.mChannelsPerFrame), "couldn't get input channel count");
 				
-	TRACE("%s, sample rate: %f channel per frame: %d\n", __func__, recordFormat.mSampleRate, recordFormat.mChannelsPerFrame);
+	TRACE("%s, sample rate: %f channel per frame: %lu\n", __func__, recordFormat.mSampleRate, recordFormat.mChannelsPerFrame);
 	recordFormat.mFormatID = inFormatID;
 	if (inFormatID == kAudioFormatLinearPCM)
 	{
