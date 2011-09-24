@@ -133,7 +133,7 @@ void *display_image_in_thread(void *arg)
 	//CGAffineTransformMakeRotation
 }
 #pragma mark SWIPE RECOGNIZER
-- (void) performRightSwipe:(UISwipeGestureRecognizer*)Sender
+- (void) performLeftSwipe:(UISwipeGestureRecognizer*)Sender
 {
 	NSInteger saved_loc = _swipe_loc;
 	
@@ -171,7 +171,7 @@ void *display_image_in_thread(void *arg)
 	//[image release];
 }
 
-- (void) performLeftSwipe:(UISwipeGestureRecognizer*)Sender
+- (void) performRightSwipe:(UISwipeGestureRecognizer*)Sender
 {
 	NSInteger saved_loc = _swipe_loc;
 	NSString *picture_name = nil;
@@ -221,7 +221,7 @@ void *display_image_in_thread(void *arg)
 		if ([[GeoDatabase sharedGeoDatabaseInstance] removePicture:picture fromJournal:self.parent.entryForThisView deleteFile:YES]) {
 			TRACE("%s, success. Index: %d\n", __func__, loc);
 			[self.pictures removeObjectAtIndex:loc];
-			[self performLeftSwipe:nil];
+			[self performRightSwipe:nil];
 			
 		}
 		else {

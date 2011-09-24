@@ -37,6 +37,7 @@
 	NSString				*searchString;
 	NSFileManager			*fileManager;
 	BOOL					levelRestored;
+    NSNumber                *isPrivate;
 	
 }
 
@@ -65,6 +66,7 @@
 @property (nonatomic, retain)	NSNumber	*defaultInitDone;
 @property (nonatomic, retain)	NSString	*searchString;
 @property (nonatomic)			BOOL		levelRestored;
+@property (nonatomic, retain)   NSNumber    *isPrivate;
 
 @property (nonatomic) NSInteger	firstLevel;
 @property (nonatomic) NSInteger	secondLevel;

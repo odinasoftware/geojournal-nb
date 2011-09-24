@@ -13,15 +13,26 @@
 #import "GeoJournalHeaders.h"
 #import "GeoDatabase.h"
 #import "FacebookConnect.h"
+#import "GeoDefaults.h"
+#import "PTPasscodeViewController.h"
 
 #define CONNECT_SECTIONS	2
 #define MAIL_INDEX			0
 #define FACEBOOK_INDEX		1
+#define PASSCODE_INDEX      2
 
 #define kConnectObjectKey	@"object"
 #define kConnectHeaderKey	@"header"
 #define kConnectFooterKey	@"footer"
 #define kConnectRowsKey		@"rows"
+
+#define kSwitchButtonWidth		94.0
+#define kSwitchButtonHeight		27.0
+#define kSwitchButtonXOffset    10.0
+
+NSString *kDisplaySwitchCell_ID = @"SwitchCell_ID";
+NSString *kDisplayDateCell_ID = @"DisplayDateCell_ID";
+NSString *kSourceCell_ID = @"SourceCell_ID";
 
 extern Boolean testReachability();
 
@@ -29,6 +40,8 @@ extern Boolean testReachability();
 
 @synthesize _tableView;
 @synthesize connectObjectArray;
+@synthesize switchCtrl;
+@synthesize passwordItem;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -54,6 +67,12 @@ extern Boolean testReachability();
 	NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"ConnectTarget" ofType:@"plist"];
 	connectObjectArray = [[NSArray alloc] initWithContentsOfFile:thePath];
 
+    CGRect frame = CGRectMake(0.0, 0.0, kSwitchButtonWidth, kSwitchButtonHeight);
+    UISwitch *s = [[UISwitch alloc] initWithFrame:frame];
+    self.switchCtrl = s;
+    [self.switchCtrl addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
+    [s release];
+    
 	self.tabBarController.tabBar.selectedItem.title = @"Connect";
 	self.navigationItem.title = @"Connect";
 }
@@ -131,7 +150,7 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 	
 	TRACE("%s\n", __func__);
 	if (cell == nil) {
-		cell = [[[UITableViewCell alloc] initWithFrame:CGRectZero reuseIdentifier:identity] autorelease];
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identity] autorelease];
 	}
 	
 	if (indexPath.section == MAIL_INDEX) {
@@ -179,6 +198,30 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 
 		cell.accessoryType = UITableViewCellAccessoryNone;
 	}
+    else if (indexPath.section == PASSCODE_INDEX) {
+        if ([indexPath row] == 0)
+        {
+            cell = [_tableView dequeueReusableCellWithIdentifier:kDisplaySwitchCell_ID];
+            
+            if (cell == nil)
+            {
+                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kDisplaySwitchCell_ID] autorelease];
+            }		
+
+            // this cell hosts the UISwitch control
+            cell.textLabel.text = @"Passcode:";
+            CGRect bound = cell.contentView.bounds;
+            DEBUG_RECT("content bound:", bound);
+            float x = bound.size.width-kSwitchButtonWidth-kSwitchButtonXOffset;
+            float y = (bound.size.height-kSwitchButtonHeight)/2;
+            TRACE("%s, x: %f, y: %f\n", __func__,x, y);
+            self.switchCtrl.on = [[GeoDefaults sharedGeoDefaultsInstance].isPrivate boolValue];
+            self.switchCtrl.frame = CGRectMake(x, y, kSwitchButtonWidth, kSwitchButtonHeight);
+            DEBUG_RECT("switch: ", self.switchCtrl.frame);
+            [cell.contentView addSubview:self.switchCtrl];
+       }
+        
+    }
 	else {
 		NSLog(@"%s, index error: %d", __func__, indexPath.row);
 	}
@@ -200,6 +243,19 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 	return footer;	
 }
 
+- (void)switchAction:(id)sender
+{
+    NSNumber *n = [[NSNumber alloc] initWithInt:self.switchCtrl.on];
+    [GeoDefaults sharedGeoDefaultsInstance].isPrivate = n;
+    [n release];
+    
+    if (self.switchCtrl.on) {
+        // Ask password
+        PTPasscodeViewController *passcodeViewController = [[PTPasscodeViewController alloc] initWithDelegate:self passcode:NO];
+        [self.navigationController pushViewController:passcodeViewController animated:YES];
+    }
+
+}
 #pragma mark CALLBACK_API
 - (void)fbUserDidLogin
 {
@@ -227,6 +283,95 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 }
 
 #pragma mark -
+#pragma PTPasscode
+- (void) didShowPasscodePanel:(PTPasscodeViewController *)passcodeViewController panelView:(UIView*)panelView
+{
+    TRACE_HERE;
+    [passcodeViewController setTitle:@"Set Passcode"];
+    // Please enter your passcode to log on
+    // Incorrect passcode. Try again.
+    if([panelView tag] == kPasscodePanelOne) {
+        [[passcodeViewController titleLabel] setText:@"Enter a passcode"];
+    }
+    
+    if([panelView tag] == kPasscodePanelTwo) {
+        [[passcodeViewController titleLabel] setText:@"Re-enter your passcode"];
+    }
+    
+    if([panelView tag] == kPasscodePanelThree) {
+        [[passcodeViewController titleLabel] setText:@"Re-enter your passcode"];
+    }
+}
+
+- (BOOL)shouldChangePasscode:(PTPasscodeViewController *)passcodeViewController panelView:(UIView*)panelView passCode:(NSUInteger)passCode lastNumber:(NSInteger)lastNumber;
+{
+    TRACE_HERE;
+    // Clear summary text
+    [[passcodeViewController summaryLabel] setText:@""];
+    
+    return TRUE;
+}
+
+- (BOOL)didEndPasscodeEditing:(PTPasscodeViewController *)passcodeViewController panelView:(UIView*)panelView passCode:(NSUInteger)passCode
+{
+    
+    NSLog(@"END PASSCODE - %d", passCode);
+    
+    if([panelView tag] == kPasscodePanelOne) {
+        _passCode = passCode;
+        
+        
+        /*if(_passCode != passCode) {
+         [[passcodeViewController summaryLabel] setText:@"Invalid PIN code"];
+         [[passcodeViewController summaryLabel] setTextColor:[UIColor redColor]];
+         [passcodeViewController clearPanel];
+         return FALSE;
+         }*/
+        
+        return ![passcodeViewController nextPanel];
+    }
+    
+    if([panelView tag] == kPasscodePanelTwo) {
+        _retryPassCode = passCode;
+        
+        if(_retryPassCode != _passCode) {
+            [passcodeViewController nextPanel];
+            [[passcodeViewController summaryLabel] setText:@"Passcode did not match. Try again."];
+            return FALSE;
+        } else {
+            //[[passcodeViewController summaryLabel] setText:@"Good boy !"];    
+            [self.passwordItem setObject:[NSString stringWithFormat:@"%d",_passCode] forKey:kSecValueData];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+        
+    }
+    else if ([panelView tag] == kPasscodePanelThree) {
+        _retryPassCode = passCode;
+        
+        if(_retryPassCode != _passCode) {
+            NSNumber *n = [[NSNumber alloc] initWithInt:NO];
+            [GeoDefaults sharedGeoDefaultsInstance].isPrivate = n;
+            [n release];
+            
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Set Passcode" message:@"Passcode did not match. Can't set passcode!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+            [self.navigationController popViewControllerAnimated:YES];
+            
+            return FALSE;
+        } else {
+            //[[passcodeViewController summaryLabel] setText:@"Good boy !"];    
+            [self.passwordItem setObject:[NSString stringWithFormat:@"%d",_passCode] forKey:kSecValueData];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+
+    }
+    
+    //  return ![passcodeView nextPanel];
+    
+    return TRUE;
+}
+
+#pragma -
 #pragma mark GENERAL
 
 
@@ -246,10 +391,12 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 	TRACE_HERE;
 	self.connectObjectArray = nil;
 	self._tableView = nil;
+    self.switchCtrl = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    TRACE_HERE;
 	[self._tableView reloadData];
 }
 
@@ -257,6 +404,7 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 	TRACE_HERE;
 	[_tableView release];
 	[connectObjectArray release];
+    [switchCtrl release];
 	
     [super dealloc];
 }

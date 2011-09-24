@@ -63,6 +63,36 @@ void remove_file(NSString *file)
 	pthread_create(&thread, nil, (void*)(remove_file_in_thread), (void*)file);
 }
 
+// Workaround on iOS seed 6.  Do not ship this in production code.
+// In iOS seed 6, if you call either stringByResolvingSymlinksInPath or 
+// stringByStandardizingPath on a path descended from your container, you'll 
+// never be able to use the result to successfully perform a coordinated read.
+@implementation NSString (seed6_workaround_9966107)
+
+#warning "Seed 6 Workaround!  Do not ship this in production code!"
+
+- (NSString *)stringByStandardizingPath {
+    
+    NSString* result = [self _stringByStandardizingPathUsingCache:NO];
+    if ([result hasPrefix:@"/var"]) {
+        result = [@"/private" stringByAppendingString:result];
+    }
+    TRACE("%s, %s\n", __func__, [result UTF8String]);
+    return result;
+}
+
+- (NSString *)stringByResolvingSymlinksInPath {
+    
+    NSString* result =  [self _stringByResolvingSymlinksInPathUsingCache:NO];
+    if ([result hasPrefix:@"/var"]) {
+        result = [@"/private" stringByAppendingString:result];
+    }
+    TRACE("%s, %s\n", __func__, [result UTF8String]);
+    return result;
+}
+
+@end
+
 @implementation GeoCloudDocument
 
 /*
@@ -257,27 +287,13 @@ void remove_file(NSString *file)
 #endif
 }
 
-// NSNotifications are posted synchronously on the caller's thread
-// make sure to vector this back to the thread we want, in this case
-// the main thread for our views & controller
-- (void)mergeChangesFrom_iCloud:(NSNotification *)notification {
-    NSDictionary* ui = [notification userInfo];
-	NSManagedObjectContext* moc = [self managedObjectContext];
-    
-    // this only works if you used NSMainQueueConcurrencyType
-    // otherwise use a dispatch_async back to the main thread yourself
-    [moc performBlock:^{
-        // TODO: need to work on it later
-        //[self mergeiCloudChanges:ui forContext:moc];
-    }];
-}
 
 /**
  Returns the managed object context for the application.
  If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
  */
 - (NSManagedObjectContext *) managedObjectContext {
-	
+	TRACE_HERE;
     if (managedObjectContext__ != nil) {
         return managedObjectContext__;
     }
@@ -391,6 +407,87 @@ void remove_file(NSString *file)
     
 }
 
+// this takes the NSPersistentStoreDidImportUbiquitousContentChangesNotification
+// and transforms the userInfo dictionary into something that
+// -[NSManagedObjectContext mergeChangesFromContextDidSaveNotification:] can consume
+// then it posts a custom notification to let detail views know they might want to refresh.
+// The main list view doesn't need that custom notification because the NSFetchedResultsController is
+// already listening directly to the NSManagedObjectContext
+- (void)mergeiCloudChanges:(NSDictionary*)noteInfo forContext:(NSManagedObjectContext*)moc {
+    TRACE_HERE;
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    NSMutableDictionary *localUserInfo = [NSMutableDictionary dictionary];
+    
+    NSSet* allInvalidations = [noteInfo objectForKey:NSInvalidatedAllObjectsKey];
+    NSNotification* refreshNotification = nil;
+    
+    if (nil == allInvalidations) {
+        // (1) we always materialize deletions to ensure delete propagation happens correctly, especially with 
+        // more complex scenarios like merge conflicts and undo.  Without this, future echoes may 
+        // erroreously resurrect objects and cause dangling foreign keys
+        // (2) we always materialize insertions to make new entries visible to the UI
+        NSString* materializeKeys[] = { NSDeletedObjectsKey, NSInsertedObjectsKey };
+        int c = (sizeof(materializeKeys) / sizeof(NSString*));
+        for (int i = 0; i < c; i++) {
+            NSSet* set = [noteInfo objectForKey:materializeKeys[i]];
+            if ([set count] > 0) {
+                NSMutableSet* objectSet = [NSMutableSet set];
+                for (NSManagedObjectID* moid in set) {
+                    [objectSet addObject:[moc objectWithID:moid]];
+                }
+                [localUserInfo setObject:objectSet forKey:materializeKeys[i]];
+            }
+        }
+        
+        // (3) we do not materialize updates to objects we are not currently using
+        // (4) we do not materialize refreshes to objects we are not currently using
+        // (5) we do not materialize invalidations to objects we are not currently using
+        NSString* noMaterializeKeys[] = { NSUpdatedObjectsKey, NSRefreshedObjectsKey, NSInvalidatedObjectsKey };
+        c = (sizeof(noMaterializeKeys) / sizeof(NSString*));
+        for (int i = 0; i < 2; i++) {
+            NSSet* set = [noteInfo objectForKey:noMaterializeKeys[i]];
+            if ([set count] > 0) {
+                NSMutableSet* objectSet = [NSMutableSet set];
+                for (NSManagedObjectID* moid in set) {
+                    NSManagedObject* realObj = [moc objectRegisteredForID:moid];
+                    if (realObj) {
+                        [objectSet addObject:realObj];
+                    }
+                }
+                [localUserInfo setObject:objectSet forKey:noMaterializeKeys[i]];
+            }
+        }
+        
+        NSNotification *fakeSave = [NSNotification notificationWithName:NSManagedObjectContextDidSaveNotification object:self  userInfo:localUserInfo];
+        [moc mergeChangesFromContextDidSaveNotification:fakeSave]; 
+        
+    } else {
+        [localUserInfo setObject:allInvalidations forKey:NSInvalidatedAllObjectsKey];
+    }
+    
+    [moc processPendingChanges];
+    
+    refreshNotification = [NSNotification notificationWithName:@"RefreshAllViews" object:self  userInfo:localUserInfo];
+    
+    [[NSNotificationCenter defaultCenter] postNotification:refreshNotification];
+    [pool drain];
+}
+// NSNotifications are posted synchronously on the caller's thread
+// make sure to vector this back to the thread we want, in this case
+// the main thread for our views & controller
+- (void)mergeChangesFrom_iCloud:(NSNotification *)notification {
+    TRACE_HERE;
+    NSDictionary* ui = [notification userInfo];
+	NSManagedObjectContext* moc = [self managedObjectContext];
+    
+    // this only works if you used NSMainQueueConcurrencyType
+    // otherwise use a dispatch_async back to the main thread yourself
+    [moc performBlock:^{
+        [self mergeiCloudChanges:ui forContext:moc];
+    }];
+}
+
 
 /**
  Returns the managed object model for the application.
@@ -401,7 +498,7 @@ void remove_file(NSString *file)
     if (managedObjectModel__ != nil) {
         return managedObjectModel__;
     }
-	
+	TRACE_HERE;
 	NSString *path = [[NSBundle mainBundle] pathForResource:@"GeoJournal"ofType:@"momd"];
 	NSURL *momURL = [NSURL fileURLWithPath:path];
 	managedObjectModel__ = [[NSManagedObjectModel alloc] initWithContentsOfURL:momURL];
@@ -496,11 +593,12 @@ void remove_file(NSString *file)
     NSPersistentStoreCoordinator* psc = persistentStoreCoordinator__;
     NSURL *storeUrl = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
                                         stringByAppendingPathComponent: @"GeoJournal.sqlite"]];
-    NSString* bundleid = [[[NSBundle mainBundle] bundleIdentifier] lowercaseString];
-    NSString *defaultStorePath = [[NSBundle mainBundle] pathForResource:@"GeoJournal" ofType:@"sqlite"];
+    //NSString* bundleid = [[[NSBundle mainBundle] bundleIdentifier] lowercaseString];
+    //NSString *defaultStorePath = [[NSBundle mainBundle] pathForResource:@"GeoJournal" ofType:@"sqlite"];
 
     // do this asynchronously since if this is the first time this particular device is syncing with preexisting
     // iCloud content it may take a long long time to download
+    // CTODO: this has to be blocked call???
     //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
     {
         NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -521,49 +619,65 @@ void remove_file(NSString *file)
         
         //NSURL *storeUrl = [NSURL fileURLWithPath:storePath];
         // this needs to match the entitlements and provisioning profile
-        NSURL *cloudURL = [fileManager URLForUbiquityContainerIdentifier:UBIQUITY_CONTAINER_URL];
+        NSURL *cloudURL = [fileManager URLForUbiquityContainerIdentifier:nil];
         NSString* coreDataCloudContent = [[cloudURL path] stringByAppendingPathComponent:@"GeoJournal"];
         
         TRACE("%s, %s, %s\n", __func__, [[cloudURL absoluteString] UTF8String], [coreDataCloudContent UTF8String]);
+        TRACE("%s\n", [[storeUrl absoluteString] UTF8String]);
         
-        cloudURL = [NSURL fileURLWithPath:coreDataCloudContent];
-        
-        //  The API to turn on Core Data iCloud support here.
-        NSDictionary* options = [NSDictionary dictionaryWithObjectsAndKeys:
-                                 @"com.odinasoftware.igeojournal", NSPersistentStoreUbiquitousContentNameKey, 
-                                 cloudURL, NSPersistentStoreUbiquitousContentURLKey, 
-                                 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, 
-                                 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption,nil];
-        
-        // Needed on iOS seed 3, but not Mac OS X
-        [self workaround_weakpackages_9653904:options];
-        
-        NSError *error = nil;
-        
-        [psc lock];
-        if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
-            /*
-             Replace this implementation with code to handle the error appropriately.
-             
-             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
-             
-             Typical reasons for an error here include:
-             * The persistent store is not accessible
-             * The schema for the persistent store is incompatible with current managed object model
-             Check the error message to determine what the actual problem was.
-             */
-            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-            abort();
-        }    
-        [psc unlock];
-        
-        // tell the UI on the main thread we finally added the store and then
-        // post a custom notification to make your views do whatever they need to such as tell their
-        // NSFetchedResultsController to -performFetch again now there is a real store
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"asynchronously added persistent store!");
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
-        });
+        if (cloudURL) {
+            cloudURL = [NSURL fileURLWithPath:coreDataCloudContent];
+            
+            //  The API to turn on Core Data iCloud support here.
+            NSDictionary* options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     @"com.odinasoftware.igeojournal", NSPersistentStoreUbiquitousContentNameKey, 
+                                     cloudURL, NSPersistentStoreUbiquitousContentURLKey, 
+                                     [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, 
+                                     [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption,nil];
+            
+            // Needed on iOS seed 3, but not Mac OS X
+            //[self workaround_weakpackages_9653904:options];
+            
+            NSError *error = nil;
+            
+            [psc lock];
+            if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+                /*
+                 Replace this implementation with code to handle the error appropriately.
+                 
+                 abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
+                 
+                 Typical reasons for an error here include:
+                 * The persistent store is not accessible
+                 * The schema for the persistent store is incompatible with current managed object model
+                 Check the error message to determine what the actual problem was.
+                 */
+                NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+                abort();
+            }    
+            [psc unlock];
+            
+            // tell the UI on the main thread we finally added the store and then
+            // post a custom notification to make your views do whatever they need to such as tell their
+            // NSFetchedResultsController to -performFetch again now there is a real store
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"asynchronously added persistent store!");
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
+            });
+        }
+        else {
+            NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                     [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+                                     [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+            
+            NSError *error=nil;
+            
+            
+            if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+                // Handle the error.
+                NSLog(@"Error in persistent store: %@", error);
+            }   
+        }
     }
     //);
 
@@ -623,7 +737,7 @@ static dispatch_queue_t polling_queue;
 
 - (void)pollnewfiles_weakpackages:(NSNotification*)note {
     
-    TRACE("%s\n", __func__);
+    TRACE("%s, note: %s\n", __func__, [[note name] UTF8String]);
     [self.ubiquitousQuery disableUpdates];
     NSArray *results = [self.ubiquitousQuery results];
     NSFileManager* fm = [NSFileManager defaultManager];
@@ -633,11 +747,13 @@ static dispatch_queue_t polling_queue;
         NSURL* itemurl = [item valueForAttribute:NSMetadataItemURLKey];
         
         NSString* filepath = [itemurl path];
-        TRACE("%s, filepath: %s\n", __func__, [filepath UTF8String]);
+        //TRACE("%s, filepath: %s\n", __func__, [filepath UTF8String]);
         if (![fm fileExistsAtPath:filepath]) {
             dispatch_async(polling_queue, ^(void) {
                 NSLog(@"coordinated reading of URL '%@'", itemurl);
-                [fc coordinateReadingItemAtURL:itemurl options:0 error:nil byAccessor:^(NSURL* url) { }];
+                [fc coordinateReadingItemAtURL:itemurl options:0 error:nil byAccessor:^(NSURL* url) { 
+                    TRACE("%s, %s\n", __func__, [[url absoluteString] UTF8String]);
+                }];
             });
         }
     }

@@ -16,6 +16,7 @@
 #import "CameraThread.h"
 #import "ImageArrayScrollController.h"
 #import "GeoTakeController.h"
+#import "KeychainItemWrapper.h"
 //#import "SpeakHereController.h"
 
 #define	CONNECT_CONTROLLER_INDEX	2
@@ -24,27 +25,146 @@
 
 @synthesize window;
 @synthesize tabBarController;
+@synthesize passwordItem;
 
+- (void)startTabBarView
+{
+
+    if ([GeoDefaults sharedGeoDefaultsInstance].firstLevel > -1) {
+        int i = [GeoDefaults sharedGeoDefaultsInstance].firstLevel;
+        TRACE("%s, index: %d\n", __func__, i);
+        self.tabBarController.selectedIndex = i;
+    }
+    [window addSubview:tabBarController.view];
+    _inBackground = NO;
+        
+}
+
+- (void)openPasscodeController
+{
+    TRACE("%s\n", __func__);
+    PTPasscodeViewController *passcodeViewController = [[PTPasscodeViewController alloc] initWithDelegate:self passcode:NO];
+    
+    _passNavController = [[UINavigationController alloc]
+                          initWithRootViewController:passcodeViewController];
+    [window addSubview:[_passNavController view]];
+    [passcodeViewController release];
+    //[_passNavController release];
+}
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
+    BOOL passcode_presented = NO;
+    _appLaunching = YES;
+    TRACE_HERE;
 	[GeoDefaults sharedGeoDefaultsInstance];
     
 	// TODO: read the saved location and show it.
     // Add the tab bar controller's current view as a subview of the window
-	if ([GeoDefaults sharedGeoDefaultsInstance].firstLevel > -1) {
-		int i = [GeoDefaults sharedGeoDefaultsInstance].firstLevel;
-		TRACE("%s, index: %d\n", __func__, i);
-		self.tabBarController.selectedIndex = i;
-	}
-    [window addSubview:tabBarController.view];
-	_inBackground = NO;
+    KeychainItemWrapper *wrapper = [[KeychainItemWrapper alloc] initWithIdentifier:@"Password" accessGroup:nil];
+	self.passwordItem = wrapper;
+    [wrapper release];
+
+    if (([[GeoDefaults sharedGeoDefaultsInstance].defaultInitDone intValue] == 0) ||
+        ([[GeoDefaults sharedGeoDefaultsInstance].isPrivate intValue] == 1)) {
+
+        NSString *password = [self.passwordItem objectForKey:kSecValueData];
+        TRACE("%s, password: %s\n", __func__, [password UTF8String]);
+        if ([password length] == 4) {
+            _passCode = [password intValue];
+            passcode_presented = YES;
+        }
+        // This is first run, set up password
+        [self openPasscodeController];
+        
+    }
+    else {
+        [self startTabBarView];
+    }
 	//CameraThread *thread = [CameraThread sharedCameraControllerInstance];
 	
 	//[thread start];
 	
 }
 
+#pragma PTPasscode
+- (void) didShowPasscodePanel:(PTPasscodeViewController *)passcodeViewController panelView:(UIView*)panelView
+{
+    TRACE_HERE;
+    [passcodeViewController setTitle:@"Set Passcode"];
+    // Please enter your passcode to log on
+    // Incorrect passcode. Try again.
+    if([panelView tag] == kPasscodePanelOne) {
+        [[passcodeViewController titleLabel] setText:@"Please enter your passcode to start."];
+    }
+    
+    if([panelView tag] == kPasscodePanelTwo) {
+        [[passcodeViewController titleLabel] setText:@"Incorrect passcode. Try again."];
+    }
+    
+    if([panelView tag] == kPasscodePanelThree) {
+        [[passcodeViewController titleLabel] setText:@"Incorrect passcode. Try again."];
+    }
+}
 
+- (BOOL)shouldChangePasscode:(PTPasscodeViewController *)passcodeViewController panelView:(UIView*)panelView passCode:(NSUInteger)passCode lastNumber:(NSInteger)lastNumber;
+{
+    TRACE_HERE;
+    // Clear summary text
+    [[passcodeViewController summaryLabel] setText:@""];
+    
+    return TRUE;
+}
+
+- (BOOL)didEndPasscodeEditing:(PTPasscodeViewController *)passcodeViewController panelView:(UIView*)panelView passCode:(NSUInteger)passCode
+{
+    
+    NSLog(@"END PASSCODE - %d", passCode);
+    
+    if([panelView tag] == kPasscodePanelOne) {
+        if (_passCode != passCode) {
+            
+            
+            /*if(_passCode != passCode) {
+             [[passcodeViewController summaryLabel] setText:@"Invalid PIN code"];
+             [[passcodeViewController summaryLabel] setTextColor:[UIColor redColor]];
+             [passcodeViewController clearPanel];
+             return FALSE;
+             }*/
+            
+            return ![passcodeViewController nextPanel];
+        }
+       
+    }
+    else if([panelView tag] == kPasscodePanelTwo) {
+        if (_passCode != passCode) {
+            [passcodeViewController nextPanel];
+            [[passcodeViewController summaryLabel] setText:@"Passcode did not match. Try again."];
+            return FALSE;
+        }
+    }
+    else if ([panelView tag] == kPasscodePanelThree) {
+        if (_passCode != passCode) {
+            [passcodeViewController prevPanel];
+            [[passcodeViewController summaryLabel] setText:@"Passcode did not match. Try again."];
+            return FALSE;
+        }
+    }
+    
+    
+    [self.passwordItem setObject:[NSString stringWithFormat:@"%d",_passCode] forKey:kSecValueData];
+    if (_passNavController) {
+        [_passNavController popViewControllerAnimated:YES];
+        [[_passNavController view] removeFromSuperview];
+        [_passNavController release];
+    }
+    
+    [self startTabBarView];
+    //  return ![passcodeView nextPanel];
+    
+    return TRUE;
+}
+
+#pragma -
 /*
 // Optional UITabBarControllerDelegate method
 - (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
@@ -154,6 +274,7 @@
 			_inBackground = YES;
 		}
 	}
+    _appLaunching = NO;
 	[self saveAppSettings];
 }
 
@@ -161,16 +282,22 @@
 {
 	UINavigationController *controller = nil;
 	GeoTakeController *take = nil;
-	
+	TRACE_HERE;
 	if (_inBackground) {
 		controller = (UINavigationController*)[self.tabBarController selectedViewController];
 		if ([controller.visibleViewController isKindOfClass:[GeoTakeController class]]) {
 			take = (GeoTakeController*) controller.visibleViewController;
 			
 			[take.audioController restartRecoding];
+         
 			_inBackground = NO;
 		}
+        
 	}
+    // TODO: taking care of when view is not unloaded.
+    if (_appLaunching == NO) {
+        [self openPasscodeController];
+    }
 }
 
 - (void)dealloc {

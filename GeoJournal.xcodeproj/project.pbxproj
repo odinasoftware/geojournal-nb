@@ -12,6 +12,7 @@
 		19246F8F0FFB7BDF00F33AF0 /* pause-up.png in Resources */ = {isa = PBXBuildFile; fileRef = 19246F8E0FFB7BDF00F33AF0 /* pause-up.png */; };
 		19257D301012193A0086E927 /* GeoTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19257D2F1012193A0086E927 /* GeoTabController.m */; };
 		192612A4102CD7BA00648394 /* ArticleScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 192612A2102CD7BA00648394 /* ArticleScrollView.m */; };
+		19327E2013D7009C003770CB /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = 19327E1F13D7009C003770CB /* readme.txt */; };
 		193400D3125560A8003C0DC5 /* orig-view.png in Resources */ = {isa = PBXBuildFile; fileRef = 193400D1125560A8003C0DC5 /* orig-view.png */; };
 		193400D4125560A8003C0DC5 /* full-view.png in Resources */ = {isa = PBXBuildFile; fileRef = 193400D2125560A8003C0DC5 /* full-view.png */; };
 		193403511257BEF5003C0DC5 /* FullImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1934034F1257BEF5003C0DC5 /* FullImageViewController.m */; };
@@ -169,7 +170,10 @@
 		19D9437E1024CF76000FCDAA /* HorizontalImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19D9437D1024CF76000FCDAA /* HorizontalImageViewController.m */; };
 		19D943F51024DAA7000FCDAA /* HorizontalImageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19D943F41024DAA7000FCDAA /* HorizontalImageViewController.xib */; };
 		19DE6C0612AE5AE100251003 /* ImageFrameView.m in Sources */ = {isa = PBXBuildFile; fileRef = 19DE6C0512AE5AE100251003 /* ImageFrameView.m */; };
+		19DF764B1420D06D0026138D /* PTPasscodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19DF764A1420D06D0026138D /* PTPasscodeViewController.m */; };
 		19E087E8108D4BFE00800B20 /* pencil.png in Resources */ = {isa = PBXBuildFile; fileRef = 19E087E7108D4BFE00800B20 /* pencil.png */; };
+		19E7EFC11427656C00DAAEB7 /* KeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 19E7EFC01427656C00DAAEB7 /* KeychainItemWrapper.m */; };
+		19E7EFC4142768DD00DAAEB7 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19E7EFC3142768DD00DAAEB7 /* Security.framework */; };
 		19F6262F1003A7D700278FA0 /* left-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 19F6262C1003A7D700278FA0 /* left-arrow.png */; };
 		19F626301003A7D700278FA0 /* right-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 19F6262D1003A7D700278FA0 /* right-arrow.png */; };
 		19F8763E1090951A003628D4 /* EditText.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19F8763D1090951A003628D4 /* EditText.xib */; };
@@ -190,6 +194,7 @@
 		19257D2F1012193A0086E927 /* GeoTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoTabController.m; sourceTree = "<group>"; };
 		192612A2102CD7BA00648394 /* ArticleScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ArticleScrollView.m; sourceTree = "<group>"; };
 		192612A3102CD7BA00648394 /* ArticleScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArticleScrollView.h; sourceTree = "<group>"; };
+		19327E1F13D7009C003770CB /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
 		193400D1125560A8003C0DC5 /* orig-view.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orig-view.png"; sourceTree = "<group>"; };
 		193400D2125560A8003C0DC5 /* full-view.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "full-view.png"; sourceTree = "<group>"; };
 		1934034E1257BEF5003C0DC5 /* FullImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FullImageViewController.h; path = ../FullImageViewController.h; sourceTree = "<group>"; };
@@ -417,7 +422,12 @@
 		19D943F41024DAA7000FCDAA /* HorizontalImageViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HorizontalImageViewController.xib; sourceTree = "<group>"; };
 		19DE6C0412AE5AE100251003 /* ImageFrameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrameView.h; sourceTree = "<group>"; };
 		19DE6C0512AE5AE100251003 /* ImageFrameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageFrameView.m; sourceTree = "<group>"; };
+		19DF76491420D06C0026138D /* PTPasscodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTPasscodeViewController.h; sourceTree = "<group>"; };
+		19DF764A1420D06D0026138D /* PTPasscodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PTPasscodeViewController.m; sourceTree = "<group>"; };
 		19E087E7108D4BFE00800B20 /* pencil.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pencil.png; sourceTree = "<group>"; };
+		19E7EFBF1427656C00DAAEB7 /* KeychainItemWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainItemWrapper.h; sourceTree = "<group>"; };
+		19E7EFC01427656C00DAAEB7 /* KeychainItemWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeychainItemWrapper.m; sourceTree = "<group>"; };
+		19E7EFC3142768DD00DAAEB7 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		19F6262C1003A7D700278FA0 /* left-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "left-arrow.png"; sourceTree = "<group>"; };
 		19F6262D1003A7D700278FA0 /* right-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "right-arrow.png"; sourceTree = "<group>"; };
 		19F8763D1090951A003628D4 /* EditText.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditText.xib; sourceTree = "<group>"; };
@@ -440,6 +450,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19E7EFC4142768DD00DAAEB7 /* Security.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765080DF74369002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -535,6 +546,8 @@
 			isa = PBXGroup;
 			children = (
 				198952E612B3D8E500DD1FF1 /* StatusViewController.h */,
+				19DF76491420D06C0026138D /* PTPasscodeViewController.h */,
+				19DF764A1420D06D0026138D /* PTPasscodeViewController.m */,
 				198952E712B3D8E500DD1FF1 /* StatusViewController.m */,
 				19340448125A0B56003C0DC5 /* TapDetectingImageView.h */,
 				19340449125A0B56003C0DC5 /* TapDetectingImageView.m */,
@@ -633,6 +646,8 @@
 				1975EB8812649467009A65F6 /* GeoJournal.xcdatamodeld */,
 				19901832125CB23C002A09F1 /* Pictures.h */,
 				19901833125CB23C002A09F1 /* Pictures.m */,
+				19E7EFBF1427656C00DAAEB7 /* KeychainItemWrapper.h */,
+				19E7EFC01427656C00DAAEB7 /* KeychainItemWrapper.m */,
 				19901834125CB23C002A09F1 /* PictureFrame.h */,
 				19901835125CB23C002A09F1 /* PictureFrame.m */,
 				19A44DB71004D85E006AB024 /* GeoDatabase.m */,
@@ -641,6 +656,7 @@
 				199B49B810064D03008542F1 /* GeoDefaults.m */,
 				193436B0100E6A5000E7E4AA /* GeoSession.h */,
 				193436B1100E6A5000E7E4AA /* GeoSession.m */,
+				19327E1F13D7009C003770CB /* readme.txt */,
 			);
 			name = Database;
 			sourceTree = "<group>";
@@ -821,6 +837,7 @@
 			isa = PBXGroup;
 			children = (
 				19B7500810CB500D00D21E97 /* libsqlite3.dylib */,
+				19E7EFC3142768DD00DAAEB7 /* Security.framework */,
 				19B74FF410CB4F0100D21E97 /* MediaPlayer.framework */,
 				19725F681088F83A0037BD55 /* SystemConfiguration.framework */,
 				193438D7100F594300E7E4AA /* MessageUI.framework */,
@@ -979,6 +996,7 @@
 				1989531312B3DB0A00DD1FF1 /* StatusViewController.xib in Resources */,
 				1989531612B3DB3700DD1FF1 /* close-mark.png in Resources */,
 				190077FD12CAD95B00347CA4 /* Icon-high.png in Resources */,
+				19327E2013D7009C003770CB /* readme.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1059,6 +1077,8 @@
 				1989514612B26DA600DD1FF1 /* FBDialog.m in Sources */,
 				1989514812B26DA600DD1FF1 /* Facebook.m in Sources */,
 				198952E812B3D8E500DD1FF1 /* StatusViewController.m in Sources */,
+				19DF764B1420D06D0026138D /* PTPasscodeViewController.m in Sources */,
+				19E7EFC11427656C00DAAEB7 /* KeychainItemWrapper.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

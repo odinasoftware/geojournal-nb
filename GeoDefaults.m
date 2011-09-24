@@ -32,6 +32,7 @@
 #define kSearchStringKey				@"SEARCH_STRING"
 #define kDefaultFontSizeKey				@"DEFAULT_FONT_SIZE"
 #define kDefaultInitDoneKey				@"DEFAULT_INIT_DONE"
+#define kIsPriviateKey                  @"IS_PRIVATE"
 
 //
 #define GEO_FOLDER_NAME				@"GeoJournal"
@@ -66,6 +67,7 @@ static GeoDefaults	*sharedGeoDefaults = nil;
 @synthesize levelRestored;
 @synthesize defaultFontSize;
 @synthesize defaultInitDone;
+@synthesize isPrivate;
 
 int getNumberFromIndex(int i)
 {
@@ -140,6 +142,7 @@ int getNumberFromIndex(int i)
 	[showImageSlider release];
 	[defaultFontSize release];
 	[defaultInitDone release];
+    [isPrivate release];
 
 	[super dealloc];
 }
@@ -193,6 +196,8 @@ int getNumberFromIndex(int i)
 		self.defaultFontSize = temp; [temp release];
 		temp = [[NSNumber alloc] initWithInt:0];
 		self.defaultInitDone = temp; [temp release];
+        temp = [[NSNumber alloc] initWithInt:1];
+        self.isPrivate = temp;
 		
 		// TODO: it must to be retained. Why???
 		NSMutableArray *loc = [[NSMutableArray arrayWithObjects:
@@ -246,7 +251,8 @@ int getNumberFromIndex(int i)
 		
 		// Default category initialized
 		self.defaultInitDone = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultInitDoneKey];
-		
+		self.isPrivate = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kIsPriviateKey];
+        
 		// will need to restore levels
 		levelRestored = NO;
 	}
@@ -274,6 +280,7 @@ int getNumberFromIndex(int i)
 				   searchString, kSearchStringKey,
 				   defaultFontSize, kDefaultFontSizeKey,
 				   defaultInitDone, kDefaultInitDoneKey,
+                   isPrivate, kIsPriviateKey,
 				   nil];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
@@ -399,6 +406,7 @@ int getNumberFromIndex(int i)
 	[self saveImageSlideshowSettings];
 	[self saveHorizontalSlideshowSettings];
 	[self saveFontSize];
+    [[NSUserDefaults standardUserDefaults] setObject:isPrivate forKey:kIsPriviateKey];
 }
 
 - (void)saveMapSettins

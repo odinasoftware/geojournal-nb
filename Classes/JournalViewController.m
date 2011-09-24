@@ -5,7 +5,7 @@
 //  Created by Jae Han on 7/10/09.
 //  Copyright 2009 Home. All rights reserved.
 //
-
+#define CLOUD_TEST 1
 #import "JournalViewController.h"
 #import "GCategory.h"
 #import "GeoDatabase.h"
@@ -143,6 +143,41 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
     return self;
 }
 
+/*
+ * enumerateFileAndSync
+ *   will enumerate all files in the database and save it into cloud. 
+ *   1. decide how to sync the files
+ *   2. can we say that all are synced at once. 
+ */
+- (void)enumerateFilesAndSync
+{
+    int pc = 0;
+    NSArray *category = [GeoDatabase sharedGeoDatabaseInstance].categoryArray;
+    
+    TRACE("%s\n", __func__);
+    for (GCategory *c in category) {
+        NSArray *journals = [[GeoDatabase sharedGeoDatabaseInstance] journalByCategory:c];
+        
+        for (Journal *j in journals) {
+            TRACE("Journal: %s\n", [j.title UTF8String]);
+            if (j.picture != nil) {
+                pc++;
+                //NSString *pictureLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPath:image];
+                TRACE("  Picture: %s\n", [j.picture UTF8String]);
+                NSArray *pictures = [[GeoDatabase sharedGeoDatabaseInstance] picturesForJournal:j.picture];
+                if ([pictures count] > 0) {
+                    for (NSString *s in pictures) {
+                        TRACE("  PO: %s\n", [s UTF8String]);
+                    }
+                }
+            }
+            if (j.audio != nil) {
+                TRACE("  Audio: %s\n", [j.audio UTF8String]);
+            }
+        }
+    }
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -165,6 +200,9 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	//self.addCategoryController = nil;
 	
 	[self loadFromDatabase];
+#ifdef CLOUD_TEST
+    [self enumerateFilesAndSync];
+#endif
 	[self setNormalButtons];
 	[self initCategoryButtons];
 	[self showSelectedButton];

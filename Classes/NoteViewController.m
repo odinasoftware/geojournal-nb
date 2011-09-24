@@ -6,6 +6,7 @@
 //  Copyright 2009 Home. All rights reserved.
 //
 //#define DB_TEST
+#define CLOUD_TEST 1
 #import "NoteViewController.h"
 #import "GeoTakeController.h"
 #import "GeoJournalHeaders.h"
@@ -282,7 +283,7 @@ NSString *getOrigFilename(NSString *filename)
 	mainBundle = CFBundleGetMainBundle ();
 	
 	// Get the URL to the sound file to play
-	
+	§Ω
 	soundFileURLRef  =	CFBundleCopyResourceURL (
 												 mainBundle,
 												 CFSTR ("bringup"),
@@ -317,6 +318,7 @@ NSString *getOrigFilename(NSString *filename)
 	DefaultCategory *dc = nil;
 	
 	// only do that for the first run. And what to do for the already installed user.
+    // CTODO: if there is anything in the cloude, what to do with it???
 	NSInteger initDone = [[GeoDefaults sharedGeoDefaultsInstance].defaultInitDone intValue];
 	
 	if (initDone == 0) {

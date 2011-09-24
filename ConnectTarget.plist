@@ -22,5 +22,15 @@
 		<key>rows</key>
 		<integer>1</integer>
 	</dict>
+	<dict>
+		<key>object</key>
+		<string>Passcode</string>
+		<key>header</key>
+		<string>Passcode setting</string>
+		<key>footer</key>
+		<string>Set your passcode here.</string>
+		<key>rows</key>
+		<string>1</string>
+	</dict>
 </array>
 </plist>

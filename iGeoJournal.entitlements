@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.developer.ubiquity-container-identifiers</key>
 	<array>
-		<string>WV3CVJV89H.com.odinasoftware.igeojournal</string>
+		<string>$(TeamIdentifierPrefix)com.odinasoftware.container.igeojournal</string>
 	</array>
 </dict>
 </plist>

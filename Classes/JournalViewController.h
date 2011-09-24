@@ -137,6 +137,7 @@
 - (void)removeFromScrollableButtons:(NSInteger)index;
 - (void)selectButtonWithIndex:(NSInteger)index;
 - (void)addNewScrollableButton:(NSString*)title;
+- (void)enumerateFilesAndSync;
 
 
 @end
