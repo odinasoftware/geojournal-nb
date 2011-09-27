@@ -103,7 +103,8 @@
 	
 	if ([self.selectedViewController isKindOfClass:[UINavigationController class]]) {
 		nc = (UINavigationController*)self.selectedViewController;
-		if ([nc.topViewController isKindOfClass:[FullImageViewController class]]) {
+		if ([nc.topViewController isKindOfClass:[FullImageViewController class]] ||
+            [nc.topViewController isKindOfClass:[JournalViewController class]]) {
 			//[(FullImageViewController*)nc.topViewController redraw];
 			return;
 		}

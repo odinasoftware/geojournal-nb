@@ -8,6 +8,7 @@
 
 #import "GeoDefaults.h"
 #import "GeoJournalHeaders.h"
+#import "KeychainItemWrapper.h"
 
 // Degining default database keys.
 #define kNumberOfFileGeneragedKey		@"NUMBER_OF_FILE_GENERATED"
@@ -68,6 +69,7 @@ static GeoDefaults	*sharedGeoDefaults = nil;
 @synthesize defaultFontSize;
 @synthesize defaultInitDone;
 @synthesize isPrivate;
+@synthesize passwordItem;
 
 int getNumberFromIndex(int i)
 {
@@ -143,6 +145,7 @@ int getNumberFromIndex(int i)
 	[defaultFontSize release];
 	[defaultInitDone release];
     [isPrivate release];
+    [passwordItem release];
 
 	[super dealloc];
 }
@@ -289,6 +292,11 @@ int getNumberFromIndex(int i)
 	applicationDocumentsDirectory = nil;
 	geoDocumentPath = nil;
 	fileManager = [NSFileManager defaultManager];
+    
+    KeychainItemWrapper *wrapper = [[KeychainItemWrapper alloc] initWithIdentifier:@"Password" accessGroup:nil];
+	self.passwordItem = wrapper;
+    [wrapper release];
+
 }
 
 #pragma mark -
@@ -447,5 +455,16 @@ int getNumberFromIndex(int i)
 }
 
 #pragma mark -
+#pragma PASSCODE
+- (NSInteger)getPasscode
+{
+    return [[self.passwordItem objectForKey:kSecValueData] intValue];
+}
+
+- (void)setPasscode:(NSInteger)passcode
+{
+    [self.passwordItem setObject:[NSString stringWithFormat:@"%d",passcode] forKey:kSecValueData];
+}
+#pragma -
 
 @end

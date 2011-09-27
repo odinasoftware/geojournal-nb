@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 //#define	NO_ACTIVE_CATEGORY	@"None"
+@class KeychainItemWrapper;
 
 @interface GeoDefaults : NSObject {
 	NSNumber				*numberOfFileGenerated;
@@ -38,6 +39,7 @@
 	NSFileManager			*fileManager;
 	BOOL					levelRestored;
     NSNumber                *isPrivate;
+    KeychainItemWrapper     *passwordItem;
 	
 }
 
@@ -67,6 +69,7 @@
 @property (nonatomic, retain)	NSString	*searchString;
 @property (nonatomic)			BOOL		levelRestored;
 @property (nonatomic, retain)   NSNumber    *isPrivate;
+@property (nonatomic, retain)   KeychainItemWrapper       *passwordItem;
 
 @property (nonatomic) NSInteger	firstLevel;
 @property (nonatomic) NSInteger	secondLevel;
@@ -84,5 +87,7 @@
 - (BOOL)needRefreshCategory:(NSString*)category;
 - (NSString*)getUniqueFilenameWithExt:(NSString*)ext;
 - (NSString*)getAbsoluteDocPath:(NSString*)lastComponent;
+- (NSInteger)getPasscode;
+- (void)setPasscode:(NSInteger)passcode;
 
 @end

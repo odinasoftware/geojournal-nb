@@ -25,7 +25,6 @@
 
 @synthesize window;
 @synthesize tabBarController;
-@synthesize passwordItem;
 
 - (void)startTabBarView
 {
@@ -42,7 +41,9 @@
 
 - (void)openPasscodeController
 {
-    TRACE("%s\n", __func__);
+    _passCode = [[GeoDefaults sharedGeoDefaultsInstance] getPasscode];
+    TRACE("%s, passcode: %d\n", __func__, _passCode);
+
     PTPasscodeViewController *passcodeViewController = [[PTPasscodeViewController alloc] initWithDelegate:self passcode:NO];
     
     _passNavController = [[UINavigationController alloc]
@@ -60,19 +61,13 @@
     
 	// TODO: read the saved location and show it.
     // Add the tab bar controller's current view as a subview of the window
-    KeychainItemWrapper *wrapper = [[KeychainItemWrapper alloc] initWithIdentifier:@"Password" accessGroup:nil];
-	self.passwordItem = wrapper;
-    [wrapper release];
-
+    
     if (([[GeoDefaults sharedGeoDefaultsInstance].defaultInitDone intValue] == 0) ||
         ([[GeoDefaults sharedGeoDefaultsInstance].isPrivate intValue] == 1)) {
 
-        NSString *password = [self.passwordItem objectForKey:kSecValueData];
-        TRACE("%s, password: %s\n", __func__, [password UTF8String]);
-        if ([password length] == 4) {
-            _passCode = [password intValue];
-            passcode_presented = YES;
-        }
+        _passCode = [[GeoDefaults sharedGeoDefaultsInstance] getPasscode];
+        TRACE("%s, password: %d\n", __func__, _passCode);
+        
         // This is first run, set up password
         [self openPasscodeController];
         
@@ -150,8 +145,6 @@
         }
     }
     
-    
-    [self.passwordItem setObject:[NSString stringWithFormat:@"%d",_passCode] forKey:kSecValueData];
     if (_passNavController) {
         [_passNavController popViewControllerAnimated:YES];
         [[_passNavController view] removeFromSuperview];
@@ -295,7 +288,7 @@
         
 	}
     // TODO: taking care of when view is not unloaded.
-    if (_appLaunching == NO) {
+    if (_appLaunching == NO && ([[GeoDefaults sharedGeoDefaultsInstance].isPrivate intValue] == 1)) {
         [self openPasscodeController];
     }
 }

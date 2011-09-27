@@ -11,12 +11,10 @@
 
 @class GeoTabController;
 @class ImageArrayScrollController;
-@class KeychainItemWrapper;
 
 @interface GeoJournalAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, PTPasscodeViewControllerDelegate> {
     UIWindow                *window;
     GeoTabController        *tabBarController;
-    KeychainItemWrapper     *passwordItem;
 	BOOL                    _inBackground;
     BOOL                    _appLaunching;
     
@@ -28,7 +26,6 @@
 
 @property (nonatomic, retain) IBOutlet UIWindow         *window;
 @property (nonatomic, retain) IBOutlet GeoTabController *tabBarController;
-@property (nonatomic, retain) KeychainItemWrapper       *passwordItem;
 
 - (void)getFBExtendedPermission:(id)object;
 - (void)getFBUserName:(id)object;

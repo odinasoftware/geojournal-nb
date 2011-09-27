@@ -15,6 +15,7 @@
 #import "FacebookConnect.h"
 #import "GeoDefaults.h"
 #import "PTPasscodeViewController.h"
+#import "KeychainItemWrapper.h"
 
 #define CONNECT_SECTIONS	2
 #define MAIL_INDEX			0
@@ -41,7 +42,6 @@ extern Boolean testReachability();
 @synthesize _tableView;
 @synthesize connectObjectArray;
 @synthesize switchCtrl;
-@synthesize passwordItem;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -314,7 +314,7 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 
 - (BOOL)didEndPasscodeEditing:(PTPasscodeViewController *)passcodeViewController panelView:(UIView*)panelView passCode:(NSUInteger)passCode
 {
-    
+    BOOL savePassword = NO;
     NSLog(@"END PASSCODE - %d", passCode);
     
     if([panelView tag] == kPasscodePanelOne) {
@@ -339,9 +339,7 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
             [[passcodeViewController summaryLabel] setText:@"Passcode did not match. Try again."];
             return FALSE;
         } else {
-            //[[passcodeViewController summaryLabel] setText:@"Good boy !"];    
-            [self.passwordItem setObject:[NSString stringWithFormat:@"%d",_passCode] forKey:kSecValueData];
-            [self.navigationController popViewControllerAnimated:YES];
+            savePassword = YES;
         }
         
     }
@@ -360,12 +358,17 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
             return FALSE;
         } else {
             //[[passcodeViewController summaryLabel] setText:@"Good boy !"];    
-            [self.passwordItem setObject:[NSString stringWithFormat:@"%d",_passCode] forKey:kSecValueData];
-            [self.navigationController popViewControllerAnimated:YES];
+            savePassword = YES;
         }
 
     }
     
+    if (savePassword) {
+        [[GeoDefaults sharedGeoDefaultsInstance] setPasscode:_passCode];
+        [self.navigationController popViewControllerAnimated:YES];
+        TRACE("%s, save passcode: %d\n", __func__, _passCode);
+        
+    }
     //  return ![passcodeView nextPanel];
     
     return TRUE;
