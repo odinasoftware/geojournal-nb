@@ -186,11 +186,6 @@
 }
 */
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	// Return YES for supported orientations
-	return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
 
 - (void)didReceiveMemoryWarning {
 	NSLog(@"%s", __func__);

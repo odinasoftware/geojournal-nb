@@ -126,6 +126,8 @@ NSString *getOrigFilename(NSString *filename)
 @synthesize _addController;
 @synthesize _deleteIndex;
 @synthesize buttons;
+@synthesize buttonView;
+@synthesize labelView;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -1107,6 +1109,25 @@ NSString *getOrigFilename(NSString *filename)
 	}
 }
 
+- (void)adjustOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    CGRect bounds = self.view.bounds;
+    
+    CGRect frame = CGRectMake(self.buttonView.frame.origin.x, self.buttonView.frame.origin.y, 
+                              bounds.size.width, self.buttonView.frame.size.height);
+    self.buttonView.frame = frame;
+    DEBUG_RECT("buttonview:", self.buttonView.frame);
+    self.buttonFrame.frame = frame;
+    DEBUG_RECT("buttonframe:", self.buttonFrame.frame);
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    CGRect bounds = self.view.bounds;
+    
+    DEBUG_RECT("bound:", bounds);
+}
+
 /*
 #pragma mark Data Picker Delegates
 
@@ -1185,6 +1206,7 @@ NSString *getOrigFilename(NSString *filename)
 	self.infoButtonImage = nil;
 	self.buttons = nil;
 	self.selectedColor = nil;
+    self.buttonView = nil;
 }
 
 
@@ -1206,6 +1228,7 @@ NSString *getOrigFilename(NSString *filename)
 	[infoButtonImage release];
 	[selectionImage release];
 	[currentCategoryLabel release];
+    [buttonView release];
 	
     [super dealloc];
 	

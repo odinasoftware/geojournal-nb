@@ -36,7 +36,26 @@
 	}
 }
 
+#ifdef ALLOW_ROTATING
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    TRACE_HERE;
+    [self popViewControllerAnimated:NO];
+    
+    DEBUG_RECT("map controller:", self.view.bounds);
+    MapViewController *aMapViewController = [[MapViewController alloc] initWithNibName:@"MapView" bundle:nil];
+    if (self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft || 
+        self.interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        aMapViewController.hidesBottomBarWhenPushed = YES;
+        [aMapViewController adjustOrientation:(CGRect)self.view.bounds];
+    }
 
+    [self pushViewController:aMapViewController animated:NO];
+    
+    [aMapViewController release];
+
+}
+#endif
 /*
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {

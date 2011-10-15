@@ -234,6 +234,10 @@ NSInteger getNumberOfLocation(int index)
 		[alert release];
 	}
 	TRACE("%s, %d\n", __func__, self.interfaceOrientation);
+    
+    DEBUG_RECT("view", self.view.frame);
+	DEBUG_RECT("map", self._mapView.frame);
+	DEBUG_RECT("superview", self._mapParentView.frame);
 }
 
 - (GCategory*)getCategoryFromString:(NSString*)string 
@@ -1112,6 +1116,28 @@ NSInteger getNumberOfLocation(int index)
 }
 */
 
+#ifdef ALLOW_ROTATING
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+{
+    TRACE_HERE;
+    
+    return YES;
+}
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    CGRect bounds = self.view.bounds;
+   
+    //self.navigationController.hidesBottomBarWhenPushed = YES;
+    self.navigationController.toolbarHidden = YES;
+	DEBUG_RECT("view", self.view.bounds);
+	DEBUG_RECT("map", self._mapView.frame);
+	
+    self._mapView.frame = bounds;
+    //CGRect frame = CGRectMake(self.buttonView.frame.origin.x, self.buttonView.frame.origin.y, 
+    //                          bounds.size.width, self.buttonView.frame.size.height);
+
+}
+
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
 	TRACE_HERE;
@@ -1121,6 +1147,18 @@ NSInteger getNumberOfLocation(int index)
 	
 	//[self._mapView removeFromSuperview];
 }
+#endif
+
+- (void)adjustOrientation:(CGRect)bounds
+{
+    self.navigationController.toolbarHidden = YES;
+	DEBUG_RECT("view", self.view.bounds);
+	DEBUG_RECT("map", self._mapView.frame);
+	
+    self._mapView.frame = bounds;
+    
+}
+
 
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.

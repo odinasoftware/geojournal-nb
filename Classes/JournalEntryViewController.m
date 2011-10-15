@@ -19,6 +19,7 @@
 #import "ImageArrayScrollController.h"
 #import "FullImageViewController.h"
 #import "StatusViewController.h"
+#import "HorizontalViewController.h"
 
 //#define CHAR_PER_LINE(x)		x+21
 #define LINE_HEIGHT				20
@@ -1203,14 +1204,45 @@ int getNumberOfLinefeed(NSString *text) {
 }
 #pragma mark -
 
-/*
+#pragma Rotation
+#if 0
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    TRACE_HERE;
+    return YES;
 }
-*/
 
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+	TRACE_HERE;
+    
+    DEBUG_RECT("hori:", self.view.frame);
+    
+    if (fromInterfaceOrientation == UIInterfaceOrientationPortrait ||
+        fromInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+        
+        HorizontalViewController *controller = [[HorizontalViewController alloc] initWithNibName:@"HorizontalViewController" bundle:nil];
+        
+        UINavigationController *nav = self.navigationController;
+        nav.navigationBarHidden = YES;
+        controller.hidesBottomBarWhenPushed = YES;
+        controller.view.frame = CGRectMake(0.0, 0.0, 480.0, 320.0);
+        [nav pushViewController:controller animated:NO];
+        [controller release];
+        
+    }
+    else {
+        
+        UINavigationController *nav = self.navigationController;
+        nav.navigationBarHidden = NO;
+        [nav popViewControllerAnimated:NO];
+        
+    }
+    
+}
+#endif
+#pragma -
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];

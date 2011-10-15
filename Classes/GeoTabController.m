@@ -21,6 +21,8 @@
 #import "ConnectController.h"
 #import "SearchNavigationController.h"
 #import "FullImageViewController.h"
+#import "JournalViewController.h"
+#import "PTPasscodeViewController.h"
 
 /* Memory Management Strategy
  *   Uses Cases:
@@ -72,24 +74,27 @@
 	[GeoDefaults sharedGeoDefaultsInstance].firstLevel = -1;
 }
 
+#if 0
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-	/*
-	BOOL shouldAllowRotate = (interfaceOrientation == UIInterfaceOrientationPortrait);
+	
+	BOOL shouldAllowRotate = YES; //(interfaceOrientation == UIInterfaceOrientationPortrait);
 	UIViewController *controller = self.selectedViewController;
 	
-	if ([controller isKindOfClass:[MapController class]] == YES) {
+	/*if ([controller isKindOfClass:[MapController class]] == YES) {
 		shouldAllowRotate = YES;
 	}
 	else if ([controller isKindOfClass:[SlideShowNavigation class]] == YES) {
 		shouldAllowRotate = YES;
-	}
+	}*/
+    if ([controller isKindOfClass:[PTPasscodeViewController class]] == YES) {
+        shouldAllowRotate = NO;
+    }
 	
 	TRACE("%s, %d\n", __func__, shouldAllowRotate);
-	 */
-	BOOL shouldAllowRotate = YES;
 	
 	return shouldAllowRotate;
 }
+
 
 /*
  * Special horizontal view implementation.
@@ -104,7 +109,8 @@
 	if ([self.selectedViewController isKindOfClass:[UINavigationController class]]) {
 		nc = (UINavigationController*)self.selectedViewController;
 		if ([nc.topViewController isKindOfClass:[FullImageViewController class]] ||
-            [nc.topViewController isKindOfClass:[JournalViewController class]]) {
+            [nc.topViewController isKindOfClass:[JournalViewController class]] ||
+            [nc.topViewController isKindOfClass:[MapViewController class]]) {
 			//[(FullImageViewController*)nc.topViewController redraw];
 			return;
 		}
@@ -132,10 +138,20 @@
 		}
 	}
 }
-
+#endif
+#if 0
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
 	TRACE_HERE;
+    UIViewController *c = self.selectedViewController;
+    if ([c isKindOfClass:[UINavigationController class]]) {
+        UIViewController *v = ((UINavigationController*)c).visibleViewController;
+        DEBUG_RECT("View bound:", v.view.bounds);
+        
+        if ([v respondsToSelector:@selector(adjustOrientation:)]) {
+            [(JournalViewController*)v adjustOrientation:fromInterfaceOrientation];
+        }
+    }
 	/*
 	UIViewController *c = self.selectedViewController;
 	
@@ -161,7 +177,7 @@
 	}
 	*/
 }
-
+#endif
 /*
 - (UIView *)rotatingFooterView
 {

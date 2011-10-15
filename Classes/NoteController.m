@@ -10,6 +10,8 @@
 #import "NoteViewController.h"
 #import "GeoJournalHeaders.h"
 #import "JournalViewController.h"
+#import "HorizontalViewController.h"
+#import "JournalEntryViewController.h"
 
 @implementation NoteController
 
@@ -43,6 +45,26 @@
 	}
 }
 
+/*
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    TRACE_HERE;
+    [self popViewControllerAnimated:NO];
+    
+    DEBUG_RECT("journal controller:", self.view.bounds);
+    JournalViewController *aViewController = [[JournalViewController alloc] initWithNibName:@"JournalViewController" bundle:nil];
+    if (self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft || 
+        self.interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        aViewController.hidesBottomBarWhenPushed = YES;
+        [aViewController adjustOrientation:(CGRect)self.view.bounds];
+    }
+    
+    [self pushViewController:aViewController animated:NO];
+    
+    [aViewController release];
+    
+}
+ */
 
 /*
 // Override to allow orientations other than the default portrait orientation.
@@ -51,6 +73,64 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 */
+
+#pragma Rotation
+
+// Override to allow orientations other than the default portrait orientation.
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    // Return YES for supported orientations
+    BOOL rotate = NO;
+    
+    if ([self.topViewController isKindOfClass:[JournalEntryViewController class]] ||
+        [self.topViewController isKindOfClass:[HorizontalViewController class]])
+        rotate = YES;
+    
+    TRACE("%s, rotate: %d\n", __func__, rotate);
+    return rotate;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    TRACE_HERE;
+    if ([self.topViewController isKindOfClass:[JournalEntryViewController class]]) {
+        if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
+            toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+            
+            //[self popViewControllerAnimated:NO];
+            HorizontalViewController *controller = [[HorizontalViewController alloc] initWithNibName:@"HorizontalViewController" bundle:nil];
+            
+            
+            self.navigationBarHidden = YES;
+            controller.hidesBottomBarWhenPushed = YES;
+            controller.view.frame = CGRectMake(0.0, 0.0, 480.0, 320.0);
+            [self pushViewController:controller animated:NO];
+            [controller release];
+            
+        }
+    }
+    else if ([self.topViewController isKindOfClass:[HorizontalViewController class]]) {
+        if (toInterfaceOrientation == UIInterfaceOrientationPortrait ||
+            toInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
+            
+            self.navigationBarHidden = NO;
+            [self popViewControllerAnimated:NO];
+            
+            
+        }
+    }
+
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+	TRACE_HERE;
+    
+    DEBUG_RECT("hori:", self.view.frame);
+    
+    
+}
+
+#pragma -
 
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.

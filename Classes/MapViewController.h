@@ -97,5 +97,6 @@ typedef enum {MAP_MARK_ASCENDING, MAP_MARK_DESCENDING} MAP_DIRECTION_TYPE;
 - (ItineraryMark*)getMarkFromJournal:(Journal*)j;
 - (UIButton *)getDetailDisclosureButtonType:(ItineraryMark*)mark fromAnnotationView:(MKAnnotationView*)annView;
 - (void)addToMapWithDirection:(MAP_DIRECTION_TYPE)direction upto:(NSInteger)size;
+- (void)adjustOrientation:(CGRect)bounds;
 
 @end

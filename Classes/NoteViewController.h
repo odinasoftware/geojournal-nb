@@ -19,12 +19,10 @@
 
 @interface NoteViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, UIAlertViewDelegate> {
 	@private
-	IBOutlet	UIPickerView			*secionPicker;
 	IBOutlet	UITableView				*theTableView;
-	IBOutlet	UIView					*layout;
-	IBOutlet	ButtonScrollView		*buttonFrame;
+	IBOutlet	UIView					*labelView;
 	IBOutlet	UILabel					*currentCategoryLabel;
-	
+    
 	//CFURLRef		soundFileURLRef;
 	//SystemSoundID	soundFileObject;
 	NSArray							*defaultCategory;
@@ -62,8 +60,10 @@
 @property (nonatomic, retain)		AddCategory				*_addController;
 @property (nonatomic, retain)		NSIndexPath				*_deleteIndex;
 @property (nonatomic, retain)		NSMutableArray			*buttons;
+@property (nonatomic, retain)       UIView                  *buttonView;
+@property (nonatomic, retain)       UIView                  *labelView;
 
-- (void)openTakeJournal:(id)sender;
+
 - (void)addCategory;
 - (void)editCategory;
 - (void)initCategoryButtons;
@@ -89,5 +89,6 @@
 - (void)scrollToButton:(NSInteger)index;
 - (void)selectButtonWithIndex:(NSInteger)index;
 - (void)showSelectedCategory:(NSString*)text;
+- (void)adjustOrientation:(UIInterfaceOrientation)fromInterfaceOrientation;
 
 @end

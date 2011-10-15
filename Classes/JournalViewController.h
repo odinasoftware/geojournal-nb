@@ -41,6 +41,8 @@
 	IBOutlet UILabel				*categoryLabel;
 	IBOutlet UIImageView			*leftArrow;
 	IBOutlet UIImageView			*rightArrow;
+    IBOutlet UIView                 *buttonView;
+    IBOutlet UIImageView            *backgroundView;
 	
 	NSArray							*defaultCategory;
 	NSArray							*journalArray;
@@ -78,6 +80,7 @@
 @property (nonatomic, readonly)		NSInteger				numberOfCategory;
 @property (nonatomic, retain)	UIImageView					*rightArrow;
 @property (nonatomic, retain)	UIImageView					*leftArrow;
+@property (nonatomic, retain)   UIImageView                 *backgroundView;
 @property (nonatomic, retain)	UILabel						*categoryLabel;
 @property (nonatomic, retain)	UIImage						*uploadSelectedIcon;
 @property (nonatomic, retain)	UIImage						*uploadNotSelectedIcon;
@@ -99,6 +102,7 @@
 @property (nonatomic, retain)	UIImage						*defaultImage;
 @property (nonatomic, retain)	NSArray						*journalArray;
 @property (nonatomic, retain)	NSMutableArray				*_dateArray;
+@property (nonatomic, retain)   UIView                      *buttonView;
 @property (nonatomic, retain)	GeoTakeController			*journalController;
 @property (nonatomic, retain)	JournalEntryViewController	*_journalView;
 
@@ -138,6 +142,7 @@
 - (void)selectButtonWithIndex:(NSInteger)index;
 - (void)addNewScrollableButton:(NSString*)title;
 - (void)enumerateFilesAndSync;
+    - (void)adjustOrientation:(CGRect)bounds;
 
 
 @end

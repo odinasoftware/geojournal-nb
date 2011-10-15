@@ -19,6 +19,7 @@
 #import "DefaultCategory.h"
 #import "NoteViewController.h"
 #import "GeoJournalAppDelegate.h"
+#import "HorizontalViewController.h"
 
 #ifdef BANNDER_AD
 #import "QWAd.h"
@@ -36,6 +37,8 @@
 #define kCustomButtonHeight					30.0
 #define LEFT_MIN_POSITION					20.0
 #define RIGHT_MAX_POSITION					310.0
+#define RIGHT_ARROW_MARGIN                  17.0
+#define BUTTON_FRAME_MARGIN                 32.0
 
 
 extern NSString *getPrinterableDate(NSDate *date, NSInteger *day);
@@ -102,6 +105,8 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 @synthesize selectedCategory;
 @synthesize selectedColor;
 @synthesize listImage;
+@synthesize buttonView;
+@synthesize backgroundView;
 
 /*
 - (id)initWithStyle:(UITableViewStyle)style {
@@ -181,6 +186,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    TRACE_HERE;
 	self.selectionImage = [UIImage imageNamed:@"selection-button.png"];
 	self.infoButtonImage = [UIImage imageNamed:@"info-button.png"];
 	self.listImage = [UIImage imageNamed:@"list.png"];
@@ -1309,26 +1315,40 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 
 
 - (void)tableView:(UITableView *)tableview didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-	
-	JournalEntryViewController *controller = [[JournalEntryViewController alloc] initWithNibName:@"JournalEntryView" bundle:nil];
-	self._journalView = controller;
-	[controller release];
-	
-	if (indexPath.section >= [self._dateArray count]) {
-		NSLog(@"%s, index error: %d", __func__, indexPath.section);
-		return;
-	}
-	DateIndex *current = [self._dateArray objectAtIndex:indexPath.section];
-	int actualIndex = current.index + indexPath.row;
+	if (self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft 
+        || self.interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+        HorizontalViewController *controller = [[HorizontalViewController alloc] initWithNibName:@"HorizontalViewController" bundle:nil];
 
-	self._journalView.showToolbar = YES;
-	self._journalView.entryForThisView = [journalArray objectAtIndex:actualIndex];
-	self._journalView._parent = self;
-	self._journalView.hidesBottomBarWhenPushed = YES;
-	self._journalView.indexForThis = actualIndex;
-	[GeoDefaults sharedGeoDefaultsInstance].thirdLevel = actualIndex;
-	[self.navigationController pushViewController:self._journalView animated:YES];
-	[tableview deselectRowAtIndexPath:indexPath animated:YES];
+        //self.navigationController.navigationBarHidden = YES;
+        controller.hidesBottomBarWhenPushed = YES;
+        controller.view.frame = CGRectMake(0.0, 0.0, 480.0, 320.0);
+        [self.navigationController pushViewController:controller animated:NO];
+        [controller release];
+        
+    }
+    else {
+        JournalEntryViewController *controller = [[JournalEntryViewController alloc] initWithNibName:@"JournalEntryView" bundle:nil];
+        self._journalView = controller;
+        [controller release];
+        
+        if (indexPath.section >= [self._dateArray count]) {
+            NSLog(@"%s, index error: %d", __func__, indexPath.section);
+            return;
+        }
+        DateIndex *current = [self._dateArray objectAtIndex:indexPath.section];
+        int actualIndex = current.index + indexPath.row;
+        
+        self._journalView.showToolbar = YES;
+        self._journalView.entryForThisView = [journalArray objectAtIndex:actualIndex];
+        self._journalView._parent = self;
+        self._journalView.hidesBottomBarWhenPushed = YES;
+        self._journalView.indexForThis = actualIndex;
+        [GeoDefaults sharedGeoDefaultsInstance].thirdLevel = actualIndex;
+        [self.navigationController pushViewController:self._journalView animated:YES];
+        
+    }
+    
+    [tableview deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark SCROLL EVENT
@@ -1414,6 +1434,57 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 }
 */
 
+- (void)adjustOrientation:(CGRect)bounds
+{
+    self.view.bounds = bounds;
+    [self didRotateFromInterfaceOrientation:0];
+}
+
+#ifdef ALLOW_ROTATING
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
+{
+    TRACE_HERE;
+    
+    if (self.editCategoryController)
+        return NO;
+    
+    return YES;
+}
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    CGRect bounds = self.view.bounds;
+    
+    if (self.editCategoryController) {
+        DEBUG_RECT("Edit:", self.editCategoryController.view.frame);
+        self.editCategoryController.view.frame = bounds;
+    }
+    else {
+        
+        CGRect frame = CGRectMake(self.buttonView.frame.origin.x, self.buttonView.frame.origin.y, 
+                                  bounds.size.width, self.buttonView.frame.size.height);
+        self.buttonView.frame = frame;
+        DEBUG_RECT("buttonview:", self.buttonView.frame);
+        frame = CGRectMake(frame.origin.x+BUTTON_FRAME_MARGIN/2, frame.origin.y, frame.size.width-BUTTON_FRAME_MARGIN, frame.size.height);
+        self.buttonFrame.frame = frame;
+        DEBUG_RECT("buttonframe:", self.buttonFrame.frame);
+        self.backgroundView.frame = self.buttonView.frame;
+        DEBUG_RECT("button:", self.backgroundView.frame);
+        //DEBUG_RECT("left:", self.leftArrow.frame);
+        CGRect arrowFrame = CGRectMake(self.buttonView.frame.size.width-RIGHT_ARROW_MARGIN, self.rightArrow.frame.origin.y, 
+                                       self.rightArrow.frame.size.width, self.rightArrow.frame.size.height);
+        self.rightArrow.frame = arrowFrame;
+        DEBUG_RECT("right:", self.rightArrow.frame);
+        
+        [self scrollToButton:selectedButton];
+        [self.tableView reloadData];
+    }
+}
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    TRACE_HERE;
+}
+#endif
+
 - (void)viewDidUnload {
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
@@ -1444,6 +1515,8 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	self.backgroundLabel = nil;
 	self.backgroundLabel2 = nil;
 	self.categoryLabel = nil;
+    self.buttonView = nil;
+    self.backgroundView = nil;
 }
 
 - (void)dealloc {
@@ -1476,6 +1549,8 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	[selectedColor release];
 	[infoButtonImage release];
 	[selectionImage release];
+    [buttonView release];
+    [backgroundView release];
 	
 	//AudioServicesDisposeSystemSoundID (soundFileObject);
 	//CFRelease (soundFileURLRef);
