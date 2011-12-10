@@ -6,6 +6,7 @@
 //  Copyright 2009 Home. All rights reserved.
 //
 #define CLOUD_TEST 1
+//#define DB_TEST 1
 #import "JournalViewController.h"
 #import "GCategory.h"
 #import "GeoDatabase.h"
@@ -20,6 +21,7 @@
 #import "NoteViewController.h"
 #import "GeoJournalAppDelegate.h"
 #import "HorizontalViewController.h"
+#import "DateIndex.h"
 
 #ifdef BANNDER_AD
 #import "QWAd.h"
@@ -60,19 +62,6 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	} 
 }
 
-@implementation DateIndex
-
-@synthesize dateString;
-@synthesize index;
-
-- (void)dealloc
-{
-	[dateString release];
-	[super dealloc];
-}
-
-@end
-
 
 @implementation JournalViewController
 
@@ -81,6 +70,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 #endif
 @synthesize leftArrow;
 @synthesize rightArrow;
+
 @synthesize categoryLabel;
 @synthesize backgroundLabel;
 @synthesize backgroundLabel2;
@@ -182,6 +172,114 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
         }
     }
 }
+
+#ifdef DB_TEST
+- (void)insertTestDBEntities
+{
+	//if ([[GeoDefaults sharedGeoDefaultsInstance].testJournalCreated boolValue] == NO) {
+	GCategory *chicago = [self getCategory:@"Chicago Travel"];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"JournalTest" ofType:@"plist"];
+    NSMutableArray *testJournal = [[NSMutableArray alloc] initWithContentsOfFile:path];
+    path = [[NSBundle mainBundle] pathForResource:@"1" ofType:@"png"];
+    NSData *imageData = [[NSData alloc] initWithContentsOfFile:path];
+    path = [[NSBundle mainBundle] pathForResource:@"1_small" ofType:@"png"];
+    NSData *thumb = [[NSData alloc] initWithContentsOfFile:path];
+    path = [[NSBundle mainBundle] pathForResource:@"1074077865" ofType:@"aif"];
+    NSData *audioData = [[NSData alloc] initWithContentsOfFile:path];
+    
+    NSString *imageFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".png"];
+    NSString *thumbFileName = getThumbnailFilename(imageFileName);
+    NSString *audioFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".aif"];
+    
+    NSFileManager *manager = [NSFileManager defaultManager];
+    
+    [manager createFileAtPath:imageFileName contents:imageData attributes:nil];
+    [manager createFileAtPath:thumbFileName contents:thumb attributes:nil];
+    [manager createFileAtPath:audioFileName contents:audioData attributes:nil];
+    
+    [imageData release];
+    [audioData release];
+    [thumb release];
+    [thumbFileName release];
+    
+    for (NSDictionary *d in testJournal) {
+        Journal *journal = [GeoDatabase sharedGeoDatabaseInstance].journalEntity; 
+        
+        [journal setAudio:[audioFileName lastPathComponent]];
+        TRACE("Audio: %s\n", [audioFileName UTF8String]);
+        
+        [journal setPicture:[imageFileName lastPathComponent]];
+        TRACE("Picture: %s\n", [imageFileName UTF8String]);
+        
+        [journal setText:(NSString*)[d objectForKey:@"text"]];
+        [journal setTitle:(NSString*)[d objectForKey:@"title"]];
+        
+        [journal setCreationDate:(NSDate*)[d objectForKey:@"creationDate"]];
+        
+        [journal setLongitude:(NSNumber*)[d objectForKey:@"longitude"]];
+        [journal setLatitude:(NSNumber*)[d objectForKey:@"latitude"]];
+        
+        [journal setAddress:(NSString*)[d objectForKey:@"address"]];
+        
+        [chicago addContentsObject:journal];
+    }
+    [[GeoDatabase sharedGeoDatabaseInstance] save];
+    [GeoDefaults sharedGeoDefaultsInstance].testJournalCreated = [NSNumber numberWithBool:YES];
+	//}
+	
+	// Insert Florida Test
+	GCategory *florida = [self getCategory:@"Florida Travel"];
+	path = [[NSBundle mainBundle] pathForResource:@"Florida_test" ofType:@"plist"];
+	testJournal = [[NSMutableArray alloc] initWithContentsOfFile:path];
+	path = [[NSBundle mainBundle] pathForResource:@"1074077865" ofType:@"aif"];
+	audioData = [[NSData alloc] initWithContentsOfFile:path];
+	audioFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".aif"];
+	
+	//manager = [NSFileManager defaultManager];
+	[manager createFileAtPath:audioFileName contents:audioData attributes:nil];
+	
+	[audioData release];
+	
+	for (NSDictionary *d in testJournal) {
+		Journal *journal = [GeoDatabase sharedGeoDatabaseInstance].journalEntity; 
+		
+		[journal setAudio:[audioFileName lastPathComponent]];
+		TRACE("Audio: %s\n", [audioFileName UTF8String]);
+		
+		// picture
+		NSString *fileName = [d objectForKey:@"picture"];
+		path = [[NSBundle mainBundle] pathForResource:fileName ofType:@"jpg"];
+		NSData *imageData = [[NSData alloc] initWithContentsOfFile:path];
+		path = [[NSBundle mainBundle] pathForResource:[fileName stringByAppendingString:@"_small"] ofType:@"jpg"];
+		NSData *thumb = [[NSData alloc] initWithContentsOfFile:path];
+		
+		NSString *imageFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".png"];
+		NSString *thumbFileName = getThumbnailFilename(imageFileName);
+		[manager createFileAtPath:imageFileName contents:imageData attributes:nil];
+		[manager createFileAtPath:thumbFileName contents:thumb attributes:nil];
+		
+		// 
+		
+		[journal setPicture:[imageFileName lastPathComponent]];
+		TRACE("Picture: %s\n", [imageFileName UTF8String]);
+		
+		[journal setText:(NSString*)[d objectForKey:@"text"]];
+		[journal setTitle:(NSString*)[d objectForKey:@"title"]];
+		
+		[journal setCreationDate:(NSDate*)[d objectForKey:@"creationDate"]];
+		
+		[journal setLongitude:(NSNumber*)[d objectForKey:@"longitude"]];
+		[journal setLatitude:(NSNumber*)[d objectForKey:@"latitude"]];
+		
+		[journal setAddress:(NSString*)[d objectForKey:@"address"]];
+		
+		[florida addContentsObject:journal];
+	}
+	[[GeoDatabase sharedGeoDatabaseInstance] save];
+	
+}
+#endif
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -1450,8 +1548,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
     
     return YES;
 }
-- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
-{
+
     CGRect bounds = self.view.bounds;
     
     if (self.editCategoryController) {

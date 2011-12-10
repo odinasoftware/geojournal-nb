@@ -11,12 +11,16 @@
 
 @class GeoTabController;
 @class ImageArrayScrollController;
+@class GeoSplitViewController;
+@class GeoPadMainViewController;
 
 @interface GeoJournalAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, PTPasscodeViewControllerDelegate> {
-    UIWindow                *window;
-    GeoTabController        *tabBarController;
-	BOOL                    _inBackground;
-    BOOL                    _appLaunching;
+    UIWindow                    *window;
+    GeoTabController            *tabBarController;
+    //GeoSplitViewController    *splitController;
+    GeoPadMainViewController    *padMainController;
+	BOOL                        _inBackground;
+    BOOL                        _appLaunching;
     
     UINavigationController  *_passNavController;
     
@@ -24,8 +28,10 @@
     NSInteger           _retryPassCode;
 }
 
-@property (nonatomic, retain) IBOutlet UIWindow         *window;
-@property (nonatomic, retain) IBOutlet GeoTabController *tabBarController;
+@property (nonatomic, retain) IBOutlet UIWindow                 *window;
+@property (nonatomic, assign) IBOutlet GeoTabController         *tabBarController;
+//@property (nonatomic, assign) IBOutlet GeoSplitViewController   *splitController;
+@property (nonatomic, assign) IBOutlet GeoPadMainViewController *padMainController;
 
 - (void)getFBExtendedPermission:(id)object;
 - (void)getFBUserName:(id)object;

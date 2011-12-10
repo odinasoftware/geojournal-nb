@@ -17,6 +17,10 @@
 #import "ImageArrayScrollController.h"
 #import "GeoTakeController.h"
 #import "KeychainItemWrapper.h"
+#import "GeoSplitViewController.h"
+#import "JournalEntryViewController.h"
+#import "GeoSplitTableController.h"
+#import "GeoPadMainViewController.h"
 //#import "SpeakHereController.h"
 
 #define	CONNECT_CONTROLLER_INDEX	2
@@ -25,6 +29,8 @@
 
 @synthesize window;
 @synthesize tabBarController;
+//@synthesize splitController;
+@synthesize padMainController;
 
 - (void)startTabBarView
 {
@@ -61,7 +67,33 @@
     
 	// TODO: read the saved location and show it.
     // Add the tab bar controller's current view as a subview of the window
-    
+    /*
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        UISplitViewController *splitViewController = (UISplitViewController *)self.window.rootViewController;
+        UINavigationController *navigationController = [splitViewController.viewControllers lastObject];
+        splitViewController.delegate = (id)navigationController.topViewController;
+        
+        //UINavigationController *masterNavigationController = [splitViewController.viewControllers objectAtIndex:0];
+        //MasterViewController *controller = (MasterViewController *)masterNavigationController.topViewController;
+        //controller.managedObjectContext = self.managedObjectContext;
+    }
+    else {
+     */
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        
+        //GeoSplitViewController *controller = [[GeoSplitViewController alloc] initWithNibName:@"GeoSplitViewController" bundle:nil];
+        //GeoSplitTableController *tableView = [[GeoSplitTableController alloc] init];
+        //JournalEntryViewController *child = [[JournalEntryViewController alloc] initWithNibName:@"JournalEntryView" bundle:nil];
+        //UITableViewController *child = [[UITableViewController alloc] init];
+        //controller.tableView = tableView;
+        
+        //controller.delegate = tableView;
+        //controller.viewControllers = [NSArray arrayWithObjects:tableView, child, nil];
+        [window addSubview:padMainController.view];
+        //[window makeKeyAndVisible];
+        //[controller release];
+        return;
+    }
     if (([[GeoDefaults sharedGeoDefaultsInstance].defaultInitDone intValue] == 0) ||
         ([[GeoDefaults sharedGeoDefaultsInstance].isPrivate intValue] == 1)) {
 
@@ -75,6 +107,7 @@
     else {
         [self startTabBarView];
     }
+    //}
 	//CameraThread *thread = [CameraThread sharedCameraControllerInstance];
 	
 	//[thread start];

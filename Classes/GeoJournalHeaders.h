@@ -139,6 +139,7 @@ TRACE("%s point: x: %f, y: %f\n", string, origin.x, origin.y)
 
 #define GET_DISTANCE(a, b)						\
 	sqrt(pow(a.x-b.x, 2.0) + pow(a.y-b.y, 2.0))
+    
 
 typedef enum {PRESS_NONE, PRESS_BEGIN, PRESS_CANCEL, PRESS_DRAG, PRESS_END} PRESS_STATUS;
 

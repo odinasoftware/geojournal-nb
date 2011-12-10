@@ -19,16 +19,6 @@
 @class ButtonScrollView;
 @class NoteViewController;
 
-@interface DateIndex : NSObject
-{
-	NSString	*dateString;
-	NSInteger	index;
-}
-
-@property (nonatomic, retain) NSString		*dateString;
-@property (nonatomic) NSInteger				index;
-
-@end
 
 #ifdef BANNER_AD
 @interface JournalViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, QWAdViewDelegate> {

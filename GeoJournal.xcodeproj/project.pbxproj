@@ -9,6 +9,16 @@
 /* Begin PBXBuildFile section */
 		190077FD12CAD95B00347CA4 /* Icon-high.png in Resources */ = {isa = PBXBuildFile; fileRef = 190077FC12CAD95B00347CA4 /* Icon-high.png */; };
 		1907A7221003DB4D009E744C /* selection-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 1907A7211003DB4D009E744C /* selection-button.png */; };
+		190EB03B144DA5C60082F696 /* GeoSplitTableController.m in Sources */ = {isa = PBXBuildFile; fileRef = 190EB03A144DA5C60082F696 /* GeoSplitTableController.m */; };
+		191BCD3514872D3100636580 /* GeoPopOverController.m in Sources */ = {isa = PBXBuildFile; fileRef = 191BCD3314872D3000636580 /* GeoPopOverController.m */; };
+		191BCD3614872D3100636580 /* GeoPopOverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 191BCD3414872D3100636580 /* GeoPopOverController.xib */; };
+		191BCD63148E4D3500636580 /* ShowDisplayOptionController.m in Sources */ = {isa = PBXBuildFile; fileRef = 191BCD61148E4D3300636580 /* ShowDisplayOptionController.m */; };
+		191BCD64148E4D3500636580 /* ShowDisplayOptionController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 191BCD62148E4D3400636580 /* ShowDisplayOptionController.xib */; };
+		191BCD68148E4DB000636580 /* ShowDisplayOptionsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 191BCD66148E4DAF00636580 /* ShowDisplayOptionsView.m */; };
+		191BCD69148E4DB000636580 /* ShowDisplayOptionsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 191BCD67148E4DB000636580 /* ShowDisplayOptionsView.xib */; };
+		191BCD6D148FA00100636580 /* show-options.plist in Resources */ = {isa = PBXBuildFile; fileRef = 191BCD6C148FA00100636580 /* show-options.plist */; };
+		191BCD71149069AF00636580 /* PadMapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 191BCD6F149069AA00636580 /* PadMapViewController.m */; };
+		191BCD72149069AF00636580 /* PadMapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 191BCD70149069AD00636580 /* PadMapViewController.xib */; };
 		19246F8F0FFB7BDF00F33AF0 /* pause-up.png in Resources */ = {isa = PBXBuildFile; fileRef = 19246F8E0FFB7BDF00F33AF0 /* pause-up.png */; };
 		19257D301012193A0086E927 /* GeoTabController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19257D2F1012193A0086E927 /* GeoTabController.m */; };
 		192612A4102CD7BA00648394 /* ArticleScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 192612A2102CD7BA00648394 /* ArticleScrollView.m */; };
@@ -80,6 +90,8 @@
 		1994B78D103C0DBC0006AD38 /* no-picture.png in Resources */ = {isa = PBXBuildFile; fileRef = 1994B78C103C0DBC0006AD38 /* no-picture.png */; };
 		1994B7A3103C0E940006AD38 /* no-picture-horizontal.png in Resources */ = {isa = PBXBuildFile; fileRef = 1994B7A2103C0E940006AD38 /* no-picture-horizontal.png */; };
 		19962ACB0FCE29270031D0F9 /* locate.png in Resources */ = {isa = PBXBuildFile; fileRef = 19962ACA0FCE29270031D0F9 /* locate.png */; };
+		1996E44514781CC0005E0F78 /* GeoPadMainView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1996E44414781CBF005E0F78 /* GeoPadMainView.xib */; };
+		1996E44C14782083005E0F78 /* GeoPadMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1996E44B14782082005E0F78 /* GeoPadMainViewController.m */; };
 		19972004104E8D5700D5E578 /* stop-1.png in Resources */ = {isa = PBXBuildFile; fileRef = 19972002104E8D5700D5E578 /* stop-1.png */; };
 		19972005104E8D5700D5E578 /* pause-3.png in Resources */ = {isa = PBXBuildFile; fileRef = 19972003104E8D5700D5E578 /* pause-3.png */; };
 		19984B46101E930A005349E9 /* ImageView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19984B45101E930A005349E9 /* ImageView.xib */; };
@@ -141,6 +153,8 @@
 		19AB9ECC0FFE5A2B0057953C /* CommonObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 19AB9ECB0FFE5A2B0057953C /* CommonObject.m */; };
 		19ABB4D610907196007B004C /* Increase-font.png in Resources */ = {isa = PBXBuildFile; fileRef = 19ABB4D410907196007B004C /* Increase-font.png */; };
 		19ABB4D710907196007B004C /* Decrease-font.png in Resources */ = {isa = PBXBuildFile; fileRef = 19ABB4D510907196007B004C /* Decrease-font.png */; };
+		19AC10341449F9EE007B24B8 /* GeoSplitViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19AC10321449F9EC007B24B8 /* GeoSplitViewController.m */; };
+		19AC10351449F9EE007B24B8 /* GeoSplitViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19AC10331449F9ED007B24B8 /* GeoSplitViewController.xib */; };
 		19AC8E451031BA69009F0241 /* map4.png in Resources */ = {isa = PBXBuildFile; fileRef = 19AC8E441031BA69009F0241 /* map4.png */; };
 		19AC8E4E1031CC84009F0241 /* connect4.png in Resources */ = {isa = PBXBuildFile; fileRef = 19AC8E4C1031CC84009F0241 /* connect4.png */; };
 		19AC8E4F1031CC84009F0241 /* slideshow4.png in Resources */ = {isa = PBXBuildFile; fileRef = 19AC8E4D1031CC84009F0241 /* slideshow4.png */; };
@@ -162,9 +176,14 @@
 		19B70F1C0FF6B15C00149428 /* stop-up.png in Resources */ = {isa = PBXBuildFile; fileRef = 19B70F170FF6B15C00149428 /* stop-up.png */; };
 		19B74FF510CB4F0100D21E97 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B74FF410CB4F0100D21E97 /* MediaPlayer.framework */; };
 		19B7500910CB500D00D21E97 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B7500810CB500D00D21E97 /* libsqlite3.dylib */; };
+		19B847451468D57D00765424 /* DateIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 19B847441468D57B00765424 /* DateIndex.m */; };
+		19C0B72414720DF70052C531 /* PadEntryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19C0B72214720DF70052C531 /* PadEntryViewController.m */; };
+		19C0B72514720DF70052C531 /* PadEntryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19C0B72314720DF70052C531 /* PadEntryViewController.xib */; };
 		19C26FA3101DE2640078632B /* SlideShowNavigation.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19C26FA2101DE2640078632B /* SlideShowNavigation.xib */; };
 		19C3DFD2101FA20300F51330 /* ImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19C3DFD1101FA20300F51330 /* ImageViewController.m */; };
 		19CB44E610B6331D000C17A5 /* list.png in Resources */ = {isa = PBXBuildFile; fileRef = 19CB44E510B6331D000C17A5 /* list.png */; };
+		19CB51AB145BA344009435D2 /* GeoPadTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19CB51A9145BA344009435D2 /* GeoPadTableViewController.m */; };
+		19CB51AC145BA344009435D2 /* GeoPadTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19CB51AA145BA344009435D2 /* GeoPadTableViewController.xib */; };
 		19CC4AC0102275B60062CB52 /* HorizontalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19CC4ABF102275B60062CB52 /* HorizontalViewController.xib */; };
 		19CC4ADA10227B010062CB52 /* HorizontalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19CC4AD910227B010062CB52 /* HorizontalViewController.m */; };
 		19D9437E1024CF76000FCDAA /* HorizontalImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19D9437D1024CF76000FCDAA /* HorizontalImageViewController.m */; };
@@ -189,6 +208,21 @@
 /* Begin PBXFileReference section */
 		190077FC12CAD95B00347CA4 /* Icon-high.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon-high.png"; sourceTree = "<group>"; };
 		1907A7211003DB4D009E744C /* selection-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "selection-button.png"; sourceTree = "<group>"; };
+		190EB039144DA5C60082F696 /* GeoSplitTableController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoSplitTableController.h; sourceTree = "<group>"; };
+		190EB03A144DA5C60082F696 /* GeoSplitTableController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoSplitTableController.m; sourceTree = "<group>"; };
+		191BCD3214872D3000636580 /* GeoPopOverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoPopOverController.h; sourceTree = "<group>"; };
+		191BCD3314872D3000636580 /* GeoPopOverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoPopOverController.m; sourceTree = "<group>"; };
+		191BCD3414872D3100636580 /* GeoPopOverController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeoPopOverController.xib; sourceTree = "<group>"; };
+		191BCD60148E4D2C00636580 /* ShowDisplayOptionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowDisplayOptionController.h; sourceTree = "<group>"; };
+		191BCD61148E4D3300636580 /* ShowDisplayOptionController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowDisplayOptionController.m; sourceTree = "<group>"; };
+		191BCD62148E4D3400636580 /* ShowDisplayOptionController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShowDisplayOptionController.xib; sourceTree = "<group>"; };
+		191BCD65148E4DAE00636580 /* ShowDisplayOptionsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShowDisplayOptionsView.h; sourceTree = "<group>"; };
+		191BCD66148E4DAF00636580 /* ShowDisplayOptionsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ShowDisplayOptionsView.m; sourceTree = "<group>"; };
+		191BCD67148E4DB000636580 /* ShowDisplayOptionsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ShowDisplayOptionsView.xib; sourceTree = "<group>"; };
+		191BCD6C148FA00100636580 /* show-options.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "show-options.plist"; sourceTree = "<group>"; };
+		191BCD6E1490699600636580 /* PadMapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PadMapViewController.h; sourceTree = "<group>"; };
+		191BCD6F149069AA00636580 /* PadMapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PadMapViewController.m; sourceTree = "<group>"; };
+		191BCD70149069AD00636580 /* PadMapViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PadMapViewController.xib; sourceTree = "<group>"; };
 		19246F8E0FFB7BDF00F33AF0 /* pause-up.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pause-up.png"; sourceTree = "<group>"; };
 		19257D2E1012193A0086E927 /* GeoTabController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoTabController.h; sourceTree = "<group>"; };
 		19257D2F1012193A0086E927 /* GeoTabController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoTabController.m; sourceTree = "<group>"; };
@@ -300,6 +334,9 @@
 		1994B78C103C0DBC0006AD38 /* no-picture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "no-picture.png"; sourceTree = "<group>"; };
 		1994B7A2103C0E940006AD38 /* no-picture-horizontal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "no-picture-horizontal.png"; sourceTree = "<group>"; };
 		19962ACA0FCE29270031D0F9 /* locate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = locate.png; sourceTree = "<group>"; };
+		1996E44414781CBF005E0F78 /* GeoPadMainView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GeoPadMainView.xib; path = ../GeoPadMainView.xib; sourceTree = "<group>"; };
+		1996E44A14782081005E0F78 /* GeoPadMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoPadMainViewController.h; sourceTree = "<group>"; };
+		1996E44B14782082005E0F78 /* GeoPadMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoPadMainViewController.m; sourceTree = "<group>"; };
 		19972002104E8D5700D5E578 /* stop-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop-1.png"; sourceTree = "<group>"; };
 		19972003104E8D5700D5E578 /* pause-3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pause-3.png"; sourceTree = "<group>"; };
 		19984B45101E930A005349E9 /* ImageView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ImageView.xib; sourceTree = "<group>"; };
@@ -388,6 +425,9 @@
 		19AB9ECB0FFE5A2B0057953C /* CommonObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonObject.m; sourceTree = "<group>"; };
 		19ABB4D410907196007B004C /* Increase-font.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Increase-font.png"; sourceTree = "<group>"; };
 		19ABB4D510907196007B004C /* Decrease-font.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Decrease-font.png"; sourceTree = "<group>"; };
+		19AC10311449F9EC007B24B8 /* GeoSplitViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoSplitViewController.h; sourceTree = "<group>"; };
+		19AC10321449F9EC007B24B8 /* GeoSplitViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoSplitViewController.m; sourceTree = "<group>"; };
+		19AC10331449F9ED007B24B8 /* GeoSplitViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeoSplitViewController.xib; sourceTree = "<group>"; };
 		19AC8E441031BA69009F0241 /* map4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map4.png; sourceTree = "<group>"; };
 		19AC8E4C1031CC84009F0241 /* connect4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = connect4.png; sourceTree = "<group>"; };
 		19AC8E4D1031CC84009F0241 /* slideshow4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = slideshow4.png; sourceTree = "<group>"; };
@@ -410,10 +450,19 @@
 		19B70F170FF6B15C00149428 /* stop-up.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "stop-up.png"; sourceTree = "<group>"; };
 		19B74FF410CB4F0100D21E97 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		19B7500810CB500D00D21E97 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		19B847431468D57800765424 /* DateIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateIndex.h; sourceTree = "<group>"; };
+		19B847441468D57B00765424 /* DateIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DateIndex.m; sourceTree = "<group>"; };
+		19B84746146EE14100765424 /* GeoPadHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoPadHeaders.h; sourceTree = "<group>"; };
+		19C0B72114720DF70052C531 /* PadEntryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PadEntryViewController.h; sourceTree = "<group>"; };
+		19C0B72214720DF70052C531 /* PadEntryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PadEntryViewController.m; sourceTree = "<group>"; };
+		19C0B72314720DF70052C531 /* PadEntryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PadEntryViewController.xib; sourceTree = "<group>"; };
 		19C26FA2101DE2640078632B /* SlideShowNavigation.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SlideShowNavigation.xib; sourceTree = "<group>"; };
 		19C3DFD0101FA20300F51330 /* ImageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageViewController.h; sourceTree = "<group>"; };
 		19C3DFD1101FA20300F51330 /* ImageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageViewController.m; sourceTree = "<group>"; };
 		19CB44E510B6331D000C17A5 /* list.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = list.png; sourceTree = "<group>"; };
+		19CB51A8145BA344009435D2 /* GeoPadTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeoPadTableViewController.h; path = ../GeoPadTableViewController.h; sourceTree = "<group>"; };
+		19CB51A9145BA344009435D2 /* GeoPadTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeoPadTableViewController.m; path = ../GeoPadTableViewController.m; sourceTree = "<group>"; };
+		19CB51AA145BA344009435D2 /* GeoPadTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeoPadTableViewController.xib; sourceTree = "<group>"; };
 		19CC4ABF102275B60062CB52 /* HorizontalViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HorizontalViewController.xib; sourceTree = "<group>"; };
 		19CC4AD810227B010062CB52 /* HorizontalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizontalViewController.h; sourceTree = "<group>"; };
 		19CC4AD910227B010062CB52 /* HorizontalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HorizontalViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -545,6 +594,8 @@
 		198E04860FC84D5400D3E5E1 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				19CB51A8145BA344009435D2 /* GeoPadTableViewController.h */,
+				19CB51A9145BA344009435D2 /* GeoPadTableViewController.m */,
 				198952E612B3D8E500DD1FF1 /* StatusViewController.h */,
 				19DF76491420D06C0026138D /* PTPasscodeViewController.h */,
 				19DF764A1420D06D0026138D /* PTPasscodeViewController.m */,
@@ -560,6 +611,13 @@
 				1934FAC1125223AA003C0DC5 /* ImageContainer.m */,
 				1934FAC2125223AA003C0DC5 /* SlideImageView.h */,
 				192612A2102CD7BA00648394 /* ArticleScrollView.m */,
+				19AC10311449F9EC007B24B8 /* GeoSplitViewController.h */,
+				1996E44414781CBF005E0F78 /* GeoPadMainView.xib */,
+				191BCD6E1490699600636580 /* PadMapViewController.h */,
+				191BCD6F149069AA00636580 /* PadMapViewController.m */,
+				191BCD70149069AD00636580 /* PadMapViewController.xib */,
+				19AC10321449F9EC007B24B8 /* GeoSplitViewController.m */,
+				19AC10331449F9ED007B24B8 /* GeoSplitViewController.xib */,
 				192612A3102CD7BA00648394 /* ArticleScrollView.h */,
 				19257D2E1012193A0086E927 /* GeoTabController.h */,
 				19257D2F1012193A0086E927 /* GeoTabController.m */,
@@ -615,6 +673,24 @@
 				19F876471090972E003628D4 /* EditText.m */,
 				19DE6C0412AE5AE100251003 /* ImageFrameView.h */,
 				19DE6C0512AE5AE100251003 /* ImageFrameView.m */,
+				190EB039144DA5C60082F696 /* GeoSplitTableController.h */,
+				190EB03A144DA5C60082F696 /* GeoSplitTableController.m */,
+				19B847431468D57800765424 /* DateIndex.h */,
+				1996E44A14782081005E0F78 /* GeoPadMainViewController.h */,
+				1996E44B14782082005E0F78 /* GeoPadMainViewController.m */,
+				19B847441468D57B00765424 /* DateIndex.m */,
+				19C0B72114720DF70052C531 /* PadEntryViewController.h */,
+				19C0B72214720DF70052C531 /* PadEntryViewController.m */,
+				19C0B72314720DF70052C531 /* PadEntryViewController.xib */,
+				191BCD3214872D3000636580 /* GeoPopOverController.h */,
+				191BCD3314872D3000636580 /* GeoPopOverController.m */,
+				191BCD3414872D3100636580 /* GeoPopOverController.xib */,
+				191BCD60148E4D2C00636580 /* ShowDisplayOptionController.h */,
+				191BCD61148E4D3300636580 /* ShowDisplayOptionController.m */,
+				191BCD62148E4D3400636580 /* ShowDisplayOptionController.xib */,
+				191BCD65148E4DAE00636580 /* ShowDisplayOptionsView.h */,
+				191BCD66148E4DAF00636580 /* ShowDisplayOptionsView.m */,
+				191BCD67148E4DB000636580 /* ShowDisplayOptionsView.xib */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -722,6 +798,10 @@
 				198E049D0FC851E000D3E5E1 /* NoteView.xib */,
 				198E04A50FC8527D00D3E5E1 /* MapView.xib */,
 				1991900C0FCCBDF500EEF056 /* GeoTake.xib */,
+				19CB51AA145BA344009435D2 /* GeoPadTableViewController.xib */,
+				19920F210FC62B9A007B1463 /* NoteNavigation.xib */,
+				19920F240FC62BDB007B1463 /* MapNavigation.xib */,
+				28AD73870D9D96C1002E5188 /* MainWindow.xib */,
 				19A44E201004E949006AB024 /* AddCategory.xib */,
 				19342F5B100BD43000E7E4AA /* JournalEntryView.xib */,
 				1934351C100E219000E7E4AA /* ConnectNavigation.xib */,
@@ -755,6 +835,7 @@
 				198FCBC00FDB009300162195 /* GeoJournalHeaders.h */,
 				19AB9ECA0FFE5A2B0057953C /* CommonObject.h */,
 				19AB9ECB0FFE5A2B0057953C /* CommonObject.m */,
+				19B84746146EE14100765424 /* GeoPadHeaders.h */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -820,11 +901,9 @@
 				19A46D940FD4075C00FFB1B0 /* background-test.png */,
 				19962ACA0FCE29270031D0F9 /* locate.png */,
 				1989531512B3DB3700DD1FF1 /* close-mark.png */,
+				191BCD6C148FA00100636580 /* show-options.plist */,
 				199190480FCD55A000EEF056 /* OnButton.png */,
-				28AD73870D9D96C1002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* GeoJournal-Info.plist */,
-				19920F210FC62B9A007B1463 /* NoteNavigation.xib */,
-				19920F240FC62BDB007B1463 /* MapNavigation.xib */,
 				19A382F2100296EB00EB4573 /* DefaultCategory.plist */,
 				19343534100E2B7D00E7E4AA /* ConnectTarget.plist */,
 				19AB3D3D101788A90056756D /* JournalTest.plist */,
@@ -997,6 +1076,15 @@
 				1989531612B3DB3700DD1FF1 /* close-mark.png in Resources */,
 				190077FD12CAD95B00347CA4 /* Icon-high.png in Resources */,
 				19327E2013D7009C003770CB /* readme.txt in Resources */,
+				19AC10351449F9EE007B24B8 /* GeoSplitViewController.xib in Resources */,
+				19CB51AC145BA344009435D2 /* GeoPadTableViewController.xib in Resources */,
+				19C0B72514720DF70052C531 /* PadEntryViewController.xib in Resources */,
+				1996E44514781CC0005E0F78 /* GeoPadMainView.xib in Resources */,
+				191BCD3614872D3100636580 /* GeoPopOverController.xib in Resources */,
+				191BCD64148E4D3500636580 /* ShowDisplayOptionController.xib in Resources */,
+				191BCD69148E4DB000636580 /* ShowDisplayOptionsView.xib in Resources */,
+				191BCD6D148FA00100636580 /* show-options.plist in Resources */,
+				191BCD72149069AF00636580 /* PadMapViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1079,6 +1167,16 @@
 				198952E812B3D8E500DD1FF1 /* StatusViewController.m in Sources */,
 				19DF764B1420D06D0026138D /* PTPasscodeViewController.m in Sources */,
 				19E7EFC11427656C00DAAEB7 /* KeychainItemWrapper.m in Sources */,
+				19AC10341449F9EE007B24B8 /* GeoSplitViewController.m in Sources */,
+				190EB03B144DA5C60082F696 /* GeoSplitTableController.m in Sources */,
+				19CB51AB145BA344009435D2 /* GeoPadTableViewController.m in Sources */,
+				19B847451468D57D00765424 /* DateIndex.m in Sources */,
+				19C0B72414720DF70052C531 /* PadEntryViewController.m in Sources */,
+				1996E44C14782083005E0F78 /* GeoPadMainViewController.m in Sources */,
+				191BCD3514872D3100636580 /* GeoPopOverController.m in Sources */,
+				191BCD63148E4D3500636580 /* ShowDisplayOptionController.m in Sources */,
+				191BCD68148E4DB000636580 /* ShowDisplayOptionsView.m in Sources */,
+				191BCD71149069AF00636580 /* PadMapViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1094,6 +1192,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = iGeoJournal;
 				PROVISIONING_PROFILE = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
 				"PROVISIONING_PROFILE[sdk=iphoneos4.2]" = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
@@ -1118,6 +1217,7 @@
 				);
 				PRODUCT_NAME = iGeoJournal;
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Distribution;
 		};
@@ -1141,6 +1241,7 @@
 				PRODUCT_NAME = iGeoJournal;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -1160,6 +1261,7 @@
 				);
 				PRODUCT_NAME = iGeoJournal;
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -1191,6 +1293,7 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = iGeoJournal;
 				PROVISIONING_PROFILE = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
 				"PROVISIONING_PROFILE[sdk=*]" = "E3FC426D-826F-43BF-885B-C7C2400C7C24";

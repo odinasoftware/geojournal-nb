@@ -17,6 +17,12 @@
 @class ButtonScrollView;
 @class NoteTableView;
 
+@protocol ChangeCategory
+
+- (void)setCategory:(NSString*)category;
+
+@end
+
 @interface NoteViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate, UIAlertViewDelegate> {
 	@private
 	IBOutlet	UITableView				*theTableView;
@@ -35,6 +41,7 @@
 	NSInteger						selectedButton;
 	GCategory						*selectedCategory;
 	GeoTakeController				*journalController;
+    id <ChangeCategory>             delegate;
 	
 	@private
 	JournalViewController			*_journalController;
@@ -62,7 +69,7 @@
 @property (nonatomic, retain)		NSMutableArray			*buttons;
 @property (nonatomic, retain)       UIView                  *buttonView;
 @property (nonatomic, retain)       UIView                  *labelView;
-
+@property (nonatomic, retain)       id<ChangeCategory>      delegate;
 
 - (void)addCategory;
 - (void)editCategory;

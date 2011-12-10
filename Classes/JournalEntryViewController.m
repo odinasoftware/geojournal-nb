@@ -13,7 +13,6 @@
 #import "GeoJournalHeaders.h"
 #import "GeoDatabase.h"
 #import "GeoSession.h"
-#import "FacebookConnect.h"
 #import "JournalViewController.h"
 #import "EditText.h"
 #import "ImageArrayScrollController.h"
@@ -1243,6 +1242,30 @@ int getNumberOfLinefeed(NSString *text) {
 }
 #endif
 #pragma -
+#pragma mark Managing the popover
+
+- (void)showRootPopoverButtonItem:(UIBarButtonItem *)barButtonItem {
+    
+    // Add the popover button to the toolbar.
+    NSMutableArray *itemsArray = [toolbar.items mutableCopy];
+    [itemsArray insertObject:barButtonItem atIndex:0];
+    [toolbar setItems:itemsArray animated:NO];
+    [itemsArray release];
+}
+
+
+- (void)invalidateRootPopoverButtonItem:(UIBarButtonItem *)barButtonItem {
+    
+    // Remove the popover button from the toolbar.
+    NSMutableArray *itemsArray = [toolbar.items mutableCopy];
+    [itemsArray removeObject:barButtonItem];
+    [toolbar setItems:itemsArray animated:NO];
+    [itemsArray release];
+}
+
+
+#pragma mark -
+
 - (void)didReceiveMemoryWarning {
 	// Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];

@@ -128,6 +128,7 @@ NSString *getOrigFilename(NSString *filename)
 @synthesize buttons;
 @synthesize buttonView;
 @synthesize labelView;
+@synthesize delegate;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -148,113 +149,6 @@ NSString *getOrigFilename(NSString *filename)
 }
 */
 
-#ifdef DB_TEST
-- (void)insertTestDBEntities
-{
-	//if ([[GeoDefaults sharedGeoDefaultsInstance].testJournalCreated boolValue] == NO) {
-	GCategory *chicago = [self getCategory:@"Chicago Travel"];
-		NSString *path = [[NSBundle mainBundle] pathForResource:@"JournalTest" ofType:@"plist"];
-		NSMutableArray *testJournal = [[NSMutableArray alloc] initWithContentsOfFile:path];
-		path = [[NSBundle mainBundle] pathForResource:@"1" ofType:@"png"];
-		NSData *imageData = [[NSData alloc] initWithContentsOfFile:path];
-		path = [[NSBundle mainBundle] pathForResource:@"1_small" ofType:@"png"];
-		NSData *thumb = [[NSData alloc] initWithContentsOfFile:path];
-		path = [[NSBundle mainBundle] pathForResource:@"1074077865" ofType:@"aif"];
-		NSData *audioData = [[NSData alloc] initWithContentsOfFile:path];
-		
-		NSString *imageFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".png"];
-		NSString *thumbFileName = getThumbnailFilename(imageFileName);
-		NSString *audioFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".aif"];
-		
-		NSFileManager *manager = [NSFileManager defaultManager];
-		
-		[manager createFileAtPath:imageFileName contents:imageData attributes:nil];
-		[manager createFileAtPath:thumbFileName contents:thumb attributes:nil];
-		[manager createFileAtPath:audioFileName contents:audioData attributes:nil];
-		
-		[imageData release];
-		[audioData release];
-		[thumb release];
-		[thumbFileName release];
-		
-		for (NSDictionary *d in testJournal) {
-			Journal *journal = [GeoDatabase sharedGeoDatabaseInstance].journalEntity; 
-			
-			[journal setAudio:[audioFileName lastPathComponent]];
-			TRACE("Audio: %s\n", [audioFileName UTF8String]);
-			
-			[journal setPicture:[imageFileName lastPathComponent]];
-			TRACE("Picture: %s\n", [imageFileName UTF8String]);
-			
-			[journal setText:(NSString*)[d objectForKey:@"text"]];
-			[journal setTitle:(NSString*)[d objectForKey:@"title"]];
-			
-			[journal setCreationDate:(NSDate*)[d objectForKey:@"creationDate"]];
-			
-			[journal setLongitude:(NSNumber*)[d objectForKey:@"longitude"]];
-			[journal setLatitude:(NSNumber*)[d objectForKey:@"latitude"]];
-			
-			[journal setAddress:(NSString*)[d objectForKey:@"address"]];
-			
-			[chicago addContentsObject:journal];
-		}
-		[[GeoDatabase sharedGeoDatabaseInstance] save];
-		[GeoDefaults sharedGeoDefaultsInstance].testJournalCreated = [NSNumber numberWithBool:YES];
-	//}
-	
-	// Insert Florida Test
-	GCategory *florida = [self getCategory:@"Florida Travel"];
-	path = [[NSBundle mainBundle] pathForResource:@"Florida_test" ofType:@"plist"];
-	testJournal = [[NSMutableArray alloc] initWithContentsOfFile:path];
-	path = [[NSBundle mainBundle] pathForResource:@"1074077865" ofType:@"aif"];
-	audioData = [[NSData alloc] initWithContentsOfFile:path];
-	audioFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".aif"];
-	
-	//manager = [NSFileManager defaultManager];
-	[manager createFileAtPath:audioFileName contents:audioData attributes:nil];
-	
-	[audioData release];
-	
-	for (NSDictionary *d in testJournal) {
-		Journal *journal = [GeoDatabase sharedGeoDatabaseInstance].journalEntity; 
-		
-		[journal setAudio:[audioFileName lastPathComponent]];
-		TRACE("Audio: %s\n", [audioFileName UTF8String]);
-		
-		// picture
-		NSString *fileName = [d objectForKey:@"picture"];
-		path = [[NSBundle mainBundle] pathForResource:fileName ofType:@"jpg"];
-		NSData *imageData = [[NSData alloc] initWithContentsOfFile:path];
-		path = [[NSBundle mainBundle] pathForResource:[fileName stringByAppendingString:@"_small"] ofType:@"jpg"];
-		NSData *thumb = [[NSData alloc] initWithContentsOfFile:path];
-		
-		NSString *imageFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".png"];
-		NSString *thumbFileName = getThumbnailFilename(imageFileName);
-		[manager createFileAtPath:imageFileName contents:imageData attributes:nil];
-		[manager createFileAtPath:thumbFileName contents:thumb attributes:nil];
-		
-		// 
-		
-		[journal setPicture:[imageFileName lastPathComponent]];
-		TRACE("Picture: %s\n", [imageFileName UTF8String]);
-		
-		[journal setText:(NSString*)[d objectForKey:@"text"]];
-		[journal setTitle:(NSString*)[d objectForKey:@"title"]];
-		
-		[journal setCreationDate:(NSDate*)[d objectForKey:@"creationDate"]];
-		
-		[journal setLongitude:(NSNumber*)[d objectForKey:@"longitude"]];
-		[journal setLatitude:(NSNumber*)[d objectForKey:@"latitude"]];
-		
-		[journal setAddress:(NSString*)[d objectForKey:@"address"]];
-		
-		[florida addContentsObject:journal];
-	}
-	[[GeoDatabase sharedGeoDatabaseInstance] save];
-	
-}
-#endif
-
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
@@ -273,12 +167,9 @@ NSString *getOrigFilename(NSString *filename)
 	[self loadFromDatabase];
 	[self setNormalButtons];
 	[self initCategoryButtons];
-	[self showSelectedButton];
-#ifdef DB_TEST
-	[self insertTestDBEntities];
-#endif	
+	//[self showSelectedButton];
 	// Init scroll view
-	[self setScrollViewSize];
+	//[self setScrollViewSize];
 		
 	/*
 	CFBundleRef mainBundle;
@@ -300,10 +191,15 @@ NSString *getOrigFilename(NSString *filename)
 									  &soundFileObject
 									  );
 	 */
-	self.tabBarController.tabBar.selectedItem.title = @"Journal";
-	self.navigationItem.title = @"Journal";
-	[self.buttonFrame setExclusiveTouch:YES];
+	//self.tabBarController.tabBar.selectedItem.title = @"Journal";
+	self.navigationItem.title = @"Edit Category";
+	//[self.buttonFrame setExclusiveTouch:YES];
 
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        self.contentSizeForViewInPopover = CGSizeMake(310.0, self.theTableView.rowHeight*(self.numberOfCategory+1));
+        DEBUG_SIZE("category size:", self.contentSizeForViewInPopover);
+        DEBUG_RECT("table view:", self.theTableView.frame);
+    }
 	//self.buttonFrame.noteDelegate = self;
 }
 
@@ -358,15 +254,13 @@ NSString *getOrigFilename(NSString *filename)
 
 - (void)setNormalButtons
 {
-	UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editCategory)];
-	//UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addCategory)];
-	UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(openTakeJournal:)];
-	
-	self.navigationItem.leftBarButtonItem = editButton;
-	self.navigationItem.rightBarButtonItem = composeButton;
-	//self.navigationItem.rightBarButtonItem = addButton;
-	[editButton release]; //[addButton release];
-	[composeButton release];	
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editCategory)];
+        
+        self.navigationItem.leftBarButtonItem = editButton;
+        [editButton release]; //[addButton release];
+    
+    }
 }
 
 - (void)openTakeJournal:(id)sender
@@ -776,6 +670,8 @@ NSString *getOrigFilename(NSString *filename)
 		[GeoDefaults sharedGeoDefaultsInstance].activeCategory = category.name;
 		[self showSelectedCategory:category.name];
 		[tableView reloadData];
+        
+        [self.delegate setCategory:category.name];
 	}
 	/*
 	else if (indexPath.row < c) {
