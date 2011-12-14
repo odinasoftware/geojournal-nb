@@ -15,6 +15,7 @@
 
 @implementation GeoPadMainViewController
 
+@synthesize navBar;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -56,6 +57,21 @@
 		[self pushViewController:aViewController animated:YES];
 		[aViewController release];
 	}
+    UIImage *listImage = [UIImage imageNamed:@"list.png"];
+    CGFloat width = self.view.frame.size.width;
+    
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setFrame:CGRectMake(width-80,5,70,26)];
+    
+    button.tintColor = [UIColor blueColor];
+    //[button setTitle:@"Category" forState:UIControlStateNormal];
+    [button setImage:listImage forState:UIControlStateNormal];
+    button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+    [navBar addSubview:button];
+    
+    //UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"test" style:UIBarButtonItemStyleBordered target:self action:nil];
+    //[navBar addSubview:item];
+    
     
 }
 
