@@ -152,6 +152,21 @@
 		19AC8E4F1031CC84009F0241 /* slideshow4.png in Resources */ = {isa = PBXBuildFile; fileRef = 19AC8E4D1031CC84009F0241 /* slideshow4.png */; };
 		19B08D880FD6B2A300A0BA7E /* SpeakHereController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 19B08D860FD6B2A300A0BA7E /* SpeakHereController.mm */; };
 		19B0B88A109133B20084DF48 /* text-edit-background.png in Resources */ = {isa = PBXBuildFile; fileRef = 19B0B889109133B20084DF48 /* text-edit-background.png */; };
+		19B2170014A2DCAA00339E4F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B216FF14A2DCAA00339E4F /* QuartzCore.framework */; };
+		19B2170214A2DCB600339E4F /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2170114A2DCB600339E4F /* Security.framework */; };
+		19B2170414A2DCBF00339E4F /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2170314A2DCBF00339E4F /* MediaPlayer.framework */; };
+		19B2170614A2DCC900339E4F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2170514A2DCC900339E4F /* SystemConfiguration.framework */; };
+		19B2170814A2DCD200339E4F /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2170714A2DCD200339E4F /* MessageUI.framework */; };
+		19B2170A14A2DCDB00339E4F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2170914A2DCDB00339E4F /* AVFoundation.framework */; };
+		19B2170C14A2DCE500339E4F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2170B14A2DCE500339E4F /* CoreData.framework */; };
+		19B2170E14A2DD0D00339E4F /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2170D14A2DD0D00339E4F /* AudioToolbox.framework */; };
+		19B2171014A2DD1500339E4F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2170F14A2DD1500339E4F /* OpenGLES.framework */; };
+		19B2171214A2DD1D00339E4F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2171114A2DD1D00339E4F /* MapKit.framework */; };
+		19B2171414A2DD2500339E4F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2171314A2DD2500339E4F /* CoreLocation.framework */; };
+		19B2171614A2DD2E00339E4F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2171514A2DD2E00339E4F /* UIKit.framework */; };
+		19B2171814A2DD3700339E4F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2171714A2DD3700339E4F /* Foundation.framework */; };
+		19B2171A14A2DD3F00339E4F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2171914A2DD3F00339E4F /* CoreGraphics.framework */; };
+		19B2171C14A2DD4C00339E4F /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2171B14A2DD4C00339E4F /* libsqlite3.dylib */; };
 		19B2A0201027BFA1007D3D17 /* Mike2.png in Resources */ = {isa = PBXBuildFile; fileRef = 19B2A01F1027BFA1007D3D17 /* Mike2.png */; };
 		19B2A0451027C6D1007D3D17 /* big-stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 19B2A0431027C6D1007D3D17 /* big-stop.png */; };
 		19B2A0461027C6D1007D3D17 /* big-play.png in Resources */ = {isa = PBXBuildFile; fileRef = 19B2A0441027C6D1007D3D17 /* big-play.png */; };
@@ -413,6 +428,21 @@
 		19B08D860FD6B2A300A0BA7E /* SpeakHereController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SpeakHereController.mm; sourceTree = "<group>"; };
 		19B08D870FD6B2A300A0BA7E /* SpeakHereController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeakHereController.h; sourceTree = "<group>"; };
 		19B0B889109133B20084DF48 /* text-edit-background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "text-edit-background.png"; sourceTree = "<group>"; };
+		19B216FF14A2DCAA00339E4F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		19B2170114A2DCB600339E4F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		19B2170314A2DCBF00339E4F /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		19B2170514A2DCC900339E4F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		19B2170714A2DCD200339E4F /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		19B2170914A2DCDB00339E4F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		19B2170B14A2DCE500339E4F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		19B2170D14A2DD0D00339E4F /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		19B2170F14A2DD1500339E4F /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		19B2171114A2DD1D00339E4F /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		19B2171314A2DD2500339E4F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		19B2171514A2DD2E00339E4F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		19B2171714A2DD3700339E4F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		19B2171914A2DD3F00339E4F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		19B2171B14A2DD4C00339E4F /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		19B2A01F1027BFA1007D3D17 /* Mike2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mike2.png; sourceTree = "<group>"; };
 		19B2A0431027C6D1007D3D17 /* big-stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "big-stop.png"; sourceTree = "<group>"; };
 		19B2A0441027C6D1007D3D17 /* big-play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "big-play.png"; sourceTree = "<group>"; };
@@ -473,6 +503,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19B2171C14A2DD4C00339E4F /* libsqlite3.dylib in Frameworks */,
+				19B2171A14A2DD3F00339E4F /* CoreGraphics.framework in Frameworks */,
+				19B2171814A2DD3700339E4F /* Foundation.framework in Frameworks */,
+				19B2171614A2DD2E00339E4F /* UIKit.framework in Frameworks */,
+				19B2171414A2DD2500339E4F /* CoreLocation.framework in Frameworks */,
+				19B2171214A2DD1D00339E4F /* MapKit.framework in Frameworks */,
+				19B2171014A2DD1500339E4F /* OpenGLES.framework in Frameworks */,
+				19B2170E14A2DD0D00339E4F /* AudioToolbox.framework in Frameworks */,
+				19B2170C14A2DCE500339E4F /* CoreData.framework in Frameworks */,
+				19B2170A14A2DCDB00339E4F /* AVFoundation.framework in Frameworks */,
+				19B2170814A2DCD200339E4F /* MessageUI.framework in Frameworks */,
+				19B2170614A2DCC900339E4F /* SystemConfiguration.framework in Frameworks */,
+				19B2170414A2DCBF00339E4F /* MediaPlayer.framework in Frameworks */,
+				19B2170214A2DCB600339E4F /* Security.framework in Frameworks */,
+				19B2170014A2DCAA00339E4F /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -733,6 +778,28 @@
 			name = Map;
 			sourceTree = "<group>";
 		};
+		19B2171D14A2DD5200339E4F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				19B2171B14A2DD4C00339E4F /* libsqlite3.dylib */,
+				19B2171914A2DD3F00339E4F /* CoreGraphics.framework */,
+				19B2171714A2DD3700339E4F /* Foundation.framework */,
+				19B2171514A2DD2E00339E4F /* UIKit.framework */,
+				19B2171314A2DD2500339E4F /* CoreLocation.framework */,
+				19B2171114A2DD1D00339E4F /* MapKit.framework */,
+				19B2170F14A2DD1500339E4F /* OpenGLES.framework */,
+				19B2170D14A2DD0D00339E4F /* AudioToolbox.framework */,
+				19B2170B14A2DCE500339E4F /* CoreData.framework */,
+				19B2170914A2DCDB00339E4F /* AVFoundation.framework */,
+				19B2170714A2DCD200339E4F /* MessageUI.framework */,
+				19B2170514A2DCC900339E4F /* SystemConfiguration.framework */,
+				19B2170314A2DCBF00339E4F /* MediaPlayer.framework */,
+				19B2170114A2DCB600339E4F /* Security.framework */,
+				19B216FF14A2DCAA00339E4F /* QuartzCore.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -744,6 +811,7 @@
 		29B97314FDCFA39411CA2CEA /* GeoJournal */ = {
 			isa = PBXGroup;
 			children = (
+				19B2171D14A2DD5200339E4F /* Frameworks */,
 				19744DED13C8FDC500D0D6F6 /* iGeoJournal.entitlements */,
 				1989514B12B26DC400DD1FF1 /* FBConnect */,
 				19A3810E100252EA00EB4573 /* Database */,
@@ -1153,6 +1221,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_ENTITLEMENTS = iGeoJournal.entitlements;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = GeoJournal_Prefix.pch;
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
@@ -1160,6 +1232,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
+					"\"$(SRCROOT)\"",
 				);
 				PRODUCT_NAME = iGeoJournal;
 				SDKROOT = iphoneos;
@@ -1174,6 +1247,10 @@
 				CODE_SIGN_ENTITLEMENTS = iGeoJournal.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1188,6 +1265,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
+					"\"$(SRCROOT)\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = iGeoJournal;
@@ -1203,6 +1281,10 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_ENTITLEMENTS = iGeoJournal.entitlements;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = GeoJournal_Prefix.pch;
 				HEADER_SEARCH_PATHS = (
@@ -1215,6 +1297,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
+					"\"$(SRCROOT)\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = iGeoJournal;
