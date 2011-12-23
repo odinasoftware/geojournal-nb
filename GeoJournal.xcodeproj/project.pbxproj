@@ -167,6 +167,7 @@
 		19B2171814A2DD3700339E4F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2171714A2DD3700339E4F /* Foundation.framework */; };
 		19B2171A14A2DD3F00339E4F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2171914A2DD3F00339E4F /* CoreGraphics.framework */; };
 		19B2171C14A2DD4C00339E4F /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B2171B14A2DD4C00339E4F /* libsqlite3.dylib */; };
+		19B2172014A3EBFF00339E4F /* MapViewCommonController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19B2171F14A3EBFE00339E4F /* MapViewCommonController.m */; };
 		19B2A0201027BFA1007D3D17 /* Mike2.png in Resources */ = {isa = PBXBuildFile; fileRef = 19B2A01F1027BFA1007D3D17 /* Mike2.png */; };
 		19B2A0451027C6D1007D3D17 /* big-stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 19B2A0431027C6D1007D3D17 /* big-stop.png */; };
 		19B2A0461027C6D1007D3D17 /* big-play.png in Resources */ = {isa = PBXBuildFile; fileRef = 19B2A0441027C6D1007D3D17 /* big-play.png */; };
@@ -443,6 +444,8 @@
 		19B2171714A2DD3700339E4F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		19B2171914A2DD3F00339E4F /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		19B2171B14A2DD4C00339E4F /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		19B2171E14A3EBFE00339E4F /* MapViewCommonController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapViewCommonController.h; sourceTree = "<group>"; };
+		19B2171F14A3EBFE00339E4F /* MapViewCommonController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapViewCommonController.m; sourceTree = "<group>"; };
 		19B2A01F1027BFA1007D3D17 /* Mike2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Mike2.png; sourceTree = "<group>"; };
 		19B2A0431027C6D1007D3D17 /* big-stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "big-stop.png"; sourceTree = "<group>"; };
 		19B2A0441027C6D1007D3D17 /* big-play.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "big-play.png"; sourceTree = "<group>"; };
@@ -695,6 +698,8 @@
 				191BCD65148E4DAE00636580 /* ShowDisplayOptionsView.h */,
 				191BCD66148E4DAF00636580 /* ShowDisplayOptionsView.m */,
 				191BCD67148E4DB000636580 /* ShowDisplayOptionsView.xib */,
+				19B2171E14A3EBFE00339E4F /* MapViewCommonController.h */,
+				19B2171F14A3EBFE00339E4F /* MapViewCommonController.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -1185,6 +1190,7 @@
 				191BCD63148E4D3500636580 /* ShowDisplayOptionController.m in Sources */,
 				191BCD68148E4DB000636580 /* ShowDisplayOptionsView.m in Sources */,
 				191BCD71149069AF00636580 /* PadMapViewController.m in Sources */,
+				19B2172014A3EBFF00339E4F /* MapViewCommonController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

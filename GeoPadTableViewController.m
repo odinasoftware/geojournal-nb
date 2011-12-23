@@ -45,6 +45,8 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
 @synthesize selectedCategory;
 @synthesize _journalView;
 
+@synthesize categoryBar, searchBar, settingBar, composeBar, viewsBar, titleLabel;
+
 /*
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -111,6 +113,12 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
     //self.titleLabel.text = active;
     self.title = active;
     
+    self.titleLabel.text = self.title;
+    self.categoryBar.target = self.navigationController;
+    self.categoryBar.action = @selector(showCategoryOptions:);
+    self.viewsBar.target = self.navigationController;
+    self.viewsBar.action = @selector(displayShowOptions:);
+                                      
     //[self fetchJournalForCategory:self.selectedCategory];
     NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"DefaultCategory" ofType:@"plist"];
 	defaultCategory = [[NSArray alloc] initWithContentsOfFile:thePath];

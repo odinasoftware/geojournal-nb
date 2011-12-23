@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Three20/Three20.h>
 #import "ShowDisplayOptionsView.h"
 
 @interface GeoPadMainViewController : UINavigationController <ChangeDisplayViewDelegate> {

@@ -25,6 +25,14 @@
     NSMutableArray              *categoryArray;
     GCategory                   *selectedCategory;
     PadEntryViewController      *_journalView;
+    
+    // Toobar support   
+    UIBarButtonItem             *categoryBar;
+    UIBarButtonItem             *searchBar;
+    UIBarButtonItem             *settingBar;
+    UIBarButtonItem             *composeBar;
+    UIBarButtonItem             *viewsBar;
+    UILabel                     *titleLabel;
 }
 
 //@property (nonatomic, retain)   IBOutlet    UIToolbar       *toolbar;
@@ -37,6 +45,14 @@
 @property (nonatomic, retain)	NSMutableArray				*categoryArray;
 @property (nonatomic, retain)	GCategory					*selectedCategory;
 @property (nonatomic, retain)   PadEntryViewController      *_journalView;
+
+@property (nonatomic, retain)   IBOutlet    UIBarButtonItem             *categoryBar;
+@property (nonatomic, retain)   IBOutlet    UIBarButtonItem             *searchBar;
+@property (nonatomic, retain)   IBOutlet    UIBarButtonItem             *settingBar;
+@property (nonatomic, retain)   IBOutlet    UIBarButtonItem             *composeBar;
+@property (nonatomic, retain)   IBOutlet    UIBarButtonItem             *viewsBar;
+@property (nonatomic, retain)   IBOutlet    UILabel                     *titleLabel;
+
 
 - (void)fetchJournalForCategory:(GCategory*)category ;
 - (void)loadFromDatabase;

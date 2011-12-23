@@ -5,6 +5,7 @@
 //  Created by Jae Han on 11/19/11.
 //  Copyright (c) 2011 Home. All rights reserved.
 //
+
 #import "GeoJournalHeaders.h"
 #import "GeoPadMainViewController.h"
 #import "GeoPadTableViewController.h"
@@ -43,6 +44,17 @@
 }
 */
 
+- (void)addButtons
+{
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"Category" style:UIBarButtonItemStyleBordered target:self action:@selector(showCategoryOptions:)];
+    self.navigationItem.leftBarButtonItem = item;
+    [item release];
+    
+    item = [[UIBarButtonItem alloc] initWithTitle:@"SHOW" style:UIBarButtonItemStyleBordered target:self action:@selector(displayShowOptions:)];
+    self.navigationItem.rightBarButtonItem = item;
+    [item release];
+    
+}
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
@@ -51,14 +63,18 @@
     TRACE("%s, top: %s\n", __func__, [NSStringFromClass([self.topViewController class]) UTF8String]);
     //Class = [self.topViewController class];
     
+    //[self addButtons];
     if (self.topViewController == nil) {
 		GeoPadTableViewController *aViewController = [[GeoPadTableViewController alloc] initWithNibName:@"GeoPadTableViewController" bundle:nil];
         
 		[self pushViewController:aViewController animated:YES];
 		[aViewController release];
 	}
+    self.navigationBarHidden = YES;
+    /*
     UIImage *listImage = [UIImage imageNamed:@"list.png"];
     CGFloat width = self.view.frame.size.width;
+    
     
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     [button setFrame:CGRectMake(width-80,5,70,26)];
@@ -67,10 +83,30 @@
     //[button setTitle:@"Category" forState:UIControlStateNormal];
     [button setImage:listImage forState:UIControlStateNormal];
     button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+    [button addTarget:self action:@selector(displayShowOptions:) forControlEvents:UIControlEventTouchDown];
     [navBar addSubview:button];
+    //[button release];
+       
+    button = [UIButton buttonWithType:UIButtonTypeCustom];
+    [button setFrame:CGRectMake(19,5,70,26)];
     
-    //UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:@"test" style:UIBarButtonItemStyleBordered target:self action:nil];
-    //[navBar addSubview:item];
+    button.tintColor = [UIColor blueColor];
+    //[button setTitle:@"Category" forState:UIControlStateNormal];
+    [button setImage:listImage forState:UIControlStateNormal];
+    button.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
+    [button addTarget:self action:@selector(showCategoryOptions:) forControlEvents:UIControlEventTouchDown];
+    [navBar addSubview:button];
+    //[button release];
+    */
+    /*
+    UIButton *item = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [item setFrame:CGRectMake(0, 0, 50, 30)];
+    [item setTitle:@"test" forState:UIControlStateNormal];
+    [navBar addSubview:item];
+     */
+    
+    //TTButton *b = [TTButton buttonWithStyle:@"toolbarButton:" title:@"Toolbar Button"];
+    //[navBar addSubview:b];
     
     
 }
@@ -86,7 +122,8 @@
     UIPopoverController *aPopover = [[UIPopoverController alloc] initWithContentViewController:controller];
     [controller release];
     
-    
+    //DEBUG_RECT("Category option:", [sender frame]);
+    //[aPopover presentPopoverFromRect:[sender frame] inView:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     [aPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 }
 
@@ -111,9 +148,10 @@
     UIPopoverController *aPopover = [[UIPopoverController alloc] initWithContentViewController:controller];
     [controller release];
     
+    //DEBUG_RECT("Show option:", [sender frame]);
     
+    //[aPopover presentPopoverFromRect:CGRectMake(100, 10, 70, 26) inView:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     [aPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-
 }
 
 - (void)changeDisplayView:(NSInteger)viewIndex
@@ -127,19 +165,16 @@
         case 0:
             if (![self.topViewController isKindOfClass:[GeoPadTableViewController class]]) {
                 // Show NoteViewController
-                [self popViewControllerAnimated:NO];
-                NoteViewController *aViewController = [[NoteViewController alloc] initWithNibName:@"NoteView" bundle:nil];
-                
-                [self pushViewController:aViewController animated:YES];
-                [aViewController release];
+                GeoPadTableViewController *aViewController = [[GeoPadTableViewController alloc] initWithNibName:@"GeoPadTableViewController" bundle:nil];
+                [self setViewControllers:[NSArray arrayWithObjects:aViewController, nil] animated:NO];
             }
             break;
         case 1:
             if (![self.topViewController isKindOfClass:[PadMapViewController class]]) {
-                
+                //[self addButtons];
                 //[self popViewControllerAnimated:NO];
                 PadMapViewController *aViewController = [[PadMapViewController alloc] initWithNibName:@"PadMapViewController" bundle:nil];
-                [self setViewControllers:[NSArray arrayWithObjects:aViewController, nil] animated:YES];
+                [self setViewControllers:[NSArray arrayWithObjects:aViewController, nil] animated:NO];
                 //[self pushViewController:aViewController animated:YES];
                 //[aViewController release];
             }
