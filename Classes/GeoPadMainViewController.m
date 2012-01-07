@@ -17,6 +17,7 @@
 @implementation GeoPadMainViewController
 
 @synthesize navBar;
+@synthesize displayOptionPopOver;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -115,10 +116,11 @@
 {
     TRACE_HERE;
 	
-    
     GeoPopOverController *controller = [[GeoPopOverController alloc] initWithNibName:@"GeoPopOverController" bundle:nil];
     //NoteViewController *controller = [[NoteViewController alloc] initWithNibName:@"NoteView" bundle:nil];
-    //controller.delegate = self;
+    // TODO: set proper delegate; should be GeoPadTableViewController
+    TRACE("%s, view controller: %s\n", __func__, class_getName([self.topViewController class]));
+    controller.delegate = (id) self.topViewController;
     UIPopoverController *aPopover = [[UIPopoverController alloc] initWithContentViewController:controller];
     [controller release];
     
@@ -150,8 +152,16 @@
     
     //DEBUG_RECT("Show option:", [sender frame]);
     
+    self.displayOptionPopOver = aPopover;
     //[aPopover presentPopoverFromRect:CGRectMake(100, 10, 70, 26) inView:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     [aPopover presentPopoverFromBarButtonItem:sender permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    [aPopover release];
+}
+
+#pragma ChangeDisplayViewDelegate
+- (void)dissmissDisplayViewPopover:(id)sender
+{
+    [self.displayOptionPopOver dismissPopoverAnimated:YES];
 }
 
 - (void)changeDisplayView:(NSInteger)viewIndex
@@ -185,4 +195,6 @@
             break;
     }
 }
+#pragma -
+
 @end

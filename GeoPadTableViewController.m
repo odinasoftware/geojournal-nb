@@ -148,11 +148,14 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    
     [super viewDidAppear:animated];
+    self.navigationController.navigationBarHidden = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -739,16 +742,18 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
  
  */
 #pragma mark -
+#pragma ChangeCategory
 
 - (void)setCategory:(NSString *)category
 {
     self.selectedCategory = [self getCategory:category];
+    self.titleLabel.text = category;
     TRACE("%s, selected category: %p\n", __func__, self.selectedCategory);
     [self fetchJournalForCategory:self.selectedCategory];
     [self.tableView reloadData];
     
 }
-
+#pragma -
 
 - (void)dealloc {
     //[toolbar release];

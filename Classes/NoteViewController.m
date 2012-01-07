@@ -551,8 +551,15 @@ NSString *getOrigFilename(NSString *filename)
 {
 	UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneEditing)];
 	
-	self._journalController.navigationItem.leftBarButtonItem = doneButton;
-	self._journalController.navigationItem.rightBarButtonItem = nil;
+	
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        self.navigationItem.leftBarButtonItem = doneButton;
+        self.navigationItem.rightBarButtonItem = nil;
+    }
+    else {
+        self._journalController.navigationItem.leftBarButtonItem = doneButton;
+        self._journalController.navigationItem.rightBarButtonItem = nil;
+    }
 	//self.navigationItem.leftBarButtonItem = doneButton;
 	//self.navigationItem.rightBarButtonItem = nil;
 	
@@ -661,7 +668,12 @@ NSString *getOrigFilename(NSString *filename)
 		controller.hidesBottomBarWhenPushed = YES;
 		[GeoDefaults sharedGeoDefaultsInstance].secondLevel = self.numberOfCategory;
 		TRACE("%s, %p\n", __func__, self.navigationController);
-		[self._journalController.navigationController pushViewController:controller animated:YES];
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            [self.navigationController pushViewController:controller animated:YES];
+        }
+        else {
+            [self._journalController.navigationController pushViewController:controller animated:YES];
+        }
 		self.addCategoryController = controller; 
 		[controller release];
 	}
@@ -904,45 +916,54 @@ NSString *getOrigFilename(NSString *filename)
 }
 
 - (void)viewDidAppear:(BOOL)animated
-{
-
-	UITabBar *tabBar = self.tabBarController.tabBar;
-	
-	TRACE("%s, %p, %s\n", __func__, tabBar.selectedItem, [tabBar.selectedItem.title UTF8String]);
-	
-	
-	if (addCategoryController && addCategoryController.saveResult == YES) {
-		TRACE("%s\n", __func__);
-		
-		[self saveCategory];
-		[theTableView reloadData];
-		addCategoryController.saveResult = NO;
-	}
-	else if (journalController && journalController.journalTaken == JOURNAL_TAKEN) {
-		// save journal to category.
-		if (journalController.myPicture && journalController.pictureView.image) {
-			saveImageToFile(journalController.pictureView.image, journalController.myPicture);
-			NSString *smallImage = getThumbnailFilename(journalController.myPicture);
-			saveImageToFile(journalController.thumbnailImage, smallImage);
-			[smallImage release];
-		}
-		journalController.journalTaken = NO;
-		[self saveJournalToDatabase];
-		
-		[theTableView reloadData];
-	}
-	else if (journalController && journalController.journalTaken == JOURNAL_CANCELLED) {
-		// Should delay destorying controller due to the delegate need to be live longer.
-		//self.journalController = nil;
-	}
-	if ([GeoDefaults sharedGeoDefaultsInstance].levelRestored == NO) {
-		[self restoreLevel];
-	}
-	else {
-		[GeoDefaults sharedGeoDefaultsInstance].secondLevel = -1;
-		[theTableView reloadData];
-	}
-	[self scrollToButton:selectedButton];
+{    
+    UITabBar *tabBar = self.tabBarController.tabBar;
+    
+    TRACE("%s, %p, %s\n", __func__, tabBar.selectedItem, [tabBar.selectedItem.title UTF8String]);
+    
+    
+    if (addCategoryController && addCategoryController.saveResult == YES) {
+        TRACE("%s\n", __func__);
+        
+        [self saveCategory];
+        [theTableView reloadData];
+        addCategoryController.saveResult = NO;
+        
+        if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+            self.contentSizeForViewInPopover = CGSizeMake(310.0, self.theTableView.rowHeight*(self.numberOfCategory+1));
+            DEBUG_SIZE("category size:", self.contentSizeForViewInPopover);
+            DEBUG_RECT("table view:", self.theTableView.frame);
+        }
+    }
+    else if (journalController && journalController.journalTaken == JOURNAL_TAKEN) {
+        // save journal to category.
+        if (journalController.myPicture && journalController.pictureView.image) {
+            saveImageToFile(journalController.pictureView.image, journalController.myPicture);
+            NSString *smallImage = getThumbnailFilename(journalController.myPicture);
+            saveImageToFile(journalController.thumbnailImage, smallImage);
+            [smallImage release];
+        }
+        journalController.journalTaken = NO;
+        [self saveJournalToDatabase];
+        
+        [theTableView reloadData];
+    }
+    else if (journalController && journalController.journalTaken == JOURNAL_CANCELLED) {
+        // Should delay destorying controller due to the delegate need to be live longer.
+        //self.journalController = nil;
+    }
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad) {
+        if ([GeoDefaults sharedGeoDefaultsInstance].levelRestored == NO) {
+            [self restoreLevel];
+        }
+        else {
+            [GeoDefaults sharedGeoDefaultsInstance].secondLevel = -1;
+            [theTableView reloadData];
+        }
+        [self scrollToButton:selectedButton];
+    }
+    
 }
 
 - (void)restoreLevel

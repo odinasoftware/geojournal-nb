@@ -59,6 +59,12 @@
 	self.navigationItem.rightBarButtonItem = doneButton;
 	[doneButton release];
 	
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        self.contentSizeForViewInPopover = CGSizeMake(310.0, self.theTableView.rowHeight*(2));
+        DEBUG_SIZE("category size:", self.contentSizeForViewInPopover);
+        DEBUG_RECT("table view:", self.theTableView.frame);
+    }
+
 }
 
 

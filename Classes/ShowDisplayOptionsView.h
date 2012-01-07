@@ -11,7 +11,7 @@
 @protocol ChangeDisplayViewDelegate <NSObject>
 
 - (void)changeDisplayView:(NSInteger)viewIndex;
-
+- (void)dissmissDisplayViewPopover:(id)sender;
 @end
 
 @interface ShowDisplayOptionsView : UITableViewController {

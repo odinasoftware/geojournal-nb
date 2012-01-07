@@ -137,6 +137,7 @@ NSInteger getNumberOfLocation(int index)
 	
 	[textView addSubview:label1];
 	
+    
 	[label release]; [label1 release];
 	return textView;
 }

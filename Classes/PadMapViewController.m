@@ -74,4 +74,23 @@
 	return YES;
 }
 
+#pragma ChangeCategory
+
+- (void)setCategory:(NSString*)category
+{
+    TRACE_HERE;
+    self._category = category;
+    
+    // Need to reload
+    _locationLoaded = NO;
+    _currentJournalIndex = 0;
+    [self resetMarks];
+    [self addToMapWithDirection:MAP_MARK_ASCENDING upto:_numberOfPins];
+    self._category = [GeoDefaults sharedGeoDefaultsInstance].activeCategory;
+    self.titleLabel.text = self._category;
+    
+}
+
+#pragma -
+
 @end

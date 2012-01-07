@@ -51,7 +51,8 @@
         DEBUG_SIZE("option rect:", self.contentSizeForViewInPopover);
     }
 
-    
+    UIBarButtonItem *button = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneViewSelection:)];
+    self.navigationItem.leftBarButtonItem = button;
 }
 
 - (void)viewDidUnload
@@ -87,6 +88,11 @@
 	return YES;
 }
 
+- (void)doneViewSelection:(id)sender
+{
+    TRACE_HERE;
+    [self.delegate dissmissDisplayViewPopover:sender];
+}
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView

@@ -134,7 +134,7 @@ extern NSString *getPrinterableDate(NSDate *date, NSInteger *day);
 	if (fontSize < DEFAULT_FONT_SIZE) {
 		fontSize = DEFAULT_FONT_SIZE;
 	}
-
+    self.navigationController.navigationBarHidden = NO;
 }
 
 -(void)updateCurrentTimeForPlayer:(AVAudioPlayer *)player

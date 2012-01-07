@@ -11,8 +11,9 @@
 #import <MapKit/MKAnnotation.h>
 #import <MapKit/MKReverseGeocoder.h>
 #import "MapViewCommonController.h"
+#import "NoteViewController.h"
 
-@interface PadMapViewController : MapViewCommonController { 
+@interface PadMapViewController : MapViewCommonController <ChangeCategory>{ 
     // Toobar support   
     UIBarButtonItem             *categoryBar;
     UIBarButtonItem             *searchBar;

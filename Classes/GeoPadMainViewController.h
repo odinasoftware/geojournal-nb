@@ -11,10 +11,12 @@
 #import "ShowDisplayOptionsView.h"
 
 @interface GeoPadMainViewController : UINavigationController <ChangeDisplayViewDelegate> {
-    UINavigationBar     *navBar;
+    UINavigationBar         *navBar;
+    UIPopoverController     *displayOptionPopOver;
 }
 
 @property (nonatomic, assign)   IBOutlet    UINavigationBar *navBar;
+@property (nonatomic, retain)   UIPopoverController         *displayOptionPopOver;
 
 - (IBAction)showCategoryOptions:(id)sender;
 - (IBAction)displayShowOptions:(id)sender;
