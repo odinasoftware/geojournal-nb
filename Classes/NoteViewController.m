@@ -5,7 +5,6 @@
 //  Created by Jae Han on 5/23/09.
 //  Copyright 2009 Home. All rights reserved.
 //
-//#define DB_TEST
 #define CLOUD_TEST 1
 #import "NoteViewController.h"
 #import "GeoTakeController.h"
