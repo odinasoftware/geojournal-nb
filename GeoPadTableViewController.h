@@ -62,5 +62,6 @@
 - (void)fetchJournalForCategory:(GCategory*)category; 
 - (void)generateDateArray;
 - (void)showPopover:(id)sender;
+- (void)reloadFetchedResults:(NSNotification*)note;
 
 @end

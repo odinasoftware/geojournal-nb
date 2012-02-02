@@ -21,6 +21,7 @@
 #import "JournalEntryViewController.h"
 #import "GeoSplitTableController.h"
 #import "GeoPadMainViewController.h"
+#import "GeoDatabase.h"
 //#import "SpeakHereController.h"
 
 #define	CONNECT_CONTROLLER_INDEX	2
@@ -92,7 +93,7 @@
         [window addSubview:padMainController.view];
         //[window makeKeyAndVisible];
         //[controller release];
-        return;
+      
     }
     if (([[GeoDefaults sharedGeoDefaultsInstance].defaultInitDone intValue] == 0) ||
         ([[GeoDefaults sharedGeoDefaultsInstance].isPrivate intValue] == 1)) {
@@ -101,12 +102,13 @@
         TRACE("%s, password: %d\n", __func__, _passCode);
         
         // This is first run, set up password
-        [self openPasscodeController];
+        //[self openPasscodeController];
         
     }
     else {
         [self startTabBarView];
     }
+    [GeoDatabase sharedGeoDatabaseInstance];
     //}
 	//CameraThread *thread = [CameraThread sharedCameraControllerInstance];
 	

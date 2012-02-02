@@ -93,6 +93,19 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
 	return c;
 }
 
+// because the app delegate now loads the NSPersistentStore into the NSPersistentStoreCoordinator asynchronously
+// we will see the NSManagedObjectContext set up before any persistent stores are registered
+// we will need to fetch again after the persistent store is loaded
+- (void)reloadFetchedResults:(NSNotification*)note 
+{
+    [self loadFromDatabase];
+    //self.selectedCategory = [self getCategory:@"Daily Journal"];
+    TRACE("%s, selected category: %p\n", __func__, self.selectedCategory);
+    self.selectedCategory = [self getSelectedCategory];
+    [self fetchJournalForCategory:self.selectedCategory];
+    [self.tableView reloadData];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -123,14 +136,12 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
     NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"DefaultCategory" ofType:@"plist"];
 	defaultCategory = [[NSArray alloc] initWithContentsOfFile:thePath];
 	
-    [self loadFromDatabase];
-    //self.selectedCategory = [self getCategory:@"Daily Journal"];
-    TRACE("%s, selected category: %p\n", __func__, self.selectedCategory);
-    self.selectedCategory = [self getSelectedCategory];
-    [self fetchJournalForCategory:self.selectedCategory];
-    [self.tableView reloadData];
+    // observe the app delegate telling us when it's finished asynchronously setting up the persistent store
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(reloadFetchedResults:) 
+                                                 name:@"RefetchAllDatabaseData" 
+                                               object:nil];
     
-   
 }
 
 - (void)viewDidUnload
@@ -450,13 +461,30 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
 	imageLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPath:journal.picture];
 	if (imageLink != nil) {
 		NSString *thumb = getThumbnailFilename(imageLink);
+        // TODO: we will have to decide that this can be fetched from cloud. 
+        // how do i know it's coming from the cloud. 
 		if ([[NSFileManager defaultManager] fileExistsAtPath:thumb] == YES) {
 			imageLink = thumb;
 		}
 		else {
 			[thumb release];
 			thumb = getThumbnailOldFilename(imageLink);
-			imageLink = thumb;
+            if ([[NSFileManager defaultManager] fileExistsAtPath:thumb] == YES) {
+                imageLink = thumb;
+            }
+            /*
+            else {
+                // Look for this file from the cloud
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+                {
+                    
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        NSLog(@"asynchronously added persistent store!");
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
+                    });
+                });
+            }
+             */
 		}
 		[imageLink retain];
 		[thumb release];

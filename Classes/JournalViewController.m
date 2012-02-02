@@ -280,6 +280,49 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 }
 #endif
 
+- (void)reloadFetchedResults:(NSNotification*)note 
+{
+    
+    [self loadFromDatabase];
+#ifdef CLOUD_TEST
+    [self enumerateFilesAndSync];
+#endif
+    [self setNormalButtons];
+    [self initCategoryButtons];
+    [self showSelectedButton];
+#ifdef DB_TEST
+    [self insertTestDBEntities];
+#endif	
+    // Init scroll view
+    [self setScrollViewSize];
+    
+    self.tabBarController.tabBar.selectedItem.title = @"Journal";
+    self.navigationItem.title = nil;
+    [self.buttonFrame setExclusiveTouch:YES];
+    self.buttonFrame.noteDelegate = self;
+    
+    
+    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    self.navigationItem.title = selectedCategory.name;
+    //self.categoryLabel.text = selectedCategory.name;
+    
+    //self.tabBarController.tabBar.selectedItem.title = @"Journal";
+    
+    TRACE("%s, %p\n", __func__, self);
+    
+    //UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(openTakeJournal:)];
+    
+    //self.navigationItem.rightBarButtonItem = composeButton;
+    //[composeButton release];	
+    
+    self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:0.0 green:0.4667 blue:0.6078 alpha:1.0];
+    
+    [self fetchJournalForCategory:self.selectedCategory];
+    [self.tableView reloadData];
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -302,68 +345,12 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	defaultCategory = [[NSArray alloc] initWithContentsOfFile:thePath];
 	
 	//self.addCategoryController = nil;
-	
-	[self loadFromDatabase];
-#ifdef CLOUD_TEST
-    [self enumerateFilesAndSync];
-#endif
-	[self setNormalButtons];
-	[self initCategoryButtons];
-	[self showSelectedButton];
-#ifdef DB_TEST
-	[self insertTestDBEntities];
-#endif	
-	// Init scroll view
-	[self setScrollViewSize];
+    // observe the app delegate telling us when it's finished asynchronously setting up the persistent store
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(reloadFetchedResults:) 
+                                                 name:@"RefetchAllDatabaseData" 
+                                               object:nil];
 
-	self.tabBarController.tabBar.selectedItem.title = @"Journal";
-	self.navigationItem.title = nil;
-	[self.buttonFrame setExclusiveTouch:YES];
-	self.buttonFrame.noteDelegate = self;
-	
-	
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
-	
-	self.navigationItem.title = selectedCategory.name;
-	//self.categoryLabel.text = selectedCategory.name;
-
-	//self.tabBarController.tabBar.selectedItem.title = @"Journal";
-
-	TRACE("%s, %p\n", __func__, self);
-	
-	//UIBarButtonItem *composeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(openTakeJournal:)];
-	
-	//self.navigationItem.rightBarButtonItem = composeButton;
-	//[composeButton release];	
-	
-	self.navigationController.navigationBar.tintColor = [UIColor colorWithRed:0.0 green:0.4667 blue:0.6078 alpha:1.0];
-	
-	[self fetchJournalForCategory:self.selectedCategory];
-	[self.tableView reloadData];
-	
-#ifdef BANNDER_AD
-	self.bannerAd = [QWAdView adViewWithType:QWAdTypeBanner 
-								 publisherID:PUBLISHER_ID 
-									  siteID:SITE_ID 
-                     //[delegate selectedPlacement],
-                     //[delegate selectedSection],
-								 orientation:UIInterfaceOrientationPortrait 
-									delegate:self];
-	[self.bannerAd setBackgroundColor:[UIColor blackColor]];
-	self.bannerAd.textColor = [UIColor whiteColor];
-	self.bannerAd.displayMode = QWDisplayModeAged;
-	self.bannerAd.adInterval = 10.0;
-	//self.bannerAd.placement = QWPlacementBottom;
-	CGRect newFrame = self.bannerAd.frame;
-	newFrame.origin = CGPointMake(0, -20);
-	self.bannerAd.frame = newFrame;
-	
-	[self.view addSubview:self.bannerAd];
-	
-	[self.bannerAd displayNewAd];
-#endif
-	
 }
 
 - (void)generateDateArray

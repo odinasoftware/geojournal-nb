@@ -64,36 +64,6 @@ void remove_file(NSString *file)
 	pthread_create(&thread, nil, (void*)(remove_file_in_thread), (void*)file);
 }
 
-// Workaround on iOS seed 6.  Do not ship this in production code.
-// In iOS seed 6, if you call either stringByResolvingSymlinksInPath or 
-// stringByStandardizingPath on a path descended from your container, you'll 
-// never be able to use the result to successfully perform a coordinated read.
-@implementation NSString (seed6_workaround_9966107)
-
-#warning "Seed 6 Workaround!  Do not ship this in production code!"
-
-- (NSString *)stringByStandardizingPath {
-    
-    NSString* result = [self _stringByStandardizingPathUsingCache:NO];
-    if ([result hasPrefix:@"/var"]) {
-        result = [@"/private" stringByAppendingString:result];
-    }
-    TRACE("%s, %s\n", __func__, [result UTF8String]);
-    return result;
-}
-
-- (NSString *)stringByResolvingSymlinksInPath {
-    
-    NSString* result =  [self _stringByResolvingSymlinksInPathUsingCache:NO];
-    if ([result hasPrefix:@"/var"]) {
-        result = [@"/private" stringByAppendingString:result];
-    }
-    TRACE("%s, %s\n", __func__, [result UTF8String]);
-    return result;
-}
-
-@end
-
 @implementation GeoCloudDocument
 
 /*
@@ -158,6 +128,7 @@ void remove_file(NSString *file)
 @synthesize managedDocument;
 @synthesize metaQuery;
 @synthesize ubiquitousQuery=ubiquitousQuery__;
+@synthesize managedObjectContext;
 
 + (GeoDatabase*)sharedGeoDatabaseInstance
 {
@@ -185,6 +156,27 @@ void remove_file(NSString *file)
 	self = [super init];
 	if (self) {
 		journalDict = [[NSMutableDictionary alloc] init];
+        self.managedObjectContext = [self managedObjectContextInstance];
+        /*
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSError *error = nil;
+            UIDocument *doc = [[UIDocument alloc] initWithFileURL:[NSURL fileURLWithPath:[GeoDefaults sharedGeoDefaultsInstance].geoDocumentPath isDirectory:YES]];
+            NSFileManager *fileManager = [NSFileManager defaultManager];
+            
+            NSURL *cloudURL = [fileManager URLForUbiquityContainerIdentifier:nil];
+            NSString* cloudContent = [[cloudURL path] stringByAppendingPathComponent:@"GeoJournal"];
+            TRACE("%s, %s, %s\n", __func__, [[cloudURL absoluteString] UTF8String], [cloudContent UTF8String]);
+            [fileManager setUbiquitous:YES itemAtURL:doc.fileURL destinationURL:[NSURL fileURLWithPath:cloudContent] error:&error];
+            if (error) {
+                NSLog(@"%@", error);
+            }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                TRACE("%s, folder sync done!\n", __func__);
+                //[[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
+            });
+        });
+         */
 	}
 	
 	return self;
@@ -293,7 +285,7 @@ void remove_file(NSString *file)
  Returns the managed object context for the application.
  If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
  */
-- (NSManagedObjectContext *) managedObjectContext {
+- (NSManagedObjectContext *) managedObjectContextInstance {
 	TRACE_HERE;
     if (managedObjectContext__ != nil) {
         return managedObjectContext__;
@@ -323,89 +315,6 @@ void remove_file(NSString *file)
     }
 
     return managedObjectContext__;
-    
-#if 0
-    /*
-    storeURL = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
-                                               stringByAppendingPathComponent: @"GeoJournal.sqlite"]];
-    NSURL *cloudURL = [[[[NSFileManager defaultManager] URLForUbiquityContainerIdentifier:UBIQUITY_CONTAINER_URL] URLByAppendingPathComponent:@"Documents"] 
-                       URLByAppendingPathComponent:@"GeoJournal.sqlite"];
-    
-	TRACE("%s, db: %s\n", __func__, [[storeURL absoluteString] UTF8String]);
-    TRACE("%s, cloud URL: %s\n", __func__, [[cloudURL absoluteString] UTF8String]);
-	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-							 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
-							 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, 
-                             cloudURL, NSPersistentStoreUbiquitousContentURLKey,
-                             @"GeoJournal.sqlite", NSPersistentStoreUbiquitousContentNameKey, nil];
-    
-    // Creating managed document
-    // ??? this managed document is somehow connected to the file in the local storage.
-    // ??? why does it need to have the option.
-    
-    GeoCloudDocument *doc = [[GeoCloudDocument alloc] initWithFileURL:storeURL];
-    doc.persistentStoreOptions = options;
-    
-        
-    //[doc.managedObjectContext performBlockAndWait:^() {
-    //    NSLog(@"managed object created."); 
-    //}];
-    //sleep(10);
-    
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:[storeURL path]]) {
-        [doc openWithCompletionHandler:^(BOOL success){
-            if (!success) {
-                // Handle the error.
-                NSLog(@"failed in opening.");
-            }
-        }];
-    }
-    else {
-        [doc saveToURL:storeURL forSaveOperation:UIDocumentSaveForCreating completionHandler:^(BOOL success){
-            if (!success) {
-                // Handle the error.
-                NSLog(@"failed in save for creating.");
-            }
-        }];
-    }
-    
-    NSError *error=nil;
-    
-    if (![doc configurePersistentStoreCoordinatorForURL:storeURL ofType:NSSQLiteStoreType modelConfiguration:nil storeOptions:options error:&error]) {
-        NSLog(@"Error in persistent store: %@", error);
-        return nil;
-    }
-
-    managedObjectContext = doc.managedObjectContext;
-    managedDocument = doc;
-
-    TRACE("%s, filetype: %s, %s\n", __func__, [doc.fileType UTF8String], [[doc.fileURL absoluteString] UTF8String]);
-    
-    // Look for this is in the cloud or not
-    NSMetadataQuery *query = [[NSMetadataQuery alloc] init];
-    //[self setDocumentQuery:query];
-    [query setSearchScopes:[NSArray arrayWithObject:NSMetadataQueryUbiquitousDocumentsScope]];
-    [query setPredicate:[NSPredicate predicateWithFormat:@"%K == %@", NSMetadataItemFSNameKey, @"GeoJournal.sqlite"]];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(queryDidFinishGathering:) name:NSMetadataQueryDidFinishGatheringNotification object:query];
-    [query startQuery];
-    
-    metaQuery = query;
-    [query release];
-    
-
-    
-    //[[NSFileManager defaultManager] setUbiquitous:YES itemAtURL:storeURL destinationURL:cloudURL error:&error];
-    //if (error) {
-    //    NSLog(@"%s, %@", __func__, [error description]);
-    //}
-  
-    [doc release];
-    
-    //[self setupCloud];
-     */
-#endif
-    
 }
 
 // this takes the NSPersistentStoreDidImportUbiquitousContentChangesNotification
@@ -600,28 +509,14 @@ void remove_file(NSString *file)
     // do this asynchronously since if this is the first time this particular device is syncing with preexisting
     // iCloud content it may take a long long time to download
     // CTODO: this has to be blocked call???
-    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
     {
         NSFileManager *fileManager = [NSFileManager defaultManager];
-        
-        // we're not going to illustrate this today
-#if 0
-        /*
-         Set up the store.
-         For the sake of illustration, provide a pre-populated default store.
-         */
-        // If the expected store doesn't exist, copy the default store.
-        if (![fileManager fileExistsAtPath:storePath]) {
-            if (defaultStorePath) {
-                //			[fileManager copyItemAtPath:defaultStorePath toPath:storePath error:NULL];
-            }
-        }
-#endif
-        
+                
         //NSURL *storeUrl = [NSURL fileURLWithPath:storePath];
         // this needs to match the entitlements and provisioning profile
         NSURL *cloudURL = [fileManager URLForUbiquityContainerIdentifier:nil];
-        NSString* coreDataCloudContent = [[cloudURL path] stringByAppendingPathComponent:@"GeoJournal"];
+        NSString* coreDataCloudContent = [[cloudURL path] stringByAppendingPathComponent:@"GeoJournalDB"];
         
         TRACE("%s, %s, %s\n", __func__, [[cloudURL absoluteString] UTF8String], [coreDataCloudContent UTF8String]);
         TRACE("%s\n", [[storeUrl absoluteString] UTF8String]);
@@ -680,7 +575,7 @@ void remove_file(NSString *file)
             }   
         }
     }
-    //);
+    );
 
 	TRACE("%s, returning, db: %s\n", __func__, [[storeUrl absoluteString] UTF8String]);
 #ifdef ORIGINAL_CODE
@@ -699,72 +594,6 @@ void remove_file(NSString *file)
         
     return persistentStoreCoordinator__;
 }
-
-// Needed on iOS seed 3 as a workaround for known issues, but not Mac OS X ---------------------------------------------------
-static dispatch_queue_t polling_queue;
-
-- (void)workaround_weakpackages_9653904:(NSDictionary*)options {
-#if 1
-    TRACE("%s\n", __func__);
-    NSURL* cloudURL = [options objectForKey:NSPersistentStoreUbiquitousContentURLKey];
-    NSString* name = [options objectForKey:NSPersistentStoreUbiquitousContentNameKey];
-    NSString* cloudPath = [cloudURL path];
-    
-    NSMetadataQuery *query = [[NSMetadataQuery alloc] init];
-    [query setSearchScopes:[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDataScope, NSMetadataQueryUbiquitousDocumentsScope, nil]];
-    [query setPredicate:[NSPredicate predicateWithFormat:@"kMDItemFSName == '*'"]]; // Just get everything.
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pollnewfiles_weakpackages:) name:NSMetadataQueryGatheringProgressNotification object:query];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pollnewfiles_weakpackages:) name:NSMetadataQueryDidUpdateNotification object:query];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pollnewfiles_weakpackages:) name:NSMetadataQueryDidFinishGatheringNotification object:query];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pollnewfiles_weakpackages:) name:NSMetadataQueryDidStartGatheringNotification object:query];
-    
-    // May also register for NSMetadataQueryDidFinishGatheringNotification if you want to update any user interface items when the initial result-gathering phase of the query is complete.
-    
-    self.ubiquitousQuery = query;
-    
-    polling_queue = dispatch_queue_create("workaround_weakpackages_9653904", DISPATCH_QUEUE_SERIAL);
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        if (![query startQuery]) {
-            NSLog(@"NSMetadataQuery failed to start!");
-        } else {
-            NSLog(@"started NSMetadataQuery!");
-        };
-    });
-    
-#endif
-}
-
-- (void)pollnewfiles_weakpackages:(NSNotification*)note {
-    
-    TRACE("%s, note: %s\n", __func__, [[note name] UTF8String]);
-    [self.ubiquitousQuery disableUpdates];
-    NSArray *results = [self.ubiquitousQuery results];
-    NSFileManager* fm = [NSFileManager defaultManager];
-    NSFileCoordinator* fc = [[NSFileCoordinator alloc] initWithFilePresenter:nil];
-    
-    for (NSMetadataItem *item in results) {
-        NSURL* itemurl = [item valueForAttribute:NSMetadataItemURLKey];
-        
-        NSString* filepath = [itemurl path];
-        //TRACE("%s, filepath: %s\n", __func__, [filepath UTF8String]);
-        if (![fm fileExistsAtPath:filepath]) {
-            dispatch_async(polling_queue, ^(void) {
-                NSLog(@"coordinated reading of URL '%@'", itemurl);
-                [fc coordinateReadingItemAtURL:itemurl options:0 error:nil byAccessor:^(NSURL* url) { 
-                    TRACE("%s, %s\n", __func__, [[url absoluteString] UTF8String]);
-                }];
-            });
-        }
-    }
-    
-    [fc release];
-    [self.ubiquitousQuery enableUpdates];
-    
-}
-// Needed on iOS seed 3 as a workaround for known issues, but not Mac OS X ---------------------------------------------------
-
 
 #pragma mark MAIL RECIPIENT
 - (NSMutableArray*)mailRecipientArray

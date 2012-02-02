@@ -324,7 +324,6 @@ int getNumberFromIndex(int i)
 	return geoDocumentPath;
 }
 
-
 - (NSString*)getUniqueFilenameWithExt:(NSString*)ext 
 {
 	NSString *e = (ext==nil?GEO_FILE_EXT:ext);
