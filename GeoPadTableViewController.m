@@ -136,12 +136,7 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
     NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"DefaultCategory" ofType:@"plist"];
 	defaultCategory = [[NSArray alloc] initWithContentsOfFile:thePath];
 	
-    // observe the app delegate telling us when it's finished asynchronously setting up the persistent store
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-                                             selector:@selector(reloadFetchedResults:) 
-                                                 name:@"RefetchAllDatabaseData" 
-                                               object:nil];
-    
+    [self reloadFetchedResults:nil];
 }
 
 - (void)viewDidUnload

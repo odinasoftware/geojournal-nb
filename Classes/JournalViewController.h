@@ -60,6 +60,7 @@
 	GeoTakeController				*journalController;
 	NoteViewController				*editCategoryController;
 	BOOL							picasaSyncing;
+    //NSMetadataQuery                 *metadataSearch;
 	//CFURLRef						soundFileURLRef;
 	//SystemSoundID					soundFileObject;
 #ifdef BANNER_AD
@@ -95,6 +96,7 @@
 @property (nonatomic, retain)   UIView                      *buttonView;
 @property (nonatomic, retain)	GeoTakeController			*journalController;
 @property (nonatomic, retain)	JournalEntryViewController	*_journalView;
+//@property (nonatomic, retain)   NSMetadataQuery             *metadataSearch;
 
 #ifdef BANNER_AD
 @property (retain) QWAdView	*bannerAd;

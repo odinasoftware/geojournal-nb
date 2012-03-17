@@ -9,6 +9,10 @@
 #import <Foundation/Foundation.h>
 
 //#define	NO_ACTIVE_CATEGORY	@"None"
+//
+#define GEO_FOLDER_NAME				@"GeoJournal"
+#define GEO_FILE_EXT				@".geo"
+
 @class KeychainItemWrapper;
 
 @interface GeoDefaults : NSObject {
@@ -40,6 +44,7 @@
 	BOOL					levelRestored;
     NSNumber                *isPrivate;
     KeychainItemWrapper     *passwordItem;
+    NSURL                   *cloudContainer;
 	
 }
 
@@ -70,6 +75,7 @@
 @property (nonatomic)			BOOL		levelRestored;
 @property (nonatomic, retain)   NSNumber    *isPrivate;
 @property (nonatomic, retain)   KeychainItemWrapper       *passwordItem;
+@property (nonatomic, retain)   NSURL       *cloudContainer;
 
 @property (nonatomic) NSInteger	firstLevel;
 @property (nonatomic) NSInteger	secondLevel;
@@ -89,5 +95,8 @@
 - (NSString*)getAbsoluteDocPath:(NSString*)lastComponent;
 - (NSInteger)getPasscode;
 - (void)setPasscode:(NSInteger)passcode;
+- (NSURL*)getCloudContainer;
+- (NSString*)getCloudGeoJournalContainer;
+- (NSString*)getCloudURL:(NSString*)lastComponent;
 
 @end

@@ -35,10 +35,6 @@
 #define kDefaultInitDoneKey				@"DEFAULT_INIT_DONE"
 #define kIsPriviateKey                  @"IS_PRIVATE"
 
-//
-#define GEO_FOLDER_NAME				@"GeoJournal"
-#define GEO_FILE_EXT				@".geo"
-
 static GeoDefaults	*sharedGeoDefaults = nil;
 
 @implementation GeoDefaults
@@ -70,6 +66,7 @@ static GeoDefaults	*sharedGeoDefaults = nil;
 @synthesize defaultInitDone;
 @synthesize isPrivate;
 @synthesize passwordItem;
+@synthesize cloudContainer;
 
 int getNumberFromIndex(int i)
 {
@@ -146,6 +143,7 @@ int getNumberFromIndex(int i)
 	[defaultInitDone release];
     [isPrivate release];
     [passwordItem release];
+    [cloudContainer release];
 
 	[super dealloc];
 }
@@ -348,6 +346,33 @@ int getNumberFromIndex(int i)
 	return path;
 }
 
+- (NSURL*)getCloudContainer
+{
+    if (cloudContainer == nil) {
+        fileManager = [NSFileManager defaultManager];
+        
+        //NSURL *storeUrl = [NSURL fileURLWithPath:storePath];
+        // this needs to match the entitlements and provisioning profile
+        self.cloudContainer = [fileManager URLForUbiquityContainerIdentifier:nil];
+    }
+    return self.cloudContainer;
+}
+
+- (NSString*)getCloudGeoJournalContainer
+{
+    NSString* cloudContent = [[[self getCloudContainer] path] stringByAppendingPathComponent:@"GeoJournal"];
+        
+    return cloudContent;
+}
+
+- (NSString*)getCloudURL:(NSString*)lastComponent
+{
+    NSString *url;
+    
+    url = [[self getCloudGeoJournalContainer] stringByAppendingPathComponent:lastComponent];
+    
+    return url;
+}
 #pragma mark LEVEL SETTINGS
 
 - (NSInteger)firstLevel 

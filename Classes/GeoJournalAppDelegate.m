@@ -23,6 +23,7 @@
 #import "GeoPadMainViewController.h"
 #import "GeoDatabase.h"
 //#import "SpeakHereController.h"
+#import "CloudService.h"
 
 #define	CONNECT_CONTROLLER_INDEX	2
 
@@ -109,6 +110,7 @@
         [self startTabBarView];
     }
     [GeoDatabase sharedGeoDatabaseInstance];
+    //[[CloudService sharedCloudServiceInstance] start];
     //}
 	//CameraThread *thread = [CameraThread sharedCameraControllerInstance];
 	

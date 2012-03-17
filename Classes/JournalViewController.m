@@ -5,7 +5,7 @@
 //  Created by Jae Han on 7/10/09.
 //  Copyright 2009 Home. All rights reserved.
 //
-#define CLOUD_TEST 1
+//#define CLOUD_TEST 1
 //#define DB_TEST 1
 #import "JournalViewController.h"
 #import "GCategory.h"
@@ -22,6 +22,7 @@
 #import "GeoJournalAppDelegate.h"
 #import "HorizontalViewController.h"
 #import "DateIndex.h"
+#import "CloudService.h"
 
 #ifdef BANNDER_AD
 #import "QWAd.h"
@@ -97,6 +98,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 @synthesize listImage;
 @synthesize buttonView;
 @synthesize backgroundView;
+//@synthesize metadataSearch;
 
 /*
 - (id)initWithStyle:(UITableViewStyle)style {
@@ -346,11 +348,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	
 	//self.addCategoryController = nil;
     // observe the app delegate telling us when it's finished asynchronously setting up the persistent store
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-                                             selector:@selector(reloadFetchedResults:) 
-                                                 name:@"RefetchAllDatabaseData" 
-                                               object:nil];
-
+    [self reloadFetchedResults:nil];
 }
 
 - (void)generateDateArray
@@ -1130,6 +1128,85 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
     return count;
 }
 
+// Method invoked when notifications of content batches have been received
+- (void)queryDidUpdate:sender;
+{
+    NSLog(@"A data batch has been received");
+}
+
+
+// Method invoked when the initial query gathering is completed
+- (void)initalGatherComplete:sender;
+{
+    CloudImageObject *object = (CloudImageObject *)[(NSNotification*)sender object];
+    
+    TRACE("%s, %d\n", __func__, [object.query resultCount]);
+    
+    // Stop the query, the single pass is completed.
+    [object.query stopQuery];
+    
+    if ([object.query resultCount] == 0) {
+        // No file exists. If local exists, then upload it.
+        // Otherwise, there is no image. 
+        
+    }
+    // Process the content. In this case the application simply
+    // iterates over the content, printing the display name key for
+    // each image
+    NSInteger i=0;
+    for (i=0; i < [object.query resultCount]; i++) {
+        NSMetadataItem *theResult = [object.query resultAtIndex:i];
+        NSString *displayName = [theResult valueForAttribute:(NSString *)NSMetadataItemDisplayNameKey];
+        TRACE("result at %d - %s\n", i, [displayName UTF8String]);
+    }
+    
+    // Remove the notifications to clean up after ourselves.
+    // Also release the metadataQuery.
+    // When the Query is removed the query results are also lost.
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSMetadataQueryDidUpdateNotification
+                                                  object:sender];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSMetadataQueryDidFinishGatheringNotification
+                                                  object:sender];
+}
+
+
+- (void)searchInCloud:(NSString*)url
+{
+    TRACE("%s, url: %s\n", __func__, [url UTF8String]);
+    NSMetadataQuery *metadataSearch = [[[NSMetadataQuery alloc] init] autorelease];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, url];
+    [metadataSearch setPredicate:predicate];
+    
+    // Register the notifications for batch and completion updates
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(queryDidUpdate:)
+                                                 name:NSMetadataQueryDidUpdateNotification
+                                               object:metadataSearch];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(initalGatherComplete:)
+                                                 name:NSMetadataQueryDidFinishGatheringNotification
+                                               object:metadataSearch];
+    
+    // Set the search scope. In this case it will search the User's home directory
+    // and the iCloud documents area
+    NSArray *searchScopes;
+    searchScopes=[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDocumentsScope,nil];
+    [metadataSearch setSearchScopes:searchScopes];
+    
+    // Configure the sorting of the results so it will order the results by the
+    // display name
+    /*
+    NSSortDescriptor *sortKeys=[[[NSSortDescriptor alloc] initWithKey:(id)kMDItemDisplayName
+                                                            ascending:YES] autorelease];
+    [metadataSearch setSortDescriptors:[NSArray arrayWithObject:sortKeys]];
+    */
+    [metadataSearch startQuery];
+    
+}
+
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableview cellForRowAtIndexPath:(NSIndexPath *)indexPath 
@@ -1209,6 +1286,46 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	}
 	
 	imageLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPath:journal.picture];
+    NSString *cloudLink = [[GeoDefaults sharedGeoDefaultsInstance] getCloudURL:journal.picture];
+    
+    TRACE("%s, image: %s\n", __func__, [imageLink UTF8String]);
+    TRACE("clude: %s, %p\n", [cloudLink UTF8String], self);
+    
+    /*
+    // Run cloud search
+    NSMetadataQuery *metadataSearch = [[NSMetadataQuery alloc] init];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, journal.picture];
+    [metadataSearch setPredicate:predicate];
+    
+
+    CloudImageObject *cloudObject = [[[CloudImageObject alloc] init] autorelease];
+    cloudObject.url = journal.picture;
+    cloudObject.image = nil; 
+    cloudObject.query = metadataSearch;
+
+    
+    // Register the notifications for batch and completion updates
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(queryDidUpdate:)
+                                                 name:NSMetadataQueryDidUpdateNotification
+                                               object:cloudObject];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(initalGatherComplete:)
+                                                 name:NSMetadataQueryDidFinishGatheringNotification
+                                               object:cloudObject];
+
+    // Set the search scope. In this case it will search the User's home directory
+    // and the iCloud documents area
+    NSArray *searchScopes;
+    searchScopes=[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDocumentsScope,nil];
+    [metadataSearch setSearchScopes:searchScopes];
+     
+    TRACE("%s, metasearch query: %p\n", __func__, metadataSearch);
+    [metadataSearch startQuery];
+     */
+    
+    //[self searchInCloud:@"*"];
 	if (imageLink != nil) {
 		NSString *thumb = getThumbnailFilename(imageLink);
 		if ([[NSFileManager defaultManager] fileExistsAtPath:thumb] == YES) {

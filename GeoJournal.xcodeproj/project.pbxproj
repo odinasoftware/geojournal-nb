@@ -192,6 +192,8 @@
 		19CB44E610B6331D000C17A5 /* list.png in Resources */ = {isa = PBXBuildFile; fileRef = 19CB44E510B6331D000C17A5 /* list.png */; };
 		19CB51AB145BA344009435D2 /* GeoPadTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19CB51A9145BA344009435D2 /* GeoPadTableViewController.m */; };
 		19CB51AC145BA344009435D2 /* GeoPadTableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19CB51AA145BA344009435D2 /* GeoPadTableViewController.xib */; };
+		19CB561D14EBE900001FC28D /* CloudService.m in Sources */ = {isa = PBXBuildFile; fileRef = 19CB561C14EBE900001FC28D /* CloudService.m */; };
+		19CB562314F95653001FC28D /* CloudFileService.m in Sources */ = {isa = PBXBuildFile; fileRef = 19CB562214F95652001FC28D /* CloudFileService.m */; };
 		19CC4AC0102275B60062CB52 /* HorizontalViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19CC4ABF102275B60062CB52 /* HorizontalViewController.xib */; };
 		19CC4ADA10227B010062CB52 /* HorizontalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19CC4AD910227B010062CB52 /* HorizontalViewController.m */; };
 		19D9437E1024CF76000FCDAA /* HorizontalImageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19D9437D1024CF76000FCDAA /* HorizontalImageViewController.m */; };
@@ -481,6 +483,11 @@
 		19CB51A8145BA344009435D2 /* GeoPadTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeoPadTableViewController.h; path = ../GeoPadTableViewController.h; sourceTree = "<group>"; };
 		19CB51A9145BA344009435D2 /* GeoPadTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeoPadTableViewController.m; path = ../GeoPadTableViewController.m; sourceTree = "<group>"; };
 		19CB51AA145BA344009435D2 /* GeoPadTableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GeoPadTableViewController.xib; sourceTree = "<group>"; };
+		19CB560414E4C1D1001FC28D /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		19CB561B14EBE900001FC28D /* CloudService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudService.h; sourceTree = "<group>"; };
+		19CB561C14EBE900001FC28D /* CloudService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CloudService.m; sourceTree = "<group>"; };
+		19CB562114F95652001FC28D /* CloudFileService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloudFileService.h; sourceTree = "<group>"; };
+		19CB562214F95652001FC28D /* CloudFileService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CloudFileService.m; sourceTree = "<group>"; };
 		19CC4ABF102275B60062CB52 /* HorizontalViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HorizontalViewController.xib; sourceTree = "<group>"; };
 		19CC4AD810227B010062CB52 /* HorizontalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HorizontalViewController.h; sourceTree = "<group>"; };
 		19CC4AD910227B010062CB52 /* HorizontalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = HorizontalViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -828,9 +835,22 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		19CB560B14EBE69D001FC28D /* Cloud */ = {
+			isa = PBXGroup;
+			children = (
+				19CB561B14EBE900001FC28D /* CloudService.h */,
+				19CB561C14EBE900001FC28D /* CloudService.m */,
+				19CB562114F95652001FC28D /* CloudFileService.h */,
+				19CB562214F95652001FC28D /* CloudFileService.m */,
+			);
+			name = Cloud;
+			sourceTree = "<group>";
+		};
 		29B97314FDCFA39411CA2CEA /* GeoJournal */ = {
 			isa = PBXGroup;
 			children = (
+				19CB560B14EBE69D001FC28D /* Cloud */,
+				19CB560414E4C1D1001FC28D /* MobileCoreServices.framework */,
 				19B2171D14A2DD5200339E4F /* Frameworks */,
 				19744DED13C8FDC500D0D6F6 /* iGeoJournal.entitlements */,
 				1989514B12B26DC400DD1FF1 /* FBConnect */,
@@ -1213,6 +1233,8 @@
 				191BCD71149069AF00636580 /* PadMapViewController.m in Sources */,
 				19B2172014A3EBFF00339E4F /* MapViewCommonController.m in Sources */,
 				193233A514C678C300E06B2A /* JournalEntryViewCommon.m in Sources */,
+				19CB561D14EBE900001FC28D /* CloudService.m in Sources */,
+				19CB562314F95653001FC28D /* CloudFileService.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

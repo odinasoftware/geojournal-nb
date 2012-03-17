@@ -17,6 +17,7 @@
 #import "GeoJournalHeaders.h"
 #import "PictureFrame.h"
 #import "Pictures.h"
+#import "GeoDefaults.h"
                                             
 #define UBIQUITY_CONTAINER_URL @"WV3CVJV89H.com.odinasoftware.igeojournal" 
 
@@ -509,13 +510,10 @@ void remove_file(NSString *file)
     // do this asynchronously since if this is the first time this particular device is syncing with preexisting
     // iCloud content it may take a long long time to download
     // CTODO: this has to be blocked call???
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
     {
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-                
-        //NSURL *storeUrl = [NSURL fileURLWithPath:storePath];
-        // this needs to match the entitlements and provisioning profile
-        NSURL *cloudURL = [fileManager URLForUbiquityContainerIdentifier:nil];
+        NSURL *cloudURL = [[GeoDefaults sharedGeoDefaultsInstance] getCloudContainer];
+        
         NSString* coreDataCloudContent = [[cloudURL path] stringByAppendingPathComponent:@"GeoJournalDB"];
         
         TRACE("%s, %s, %s\n", __func__, [[cloudURL absoluteString] UTF8String], [coreDataCloudContent UTF8String]);
@@ -562,6 +560,7 @@ void remove_file(NSString *file)
             });
         }
         else {
+            // TODO: tell users that iCloud is not enabled. 
             NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
                                      [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
                                      [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
@@ -575,7 +574,7 @@ void remove_file(NSString *file)
             }   
         }
     }
-    );
+    //);
 
 	TRACE("%s, returning, db: %s\n", __func__, [[storeUrl absoluteString] UTF8String]);
 #ifdef ORIGINAL_CODE
