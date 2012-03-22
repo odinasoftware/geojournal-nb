@@ -76,14 +76,14 @@ static CloudService *sharedCloudService = nil;
 // Method invoked when the initial query gathering is completed
 - (void)initalGatherComplete:sender;
 {
-    CloudImageObject *object = (CloudImageObject *)[(NSNotification*)sender object];
+    NSMetadataQuery *query = [sender object];
     
-    TRACE("%s, %d\n", __func__, [object.query resultCount]);
+    TRACE("%s, %d\n", __func__, [query resultCount]);
     
     // Stop the query, the single pass is completed.
-    [object.query stopQuery];
+    [query stopQuery];
     
-    if ([object.query resultCount] == 0) {
+    if ([query resultCount] == 0) {
         // No file exists. If local exists, then upload it.
         // Otherwise, there is no image. 
         
@@ -92,8 +92,8 @@ static CloudService *sharedCloudService = nil;
     // iterates over the content, printing the display name key for
     // each image
     NSInteger i=0;
-    for (i=0; i < [object.query resultCount]; i++) {
-        NSMetadataItem *theResult = [object.query resultAtIndex:i];
+    for (i=0; i < [query resultCount]; i++) {
+        NSMetadataItem *theResult = [query resultAtIndex:i];
         NSString *displayName = [theResult valueForAttribute:(NSString *)NSMetadataItemDisplayNameKey];
         TRACE("result at %d - %s\n", i, [displayName UTF8String]);
     }
@@ -103,35 +103,31 @@ static CloudService *sharedCloudService = nil;
     // When the Query is removed the query results are also lost.
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:NSMetadataQueryDidUpdateNotification
-                                                  object:sender];
+                                                  object:query];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:NSMetadataQueryDidFinishGatheringNotification
-                                                  object:sender];
+                                                  object:query];
+    [query release];
 }
 
 
 - (void)searchInCloud:(NSString*)url
 {
     TRACE("%s, url: %s\n", __func__, [url UTF8String]);
-    metadataSearch = [[[NSMetadataQuery alloc] init] autorelease];
+    NSMetadataQuery *metadataSearch = [[NSMetadataQuery alloc] init];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, url];
     [metadataSearch setPredicate:predicate];
     
-    CloudImageObject *cloudObject = [[[CloudImageObject alloc] init] autorelease];
-    cloudObject.url = url;
-    cloudObject.image = nil; 
-    cloudObject.query = metadataSearch;
-
     // Register the notifications for batch and completion updates
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(queryDidUpdate:)
                                                  name:NSMetadataQueryDidUpdateNotification
-                                               object:cloudObject];
+                                               object:metadataSearch];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(initalGatherComplete:)
                                                  name:NSMetadataQueryDidFinishGatheringNotification
-                                               object:cloudObject];
+                                               object:metadataSearch];
     
     // Set the search scope. In this case it will search the User's home directory
     // and the iCloud documents area
@@ -178,7 +174,7 @@ static CloudService *sharedCloudService = nil;
      }
      */
     
-    [self searchInCloud:@"1.png"];
+    [self searchInCloud:@"*"];
     for (;;) {
         /*
         NSString *docsDir = cloudFileService.documentDirectory;
@@ -195,7 +191,7 @@ static CloudService *sharedCloudService = nil;
         [localFileManager release];
         */
     
-        TRACE("metadata search: %d, gathering: %d, stopped: %d, count: %d\n", [metadataSearch isStarted], [metadataSearch isGathering], [metadataSearch isStopped], [metadataSearch resultCount]);
+        //("metadata search: %d, gathering: %d, stopped: %d, count: %d\n", [metadataSearch isStarted], [metadataSearch isGathering], [metadataSearch isStopped], [metadataSearch resultCount]);
         sleep(3);
     }
     

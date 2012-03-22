@@ -29,7 +29,7 @@ typedef enum {CLOUE_NONE, CLOUE_CHECKING, CLOUD_DOWNLOADING, CLOUD_UPLOADING} CL
     NSMutableArray          *urlList;
     NSMutableDictionary     *contextDict;
     NSMutableDictionary     *urlDict;
-    NSMetadataQuery         *metadataSearch;
+    //NSMetadataQuery         *metadataSearch;
 }
 
 + (CloudService*)sharedCloudServiceInstance;

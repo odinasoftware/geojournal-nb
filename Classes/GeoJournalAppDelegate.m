@@ -24,6 +24,7 @@
 #import "GeoDatabase.h"
 //#import "SpeakHereController.h"
 #import "CloudService.h"
+#import "CloudFileService.h"
 
 #define	CONNECT_CONTROLLER_INDEX	2
 
@@ -59,6 +60,94 @@
     [window addSubview:[_passNavController view]];
     [passcodeViewController release];
     //[_passNavController release];
+}
+
+// Method invoked when notifications of content batches have been received
+- (void)queryDidUpdate:sender;
+{
+    NSLog(@"A data batch has been received");
+}
+
+
+// Method invoked when the initial query gathering is completed
+- (void)initalGatherComplete:sender;
+{
+    NSMetadataQuery *query = [sender object];
+    
+    TRACE("%s, %d\n", __func__, [query resultCount]);
+    
+    // Stop the query, the single pass is completed.
+    [query stopQuery];
+    
+    if ([query resultCount] == 0) {
+        // No file exists. If local exists, then upload it.
+        // Otherwise, there is no image. 
+        
+    }
+    // Process the content. In this case the application simply
+    // iterates over the content, printing the display name key for
+    // each image
+    NSInteger i=0;
+    for (i=0; i < [query resultCount]; i++) {
+        NSMetadataItem *theResult = [query resultAtIndex:i];
+        NSURL *fileURL = [theResult valueForAttribute:(NSString *)NSMetadataItemURLKey];
+        NSNumber *aBool = nil;
+        NSError *error = nil;
+        [fileURL getResourceValue:&aBool forKey:NSURLIsHiddenKey error:&error];
+        if (aBool && ![aBool boolValue]) {
+            TRACE("result at %d - %s\n", i, [[fileURL absoluteString] UTF8String]);
+        }
+    }
+    
+    // Remove the notifications to clean up after ourselves.
+    // Also release the metadataQuery.
+    // When the Query is removed the query results are also lost.
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSMetadataQueryDidUpdateNotification
+                                                  object:query];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSMetadataQueryDidFinishGatheringNotification
+                                                  object:query];
+    [query release];
+}
+
+
+- (void)searchInCloud:(NSString*)url
+{
+    TRACE("%s, url: %s, %s\n", __func__, [url UTF8String], [NSMetadataQueryUbiquitousDataScope UTF8String]);
+    NSMetadataQuery *metadataSearch = [[NSMetadataQuery alloc] init];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, url];
+    [metadataSearch setPredicate:predicate];
+    
+    // Register the notifications for batch and completion updates
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(queryDidUpdate:)
+                                                 name:NSMetadataQueryDidUpdateNotification
+                                               object:metadataSearch];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(initalGatherComplete:)
+                                                 name:NSMetadataQueryDidFinishGatheringNotification
+                                               object:metadataSearch];
+    
+    // Set the search scope. In this case it will search the User's home directory
+    // and the iCloud documents area
+    NSArray *searchScopes;
+    searchScopes=[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDataScope, nil];
+    [metadataSearch setSearchScopes:searchScopes];
+    
+    // Configure the sorting of the results so it will order the results by the
+    // display name
+    /*
+     NSSortDescriptor *sortKeys=[[[NSSortDescriptor alloc] initWithKey:(id)kMDItemDisplayName
+     ascending:YES] autorelease];
+     [metadataSearch setSortDescriptors:[NSArray arrayWithObject:sortKeys]];
+     */
+    TRACE("metadata search: %d, gathering: %d, stopped: %d, count: %d\n", [metadataSearch isStarted], [metadataSearch isGathering], [metadataSearch isStopped], [metadataSearch resultCount]);
+    if ([metadataSearch startQuery] == NO) {
+        TRACE("%s, query failed.\n", __func__);
+    }
+    
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
@@ -110,6 +199,78 @@
         [self startTabBarView];
     }
     [GeoDatabase sharedGeoDatabaseInstance];
+
+#if 0
+    dispatch_async(dispatch_get_current_queue(), ^{
+        /*
+        NSMetadataQuery *metadataSearch = [[NSMetadataQuery alloc] init];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, @"*"];
+        [metadataSearch setPredicate:predicate];
+        
+        // Register the notifications for batch and completion updates
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(queryDidUpdate:)
+                                                     name:NSMetadataQueryDidUpdateNotification
+                                                   object:metadataSearch];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(initalGatherComplete:)
+                                                     name:NSMetadataQueryDidFinishGatheringNotification
+                                                   object:metadataSearch];
+        
+        // Set the search scope. In this case it will search the User's home directory
+        // and the iCloud documents area
+        NSArray *searchScopes;
+        searchScopes=[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDocumentsScope,nil];
+        [metadataSearch setSearchScopes:searchScopes];
+        
+        TRACE("%s, metasearch query: %p\n", __func__, metadataSearch);
+        [metadataSearch startQuery];
+         */
+        //[self searchInCloud:@"*"];
+        
+        NSFileManager *fm = [NSFileManager defaultManager];
+        NSError *error = nil;
+        CloudFileService *service = [[CloudFileService alloc] init];
+        NSURL *u = [NSURL fileURLWithPath:service.coreDataCloudContent isDirectory:YES];
+        NSLog(@"url: %@, %@", u, service.coreDataCloudContent);
+        NSArray *files = [fm contentsOfDirectoryAtURL:u
+                                                       includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsRegularFileKey, nil] 
+                                                                          options:NSDirectoryEnumerationSkipsHiddenFiles 
+                                                                            error:&error];
+        TRACE("%s, file count: %d\n", __func__, [files count]);
+
+        NSNumber *aBool = nil;
+        NSNumber *isDownloaded = nil;
+        NSString *fileName = nil;
+        for (NSURL *f in files) {
+            [f getResourceValue:&aBool forKey:NSURLIsDirectoryKey error:&error];
+            if (aBool && ![aBool boolValue]) {
+                [f getResourceValue:&isDownloaded forKey:NSURLUbiquitousItemIsDownloadedKey error:&error];
+                [f getResourceValue:&fileName forKey:NSURLNameKey error:&error];
+                NSLog(@"file: %@, downloaded: %d, %@", f, [isDownloaded boolValue], fileName);
+                
+                if (isDownloaded != nil) {
+                    if (![isDownloaded boolValue]) {
+                        if ([[NSFileManager defaultManager] startDownloadingUbiquitousItemAtURL:f error:&error] == NO) {
+                            NSLog(@"faile to download: %@", error);
+                        }
+                        
+                    }
+                    else {
+                        NSString *localFile = [service.documentDirectory stringByAppendingPathComponent:fileName];
+                        TRACE("%s\n", [localFile UTF8String]);
+                        if ([fm copyItemAtURL:f toURL:[NSURL fileURLWithPath:localFile] error:&error] == NO) {
+                            NSLog(@"fail to copy: %@", error);
+                        }
+                    }
+                }
+            }
+        }
+         
+        
+    });
+#endif
     //[[CloudService sharedCloudServiceInstance] start];
     //}
 	//CameraThread *thread = [CameraThread sharedCameraControllerInstance];
