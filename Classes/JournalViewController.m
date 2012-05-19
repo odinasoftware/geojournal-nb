@@ -1324,12 +1324,24 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 			imageLink = thumb;
 		}
 		else {
-			[thumb release];
-			thumb = getThumbnailOldFilename(imageLink);
+            NSString *oldThumb = nil;
+			
+			oldThumb = getThumbnailOldFilename(imageLink);
+            if ([[NSFileManager defaultManager] fileExistsAtPath:oldThumb] == YES) {
+                // move this to the new file name
+                NSError *error = nil;
+                TRACE("%s, moving the old one to new: %s\n", __func__, [oldThumb UTF8String]);
+                if ([[NSFileManager defaultManager] moveItemAtURL:[NSURL fileURLWithPath:oldThumb] toURL:[NSURL fileURLWithPath:thumb] error:&error] == NO) {
+                    NSLog(@"%@", error);
+                }
+            }
+            
 			imageLink = thumb;
+            [oldThumb release];
 		}
 		[imageLink retain];
 		[thumb release];
+
 	}
 	
 	title = (UILabel*)[cell.contentView viewWithTag:MREADER_TITLE_TAG];
