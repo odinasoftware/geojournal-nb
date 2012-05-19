@@ -32,6 +32,7 @@
 #define SITE_ID								@"PROSPECT-g2rm2l4o"
 #endif
 
+#define UUID_LOC                            2
 #define	BUTTON_WIDTH						100
 #define BUTTON_MARGIN						3
 #define BUTTON_HEIGHT						20
@@ -48,6 +49,7 @@ extern NSString *getPrinterableDate(NSDate *date, NSInteger *day);
 extern NSString *getThumbnailFilename(NSString *filename); 
 extern NSString *getThumbnailOldFilename(NSString *filename); 
 extern void saveImageToFile(UIImage *image, NSString *filename);
+extern UIImage *getReducedImage(UIImage *image, float ratio);
 
 void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY) {
 	
@@ -1260,36 +1262,33 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 		[cell.contentView addSubview:background];
 	}
 #endif
-	
-	if (picasaSyncing == YES) {
-		/*
-		 UIImageView *picasaIconView = [[UIImageView alloc] initWithFrame:CGRectMake(ICON_RECT_X, ICON_RECT_Y, ICON_RECT_WIDTH, ICON_RECT_HEIGHT)];
-		 picasaIconView.image = self.picasaIcon;
-		 picasaIconView.tag = MREADER_PICASA_TAG;
-		 [cell.contentView addSubview:picasaIconView];
-		 */
 		
-		
-		UIImageView *selectedIconView = [[UIImageView alloc] initWithFrame:CGRectMake(ICON_RECT_X, ICON_RECT_Y, ICON_RECT_WIDTH, ICON_RECT_HEIGHT)];
-		selectedIconView.image = self.uploadSelectedIcon;
-		selectedIconView.tag = MREADER_UPLOAD_SELECTED_TAG;
-		[cell.contentView addSubview:selectedIconView];
-		rect_x += ICON_RECT_WIDTH;
-		[selectedIconView release];
-		/*
-		 UIImageView *notSelectedIconView = [[UIImageView alloc] initWithFrame:CGRectMake(ICON_RECT_X, ICON_RECT_Y, ICON_RECT_WIDTH, ICON_RECT_HEIGHT)];
-		 notSelectedIconView.image = self.uploadNotSelectedIcon;
-		 notSelectedIconView.tag = MREADER_UPLOAD_SELECTED_TAG;
-		 [cell.contentView addSubview:notSelectedIconView];
-		 */
-	}
-	
 	imageLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPath:journal.picture];
     NSString *cloudLink = [[GeoDefaults sharedGeoDefaultsInstance] getCloudURL:journal.picture];
+    
+    NSArray *components = [imageLink pathComponents];
     
     TRACE("%s, image: %s\n", __func__, [imageLink UTF8String]);
     TRACE("clude: %s, %p\n", [cloudLink UTF8String], self);
     
+    if ([components count] > UUID_LOC) {
+        int uuid_loc = [components count] - UUID_LOC;
+        NSString *possible_uuid = [components objectAtIndex:uuid_loc];
+        
+        if ([possible_uuid compare:[GeoDefaults sharedGeoDefaultsInstance].UUID] == 0) {
+            // This is local file and the UUID component should be omitted in the actual location.
+            NSMutableArray *newPath = [[NSMutableArray alloc] initWithCapacity:[components count]-2];
+            
+            
+            for (int i=0; i<[components count]; ++i) {
+                if (i == uuid_loc) continue;
+                NSString *s = [components objectAtIndex:i];
+                [newPath addObject:s];
+            }
+            imageLink = [NSString pathWithComponents:newPath];
+            TRACE("%s: new path: %s\n", __func__, [imageLink UTF8String]);
+        }
+    }
     /*
     // Run cloud search
     NSMetadataQuery *metadataSearch = [[NSMetadataQuery alloc] init];
@@ -1324,20 +1323,16 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 			imageLink = thumb;
 		}
 		else {
-            NSString *oldThumb = nil;
-			
-			oldThumb = getThumbnailOldFilename(imageLink);
-            if ([[NSFileManager defaultManager] fileExistsAtPath:oldThumb] == YES) {
-                // move this to the new file name
-                NSError *error = nil;
-                TRACE("%s, moving the old one to new: %s\n", __func__, [oldThumb UTF8String]);
-                if ([[NSFileManager defaultManager] moveItemAtURL:[NSURL fileURLWithPath:oldThumb] toURL:[NSURL fileURLWithPath:thumb] error:&error] == NO) {
-                    NSLog(@"%@", error);
-                }
-            }
+            // When the thumb is not available, create it here. This is for iCloud sync.
+            UIImage *image = [[UIImage alloc] initWithContentsOfFile:imageLink];
+            UIImage *small = getReducedImage(image, THUMBNAIL_RATIO);
+            TRACE("%s: small ref count: %d\n", __func__, [small retainCount]);
+            saveImageToFile(small, thumb);
+            [small release];
+            [image release];
+            
             
 			imageLink = thumb;
-            [oldThumb release];
 		}
 		[imageLink retain];
 		[thumb release];

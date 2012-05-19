@@ -16,6 +16,7 @@
     
     NSURL               *_presentedItemURL;
     NSOperationQueue    *_presentedItemOperationQueue;
+    NSFileManager       *_fm;
 }
 
 @property (readonly)            NSURL               *presentedItemURL;
@@ -24,5 +25,8 @@
 @property (nonatomic, retain)   NSString            *documentDirectory;
 @property (nonatomic, retain)   NSString            *coreDataCloudContent;
 //@property (nonatomic, retain)   NSFileCoordinator   *coordinator;
+
+- (void)copyToCloudSandbox;
+- (BOOL)isFilesInCloud;
 
 @end

@@ -34,6 +34,8 @@
 #define kDefaultFontSizeKey				@"DEFAULT_FONT_SIZE"
 #define kDefaultInitDoneKey				@"DEFAULT_INIT_DONE"
 #define kIsPriviateKey                  @"IS_PRIVATE"
+#define kUUIDKey                        @"UUID_DEVICE"
+#define kDBReadyForCloudKey             @"DB_READY_FOR_CLOUD"
 
 static GeoDefaults	*sharedGeoDefaults = nil;
 
@@ -67,6 +69,8 @@ static GeoDefaults	*sharedGeoDefaults = nil;
 @synthesize isPrivate;
 @synthesize passwordItem;
 @synthesize cloudContainer;
+@synthesize UUID;
+@synthesize dbReadyForCloud;
 
 int getNumberFromIndex(int i)
 {
@@ -110,6 +114,14 @@ int getNumberFromIndex(int i)
 	return nil; //on subsequent allocation attempts return nil 
 }
 
++ (NSString *)GetUUID
+{
+    CFUUIDRef theUUID = CFUUIDCreate(NULL);
+    CFStringRef string = CFUUIDCreateString(NULL, theUUID);
+    CFRelease(theUUID);
+    return [(NSString *)string autorelease];
+}
+
 -(id)init 
 {
 	self = [super init];
@@ -144,6 +156,8 @@ int getNumberFromIndex(int i)
     [isPrivate release];
     [passwordItem release];
     [cloudContainer release];
+    [UUID release];
+    [dbReadyForCloud release];
 
 	[super dealloc];
 }
@@ -199,6 +213,10 @@ int getNumberFromIndex(int i)
 		self.defaultInitDone = temp; [temp release];
         temp = [[NSNumber alloc] initWithInt:1];
         self.isPrivate = temp;
+        
+        self.UUID = [GeoDefaults GetUUID];
+        temp = [[NSNumber alloc] initWithInt:0];
+        self.dbReadyForCloud = temp; [temp release];
 		
 		// TODO: it must to be retained. Why???
 		NSMutableArray *loc = [[NSMutableArray arrayWithObjects:
@@ -254,10 +272,19 @@ int getNumberFromIndex(int i)
 		self.defaultInitDone = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kDefaultInitDoneKey];
 		self.isPrivate = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kIsPriviateKey];
         
+        // get UUID
+        self.UUID = (NSString*) [[NSUserDefaults standardUserDefaults] objectForKey:kUUIDKey];
+        
+        self.dbReadyForCloud = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kDBReadyForCloudKey];
+        
 		// will need to restore levels
 		levelRestored = NO;
 	}
 	
+    if (self.UUID == NULL || [self.UUID length] == 0) {
+        self.UUID = [GeoDefaults GetUUID];
+    }
+
 	appDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
 				   numberOfFileGenerated, kNumberOfFileGeneragedKey,
 				   activeCategory, kActiveCategoryKey,
@@ -282,11 +309,14 @@ int getNumberFromIndex(int i)
 				   defaultFontSize, kDefaultFontSizeKey,
 				   defaultInitDone, kDefaultInitDoneKey,
                    isPrivate, kIsPriviateKey,
+                   UUID, kUUIDKey,
+                   dbReadyForCloud, kDBReadyForCloudKey,
 				   nil];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
 	[[NSUserDefaults standardUserDefaults] synchronize];
-
+    
+    
 	applicationDocumentsDirectory = nil;
 	geoDocumentPath = nil;
 	fileManager = [NSFileManager defaultManager];
@@ -294,6 +324,8 @@ int getNumberFromIndex(int i)
     KeychainItemWrapper *wrapper = [[KeychainItemWrapper alloc] initWithIdentifier:@"Password" accessGroup:nil];
 	self.passwordItem = wrapper;
     [wrapper release];
+    
+    TRACE("%s: UUID: %s\n", __func__, [UUID UTF8String]);
 
 }
 
@@ -301,6 +333,7 @@ int getNumberFromIndex(int i)
 #pragma mark Application's documents directory
 
 - (NSString *)applicationDocumentsDirectory {
+    TRACE("%s\n", __func__);
 	if (applicationDocumentsDirectory == nil) {
 		NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
 		self.applicationDocumentsDirectory = ([paths count] > 0) ? [paths objectAtIndex:0] : nil;
@@ -311,7 +344,7 @@ int getNumberFromIndex(int i)
 - (NSString *)geoDocumentPath {
 	NSError *error = nil;
 	if (geoDocumentPath == nil) {
-		self.geoDocumentPath = [applicationDocumentsDirectory stringByAppendingPathComponent:GEO_FOLDER_NAME];
+		self.geoDocumentPath = [self.applicationDocumentsDirectory stringByAppendingPathComponent:GEO_FOLDER_NAME];
 		if ([fileManager fileExistsAtPath:geoDocumentPath] == NO) {
 			if ([fileManager createDirectoryAtPath:geoDocumentPath withIntermediateDirectories:YES attributes:nil error:&error] == NO) {
 				NSLog(@"%s, %@", __func__, error);
@@ -439,6 +472,8 @@ int getNumberFromIndex(int i)
 	[self saveHorizontalSlideshowSettings];
 	[self saveFontSize];
     [[NSUserDefaults standardUserDefaults] setObject:isPrivate forKey:kIsPriviateKey];
+    [[NSUserDefaults standardUserDefaults] setObject:UUID forKey:kUUIDKey];
+    [[NSUserDefaults standardUserDefaults] setObject:dbReadyForCloud forKey:kDBReadyForCloudKey];
 }
 
 - (void)saveMapSettins

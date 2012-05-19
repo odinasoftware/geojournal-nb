@@ -12,6 +12,7 @@
 //
 #define GEO_FOLDER_NAME				@"GeoJournal"
 #define GEO_FILE_EXT				@".geo"
+#define GEO_CLOUD_IDC               @"geojournal_idc_odinasoftware.geo"
 
 @class KeychainItemWrapper;
 
@@ -45,7 +46,8 @@
     NSNumber                *isPrivate;
     KeychainItemWrapper     *passwordItem;
     NSURL                   *cloudContainer;
-	
+	NSString                *UUID;
+    NSNumber                *dbReadyForCloud;
 }
 
 @property (nonatomic, retain)	NSMutableArray *savedLocation;
@@ -76,6 +78,8 @@
 @property (nonatomic, retain)   NSNumber    *isPrivate;
 @property (nonatomic, retain)   KeychainItemWrapper       *passwordItem;
 @property (nonatomic, retain)   NSURL       *cloudContainer;
+@property (nonatomic, retain)   NSString    *UUID;
+@property (nonatomic, retain)   NSNumber    *dbReadyForCloud;
 
 @property (nonatomic) NSInteger	firstLevel;
 @property (nonatomic) NSInteger	secondLevel;

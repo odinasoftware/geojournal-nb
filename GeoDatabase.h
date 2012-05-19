@@ -94,5 +94,6 @@
 - (void)workaround_weakpackages_9653904:(NSDictionary*)options;
 - (void)pollnewfiles_weakpackages:(NSNotification*)note;
 - (NSManagedObjectContext*)managedObjectContextInstance;
+- (void)upgradeDBForCloudReady;
 
 @end

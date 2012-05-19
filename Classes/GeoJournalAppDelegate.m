@@ -25,6 +25,7 @@
 //#import "SpeakHereController.h"
 #import "CloudService.h"
 #import "CloudFileService.h"
+#import "ProgressViewController.h"
 
 #define	CONNECT_CONTROLLER_INDEX	2
 
@@ -150,6 +151,23 @@
     
 }
 
+- (void)checkInSyncWithCloud
+{    
+    CloudFileService *service = [[CloudFileService alloc] init];
+    
+    if ([service isFilesInCloud] == NO) {
+        [[ProgressViewControllerHolder sharedStatusViewControllerInstance] showStatusView:self.tabBarController.view type:DEFAULT_PROGRESS_TYPE];
+        
+        // TODO: we do not have anything in the cloud, need to them into it. 
+        // TODO: check if this is cloud ready, the files has to be unique.
+        // enumerate it from the local and copy to the cloud sandbox.
+        
+        [service copyToCloudSandbox];
+        
+    }
+    
+}
+
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
     BOOL passcode_presented = NO;
     _appLaunching = YES;
@@ -185,6 +203,7 @@
         //[controller release];
       
     }
+    /*
     if (([[GeoDefaults sharedGeoDefaultsInstance].defaultInitDone intValue] == 0) ||
         ([[GeoDefaults sharedGeoDefaultsInstance].isPrivate intValue] == 1)) {
 
@@ -195,9 +214,12 @@
         //[self openPasscodeController];
         
     }
+     */
     else {
         [self startTabBarView];
     }
+    // Check the cloud sync.
+    [self checkInSyncWithCloud];
     [GeoDatabase sharedGeoDatabaseInstance];
 
 #if 0
@@ -487,7 +509,7 @@
 	}
     // TODO: taking care of when view is not unloaded.
     if (_appLaunching == NO && ([[GeoDefaults sharedGeoDefaultsInstance].isPrivate intValue] == 1)) {
-        [self openPasscodeController];
+        //[self openPasscodeController];
     }
 }
 

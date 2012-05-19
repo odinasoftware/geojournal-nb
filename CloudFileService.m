@@ -8,6 +8,7 @@
 #import "GeoJournalHeaders.h"
 #import "GeoDefaults.h"
 #import "CloudFileService.h"
+#import "GeoDatabase.h"
 
 @implementation CloudFileService
 
@@ -22,18 +23,54 @@
         NSURL *cloudURL = [[GeoDefaults sharedGeoDefaultsInstance] getCloudContainer];        
         self.coreDataCloudContent = [[cloudURL path] stringByAppendingPathComponent:GEO_FOLDER_NAME];
     
+        _fm = [NSFileManager defaultManager];
+        // TODO: if coreDataCloudContent is null, then cloud is disable.
+        /*
         NSError *error = nil;
         NSFileManager *fileManager = [NSFileManager defaultManager];
         [fileManager setUbiquitous:YES 
                          itemAtURL:_presentedItemURL
                     destinationURL:[NSURL fileURLWithPath:self.coreDataCloudContent] error:&error];
-        
+        */
         TRACE("%s, doc: %s\n", __func__, [self.documentDirectory UTF8String]);
     }
     
     return self;
 }
 
+- (BOOL)isFilesInCloud
+{
+    NSString *indicator = [self.coreDataCloudContent stringByAppendingPathComponent:GEO_CLOUD_IDC];
+    return [_fm fileExistsAtPath:indicator isDirectory:NO];
+}
+/*
+ copyToCloudSandbox:
+    Copy all file in the geojournal folder to the cloud sandbox.
+    it will eventually sync with the iCloud. 
+ */
+- (void)copyToCloudSandbox
+{
+    NSError *error = nil;
+    NSString *docsDir = self.documentDirectory;
+    NSDirectoryEnumerator *dirEnum = [_fm enumeratorAtPath:docsDir];
+    
+    TRACE_HERE;
+    // Upgrade DB entries to copy to iCloud
+    [[GeoDatabase sharedGeoDatabaseInstance] upgradeDBForCloudReady];
+    
+    // Copy the files to the cloud location
+    NSString *file;
+    while (file = [dirEnum nextObject]) {
+        
+        NSString *localFile = [self.documentDirectory stringByAppendingPathComponent:file];
+        NSString *cloudFile = [self.coreDataCloudContent stringByAppendingFormat:@"%@/%@", [GeoDefaults sharedGeoDefaultsInstance].UUID, file];
+        TRACE("%s: %s\n", [localFile UTF8String], [cloudFile UTF8String]);
+        if ([_fm copyItemAtURL:[NSURL fileURLWithPath:localFile] toURL:[NSURL fileURLWithPath:cloudFile] error:&error] == NO) {
+            NSLog(@"fail to copy: %@", error);
+        }
+    }
+
+}
 /*
  Things to do:
  1. How to associate local and cloud location.

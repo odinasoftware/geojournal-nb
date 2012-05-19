@@ -950,6 +950,121 @@ void remove_file(NSString *file)
 	return frame;
 }
 
+- (NSString*)makeUUIDFileName:(NSString*) filename
+{   
+    if (filename == NULL)
+        return NULL;
+
+    NSString *actual=NULL;
+    NSRange range = [filename rangeOfString:@"/"];
+    if (range.location == NSNotFound) {
+        actual = [NSString stringWithFormat:@"%@/%@", [GeoDefaults sharedGeoDefaultsInstance].UUID, filename];
+    }
+        
+    return actual;
+
+}
+                  
+- (void)upgradeDBForCloudReady
+{
+    if ([[GeoDefaults sharedGeoDefaultsInstance].dbReadyForCloud boolValue]) {
+        TRACE("%s, db is ready for cloud.\n", __func__);
+        return;
+    }
+        
+    @try {
+        NSFetchRequest *request = [[NSFetchRequest alloc] init];
+        NSEntityDescription *entity = [NSEntityDescription entityForName:@"Journal" inManagedObjectContext:self.managedObjectContext];
+        [request setEntity:entity];
+        
+        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"creationDate" ascending:YES];
+        NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+        [request setSortDescriptors:sortDescriptors];
+        [sortDescriptors release];
+        [sortDescriptor release];
+        
+        NSError *error;
+        NSMutableArray* mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+        if (mutableFetchResults == nil) {
+            // Handle the error.
+            NSLog(@"%s, %@", __func__, error);
+            return;
+        }
+        
+        [request release];
+        TRACE("%s: # of entries: %d\n", __func__, [mutableFetchResults count]);
+        NSString *temp;
+        for (Journal *journal in mutableFetchResults) {
+            TRACE("Db: %p, Journal: %s, audio: %s\n", journal, [journal.picture UTF8String], [journal.audio UTF8String]);
+            
+            if ((temp = [self makeUUIDFileName:journal.picture])) {
+                [journal setPicture:temp];
+            }
+            if ((temp = [self makeUUIDFileName:journal.audio])) {
+                [journal setAudio:temp];
+            }
+                      
+            
+            TRACE("Journal: %s, audio: %s\n", [journal.picture UTF8String], [journal.audio UTF8String]);
+            // Get frame
+            PictureFrame *frame = [self getFrameForJournal:journal];
+            
+            if (frame) {
+                TRACE("frame: %s\n", [frame.picture UTF8String]);
+                
+                // Get pictures for the frame
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"frame.picture == %@", journal.picture];
+                
+                NSEntityDescription *entity = [NSEntityDescription entityForName:@"Pictures" inManagedObjectContext:self.managedObjectContext];
+                
+                request = [[NSFetchRequest alloc] init];
+                [request setEntity:entity];
+                [request setPredicate:predicate];
+                [request setPropertiesToFetch:[NSArray arrayWithObjects:@"picture", nil]];
+                
+                NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"creationDate" ascending:YES];
+                NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+                [request setSortDescriptors:sortDescriptors];
+                [sortDescriptors release];
+                [sortDescriptor release];
+                
+                NSError *error=nil;
+                NSArray *array = [self.managedObjectContext executeFetchRequest:request error:&error];
+                if (error){
+                    // Handle the error.
+                    NSLog(@"%s, %@", __func__, error);
+                }
+                else if (array && [array count] > 0) {
+                    TRACE("----------\n");
+                    for (Pictures *p in array) {
+                        TRACE("[%s] ", [p.picture UTF8String]);
+                        p.picture = [self makeUUIDFileName:p.picture];
+                    }
+                    TRACE("\n----------\n");
+                }
+                
+                if ((temp = [self makeUUIDFileName:frame.picture])) {
+                    [frame setPicture:temp];
+                }
+
+                
+                [request release];
+            }
+           
+        }
+        
+        [self save];
+        
+        NSNumber *on = [NSNumber numberWithBool:TRUE];
+        [GeoDefaults sharedGeoDefaultsInstance].dbReadyForCloud = on;
+    }
+	@catch (NSException * e) {
+		NSLog(@"%s, %@", __func__, [e reason]);
+	}	
+    
+       
+}
+
 #pragma mark JOURNAL DB
 
 - (void)deleteJournalObject:(Journal*)journal forCategory:(GCategory*)category 
