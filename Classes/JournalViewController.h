@@ -134,7 +134,7 @@
 - (void)selectButtonWithIndex:(NSInteger)index;
 - (void)addNewScrollableButton:(NSString*)title;
 - (void)enumerateFilesAndSync;
-    - (void)adjustOrientation:(CGRect)bounds;
+- (void)adjustOrientation:(CGRect)bounds;
 
 
 @end

@@ -68,7 +68,6 @@ static GeoDefaults	*sharedGeoDefaults = nil;
 @synthesize defaultInitDone;
 @synthesize isPrivate;
 @synthesize passwordItem;
-@synthesize cloudContainer;
 @synthesize UUID;
 @synthesize dbReadyForCloud;
 
@@ -155,7 +154,6 @@ int getNumberFromIndex(int i)
 	[defaultInitDone release];
     [isPrivate release];
     [passwordItem release];
-    [cloudContainer release];
     [UUID release];
     [dbReadyForCloud release];
 
@@ -214,7 +212,7 @@ int getNumberFromIndex(int i)
         temp = [[NSNumber alloc] initWithInt:1];
         self.isPrivate = temp;
         
-        self.UUID = [GeoDefaults GetUUID];
+        //self.UUID = [GeoDefaults GetUUID];
         temp = [[NSNumber alloc] initWithInt:0];
         self.dbReadyForCloud = temp; [temp release];
 		
@@ -273,7 +271,7 @@ int getNumberFromIndex(int i)
 		self.isPrivate = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kIsPriviateKey];
         
         // get UUID
-        self.UUID = (NSString*) [[NSUserDefaults standardUserDefaults] objectForKey:kUUIDKey];
+        //self.UUID = (NSString*) [[NSUserDefaults standardUserDefaults] objectForKey:kUUIDKey];
         
         self.dbReadyForCloud = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kDBReadyForCloudKey];
         
@@ -281,10 +279,7 @@ int getNumberFromIndex(int i)
 		levelRestored = NO;
 	}
 	
-    if (self.UUID == NULL || [self.UUID length] == 0) {
-        self.UUID = [GeoDefaults GetUUID];
-    }
-
+    
 	appDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
 				   numberOfFileGenerated, kNumberOfFileGeneragedKey,
 				   activeCategory, kActiveCategoryKey,
@@ -309,7 +304,7 @@ int getNumberFromIndex(int i)
 				   defaultFontSize, kDefaultFontSizeKey,
 				   defaultInitDone, kDefaultInitDoneKey,
                    isPrivate, kIsPriviateKey,
-                   UUID, kUUIDKey,
+                   //UUID, kUUIDKey,
                    dbReadyForCloud, kDBReadyForCloudKey,
 				   nil];
 	
@@ -325,8 +320,6 @@ int getNumberFromIndex(int i)
 	self.passwordItem = wrapper;
     [wrapper release];
     
-    TRACE("%s: UUID: %s\n", __func__, [UUID UTF8String]);
-
 }
 
 #pragma mark -
@@ -379,33 +372,6 @@ int getNumberFromIndex(int i)
 	return path;
 }
 
-- (NSURL*)getCloudContainer
-{
-    if (cloudContainer == nil) {
-        fileManager = [NSFileManager defaultManager];
-        
-        //NSURL *storeUrl = [NSURL fileURLWithPath:storePath];
-        // this needs to match the entitlements and provisioning profile
-        self.cloudContainer = [fileManager URLForUbiquityContainerIdentifier:nil];
-    }
-    return self.cloudContainer;
-}
-
-- (NSString*)getCloudGeoJournalContainer
-{
-    NSString* cloudContent = [[[self getCloudContainer] path] stringByAppendingPathComponent:@"GeoJournal"];
-        
-    return cloudContent;
-}
-
-- (NSString*)getCloudURL:(NSString*)lastComponent
-{
-    NSString *url;
-    
-    url = [[self getCloudGeoJournalContainer] stringByAppendingPathComponent:lastComponent];
-    
-    return url;
-}
 #pragma mark LEVEL SETTINGS
 
 - (NSInteger)firstLevel 

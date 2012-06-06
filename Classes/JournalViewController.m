@@ -1173,42 +1173,6 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 }
 
 
-- (void)searchInCloud:(NSString*)url
-{
-    TRACE("%s, url: %s\n", __func__, [url UTF8String]);
-    NSMetadataQuery *metadataSearch = [[[NSMetadataQuery alloc] init] autorelease];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, url];
-    [metadataSearch setPredicate:predicate];
-    
-    // Register the notifications for batch and completion updates
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(queryDidUpdate:)
-                                                 name:NSMetadataQueryDidUpdateNotification
-                                               object:metadataSearch];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(initalGatherComplete:)
-                                                 name:NSMetadataQueryDidFinishGatheringNotification
-                                               object:metadataSearch];
-    
-    // Set the search scope. In this case it will search the User's home directory
-    // and the iCloud documents area
-    NSArray *searchScopes;
-    searchScopes=[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDocumentsScope,nil];
-    [metadataSearch setSearchScopes:searchScopes];
-    
-    // Configure the sorting of the results so it will order the results by the
-    // display name
-    /*
-    NSSortDescriptor *sortKeys=[[[NSSortDescriptor alloc] initWithKey:(id)kMDItemDisplayName
-                                                            ascending:YES] autorelease];
-    [metadataSearch setSortDescriptors:[NSArray arrayWithObject:sortKeys]];
-    */
-    [metadataSearch startQuery];
-    
-}
-
-
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableview cellForRowAtIndexPath:(NSIndexPath *)indexPath 
 {
@@ -1264,12 +1228,12 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 #endif
 		
 	imageLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPath:journal.picture];
-    NSString *cloudLink = [[GeoDefaults sharedGeoDefaultsInstance] getCloudURL:journal.picture];
+    //NSString *cloudLink = [[GeoDefaults sharedGeoDefaultsInstance] getCloudURL:journal.picture];
     
     NSArray *components = [imageLink pathComponents];
     
     TRACE("%s, image: %s\n", __func__, [imageLink UTF8String]);
-    TRACE("clude: %s, %p\n", [cloudLink UTF8String], self);
+    //TRACE("clude: %s, %p\n", [cloudLink UTF8String], self);
     
     if ([components count] > UUID_LOC) {
         int uuid_loc = [components count] - UUID_LOC;
@@ -1289,33 +1253,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
             TRACE("%s: new path: %s\n", __func__, [imageLink UTF8String]);
         }
     }
-    /*
-    // Run cloud search
-    NSMetadataQuery *metadataSearch = [[NSMetadataQuery alloc] init];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, journal.picture];
-    [metadataSearch setPredicate:predicate];
-    
-    // Register the notifications for batch and completion updates
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(queryDidUpdate:)
-                                                 name:NSMetadataQueryDidUpdateNotification
-                                               object:metadataSearch];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(initalGatherComplete:)
-                                                 name:NSMetadataQueryDidFinishGatheringNotification
-                                               object:metadataSearch];
-
-    // Set the search scope. In this case it will search the User's home directory
-    // and the iCloud documents area
-    NSArray *searchScopes;
-    searchScopes=[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDocumentsScope,nil];
-    [metadataSearch setSearchScopes:searchScopes];
      
-    TRACE("%s, metasearch query: %p\n", __func__, metadataSearch);
-    [metadataSearch startQuery];
-    */
-    
     //[self searchInCloud:@"*"];
 	if (imageLink != nil) {
 		NSString *thumb = getThumbnailFilename(imageLink);

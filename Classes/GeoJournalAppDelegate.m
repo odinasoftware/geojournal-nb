@@ -153,19 +153,18 @@
 
 - (void)checkInSyncWithCloud
 {    
-    CloudFileService *service = [[CloudFileService alloc] init];
-    
-    if ([service isFilesInCloud] == NO) {
+    if ([[CloudService sharedCloudServiceInstance] isFilesInCloud] == NO) {
         [[ProgressViewControllerHolder sharedStatusViewControllerInstance] showStatusView:self.tabBarController.view type:DEFAULT_PROGRESS_TYPE];
         
-        // TODO: we do not have anything in the cloud, need to them into it. 
-        // TODO: check if this is cloud ready, the files has to be unique.
-        // enumerate it from the local and copy to the cloud sandbox.
-        
-        [service copyToCloudSandbox];
+        dispatch_async(dispatch_get_current_queue(), ^{
+            // TODO: we do not have anything in the cloud, need to them into it. 
+            // TODO: check if this is cloud ready, the files has to be unique.
+            // enumerate it from the local and copy to the cloud sandbox.
+            
+            [[CloudService sharedCloudServiceInstance] copyToCloudSandbox];        
+        });
         
     }
-    
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
@@ -222,6 +221,9 @@
     [self checkInSyncWithCloud];
     [GeoDatabase sharedGeoDatabaseInstance];
 
+    // This is only for test.
+    //[[CloudService sharedCloudServiceInstance] listFilesInCloud:@"138D9BA5-21BF-4EB0-B3F7-A38D6A73229B"];
+    
 #if 0
     dispatch_async(dispatch_get_current_queue(), ^{
         /*
@@ -253,13 +255,15 @@
         
         NSFileManager *fm = [NSFileManager defaultManager];
         NSError *error = nil;
-        CloudFileService *service = [[CloudFileService alloc] init];
-        NSURL *u = [NSURL fileURLWithPath:service.coreDataCloudContent isDirectory:YES];
-        NSLog(@"url: %@, %@", u, service.coreDataCloudContent);
+        
+        NSString *temp = [[CloudService sharedCloudServiceInstance] getCloudURL:@"138D9BA5-21BF-4EB0-B3F7-A38D6A73229B" willCreate:YES];
+        //NSURL *u = [NSURL fileURLWithPath:service.coreDataCloudContent isDirectory:YES];
+        NSURL *u = [NSURL fileURLWithPath:temp isDirectory:YES];
+        NSLog(@"url: %@", u);
         NSArray *files = [fm contentsOfDirectoryAtURL:u
-                                                       includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsRegularFileKey, nil] 
-                                                                          options:NSDirectoryEnumerationSkipsHiddenFiles 
-                                                                            error:&error];
+                           includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsRegularFileKey, nil] 
+                                              options:NSDirectoryEnumerationSkipsHiddenFiles 
+                                                error:&error];
         TRACE("%s, file count: %d\n", __func__, [files count]);
 
         NSNumber *aBool = nil;
@@ -278,14 +282,14 @@
                             NSLog(@"faile to download: %@", error);
                         }
                         
-                    }
+                    }/*
                     else {
                         NSString *localFile = [service.documentDirectory stringByAppendingPathComponent:fileName];
                         TRACE("%s\n", [localFile UTF8String]);
                         if ([fm copyItemAtURL:f toURL:[NSURL fileURLWithPath:localFile] error:&error] == NO) {
                             NSLog(@"fail to copy: %@", error);
                         }
-                    }
+                    }*/
                 }
             }
         }

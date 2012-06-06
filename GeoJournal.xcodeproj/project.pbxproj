@@ -1214,8 +1214,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer: Jae Han (WEEA473VPB)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos4.2]" = "iPhone Developer: Jae Han (WEEA473VPB)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Odina Software, LLC";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos4.2]" = "iPhone Distribution: Odina Software, LLC";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1227,8 +1227,8 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = iGeoJournal;
-				PROVISIONING_PROFILE = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
-				"PROVISIONING_PROFILE[sdk=iphoneos4.2]" = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
+				PROVISIONING_PROFILE = "139C6C14-066E-41E9-B3BF-F370520BFAA8";
+				"PROVISIONING_PROFILE[sdk=iphoneos4.2]" = "139C6C14-066E-41E9-B3BF-F370520BFAA8";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1247,7 +1247,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = GeoJournal_Prefix.pch;
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
@@ -1282,7 +1282,7 @@
 					../three20/Build/Products/three20,
 				);
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
@@ -1316,7 +1316,7 @@
 					../three20/Build/Products/three20,
 				);
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
@@ -1343,8 +1343,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = iGeoJournal;
-				PROVISIONING_PROFILE = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E3FC426D-826F-43BF-885B-C7C2400C7C24";
+				PROVISIONING_PROFILE = "F2268FB1-803E-459B-9295-CD3194DE9BA1";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "F2268FB1-803E-459B-9295-CD3194DE9BA1";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

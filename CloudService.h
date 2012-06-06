@@ -30,10 +30,24 @@ typedef enum {CLOUE_NONE, CLOUE_CHECKING, CLOUD_DOWNLOADING, CLOUD_UPLOADING} CL
     NSMutableDictionary     *contextDict;
     NSMutableDictionary     *urlDict;
     //NSMetadataQuery         *metadataSearch;
+    NSURL                   *cloudContainer;
+        
+@private
+    NSFileManager       *_fm;
+
 }
+
+@property (nonatomic, retain)   NSURL       *cloudContainer;
 
 + (CloudService*)sharedCloudServiceInstance;
 
 - (void)initalGatherComplete:sender;
+- (NSURL*)getCloudContainer;
+- (NSString*)getCloudGeoJournalContainer;
+- (NSString*)getCloudURL:(NSString*)lastComponent willCreate:(BOOL)create;
+- (void)listFilesInCloud:(NSString*)folder;
+- (BOOL)isFilesInCloud;
+- (void)copyToCloudSandbox;
+- (void)searchInCloud:(NSString*)url delegate:(SEL)delegate;
 
 @end

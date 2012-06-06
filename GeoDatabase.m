@@ -18,6 +18,7 @@
 #import "PictureFrame.h"
 #import "Pictures.h"
 #import "GeoDefaults.h"
+#import "CloudService.h"
                                             
 #define UBIQUITY_CONTAINER_URL @"WV3CVJV89H.com.odinasoftware.igeojournal" 
 
@@ -493,7 +494,7 @@ void remove_file(NSString *file)
  If the coordinator doesn't already exist, it is created and the application's store added to it.
  */
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
-	
+	NSError *error = nil;
     if (persistentStoreCoordinator__ != nil) {
         return persistentStoreCoordinator__;
     }
@@ -512,15 +513,14 @@ void remove_file(NSString *file)
     // CTODO: this has to be blocked call???
     //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
     {
-        NSURL *cloudURL = [[GeoDefaults sharedGeoDefaultsInstance] getCloudContainer];
+        NSString* coreDataCloudContent = [[CloudService sharedCloudServiceInstance] getCloudURL:GEO_DB_FOLDER_NAME willCreate:YES];
         
-        NSString* coreDataCloudContent = [[cloudURL path] stringByAppendingPathComponent:@"GeoJournalDB"];
         
-        TRACE("%s, %s, %s\n", __func__, [[cloudURL absoluteString] UTF8String], [coreDataCloudContent UTF8String]);
-        TRACE("%s\n", [[storeUrl absoluteString] UTF8String]);
-        
-        if (cloudURL) {
-            cloudURL = [NSURL fileURLWithPath:coreDataCloudContent];
+        TRACE("%s, %s\n", __func__, [coreDataCloudContent UTF8String]);
+                
+        if (coreDataCloudContent) {
+            
+            NSURL *cloudURL = [NSURL fileURLWithPath:coreDataCloudContent];
             
             //  The API to turn on Core Data iCloud support here.
             NSDictionary* options = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -531,9 +531,7 @@ void remove_file(NSString *file)
             
             // Needed on iOS seed 3, but not Mac OS X
             //[self workaround_weakpackages_9653904:options];
-            
-            NSError *error = nil;
-            
+             
             [psc lock];
             if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
                 /*
@@ -956,8 +954,17 @@ void remove_file(NSString *file)
         return NULL;
 
     NSString *actual=NULL;
-    NSRange range = [filename rangeOfString:@"/"];
-    if (range.location == NSNotFound) {
+    NSArray *components = [filename pathComponents];
+    if (([components count] > 1) && ([GeoDefaults sharedGeoDefaultsInstance].UUID == NULL)) {
+        // Must have UUID
+        [GeoDefaults sharedGeoDefaultsInstance].UUID = [components objectAtIndex:0];
+        TRACE("%s: UUID: %s\n", [filename UTF8String], [[GeoDefaults sharedGeoDefaultsInstance].UUID UTF8String]);
+    }
+    else if ([GeoDefaults sharedGeoDefaultsInstance].UUID == NULL) {
+        [GeoDefaults sharedGeoDefaultsInstance].UUID = [GeoDefaults GetUUID];
+    }
+    
+    if ([components count] == 1) {
         actual = [NSString stringWithFormat:@"%@/%@", [GeoDefaults sharedGeoDefaultsInstance].UUID, filename];
     }
         
@@ -967,11 +974,15 @@ void remove_file(NSString *file)
                   
 - (void)upgradeDBForCloudReady
 {
-    if ([[GeoDefaults sharedGeoDefaultsInstance].dbReadyForCloud boolValue]) {
+    if ([[GeoDefaults sharedGeoDefaultsInstance].dbReadyForCloud boolValue] && 
+        [GeoDefaults sharedGeoDefaultsInstance].UUID != NULL) {
         TRACE("%s, db is ready for cloud.\n", __func__);
         return;
     }
-        
+ 
+    
+    TRACE("%s: UUID: %s\n", __func__, [[GeoDefaults sharedGeoDefaultsInstance].UUID UTF8String]);
+    
     @try {
         NSFetchRequest *request = [[NSFetchRequest alloc] init];
         NSEntityDescription *entity = [NSEntityDescription entityForName:@"Journal" inManagedObjectContext:self.managedObjectContext];

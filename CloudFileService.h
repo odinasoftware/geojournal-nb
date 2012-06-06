@@ -11,7 +11,7 @@
 @interface CloudFileService : NSObject <NSFilePresenter> {
     @private
     NSString            *documentDirectory;
-    NSString            *coreDataCloudContent;
+
     //NSFileCoordinator   *coordinator;
     
     NSURL               *_presentedItemURL;
@@ -23,10 +23,7 @@
 @property (readonly)            NSOperationQueue    *presentedItemOperationQueue;
 
 @property (nonatomic, retain)   NSString            *documentDirectory;
-@property (nonatomic, retain)   NSString            *coreDataCloudContent;
-//@property (nonatomic, retain)   NSFileCoordinator   *coordinator;
 
-- (void)copyToCloudSandbox;
-- (BOOL)isFilesInCloud;
+//@property (nonatomic, retain)   NSFileCoordinator   *coordinator;
 
 @end

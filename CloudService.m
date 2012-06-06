@@ -8,6 +8,8 @@
 #import "GeoJournalHeaders.h"
 #import "CloudService.h"
 #import "CloudFileService.h"
+#import "GeoDefaults.h"
+#import "GeoDatabase.h"
 
 static CloudService *sharedCloudService = nil;
 
@@ -18,6 +20,8 @@ static CloudService *sharedCloudService = nil;
 @end
 
 @implementation CloudService
+
+@synthesize cloudContainer;
 
 + (CloudService*)sharedCloudServiceInstance
 {
@@ -37,6 +41,15 @@ static CloudService *sharedCloudService = nil;
     return nil;
 }
 
+- (id)init
+{
+    if ((self = [super init])) {
+        _fm = [NSFileManager defaultManager];
+    }
+    
+    return self;
+}
+
 - (void)addURL:(NSString*)url withGraphicContext:(UIImageView*)view
 {
     // Add url with the uiimageview in the dictionary.
@@ -48,6 +61,7 @@ static CloudService *sharedCloudService = nil;
     
 }
 
+/*
 - (void)sendIt:(NSString*)file toCloud:(CloudFileService*)service
 {
     NSError *error = nil;
@@ -56,15 +70,15 @@ static CloudService *sharedCloudService = nil;
     
     TRACE("%s, [local : %s], [cloud: %s]\n", __func__, [localFile UTF8String], [cloudFile UTF8String]);
     
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager setUbiquitous:YES 
-                     itemAtURL:[NSURL fileURLWithPath:localFile]
-                destinationURL:[NSURL fileURLWithPath:cloudFile] error:&error];
+    [_fm setUbiquitous:YES 
+             itemAtURL:[NSURL fileURLWithPath:localFile]
+        destinationURL:[NSURL fileURLWithPath:cloudFile] error:&error];
     
     if (error) {
         NSLog(@"%s, %@", __func__, error);
     }
 }
+ */
 
 // Method invoked when notifications of content batches have been received
 - (void)queryDidUpdate:sender;
@@ -111,7 +125,7 @@ static CloudService *sharedCloudService = nil;
 }
 
 
-- (void)searchInCloud:(NSString*)url
+- (void)searchInCloud:(NSString*)url delegate:(SEL)delegate
 {
     TRACE("%s, url: %s\n", __func__, [url UTF8String]);
     NSMetadataQuery *metadataSearch = [[NSMetadataQuery alloc] init];
@@ -125,7 +139,7 @@ static CloudService *sharedCloudService = nil;
                                                object:metadataSearch];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(initalGatherComplete:)
+                                             selector:@selector(delegate:)
                                                  name:NSMetadataQueryDidFinishGatheringNotification
                                                object:metadataSearch];
     
@@ -148,6 +162,171 @@ static CloudService *sharedCloudService = nil;
     }
     
 }
+
+#pragma Cloud Management
+- (NSURL*)getCloudContainer
+{
+    if (cloudContainer == nil) {
+                
+        // this needs to match the entitlements and provisioning profile
+        self.cloudContainer = [_fm URLForUbiquityContainerIdentifier:nil];
+    }
+    return self.cloudContainer;
+}
+
+- (NSString*)getCloudGeoJournalContainer
+{
+    NSString* cloudContent = [[[self getCloudContainer] path] stringByAppendingPathComponent:@"GeoJournal"];
+    
+    return cloudContent;
+}
+
+- (NSString*)getCloudURL:(NSString*)lastComponent willCreate:(BOOL)create
+{
+    NSString *url;
+    NSError *error = nil;
+    
+    url = [[self getCloudGeoJournalContainer] stringByAppendingPathComponent:lastComponent];
+    
+    if (url != nil && create == YES) {
+        
+        if ([_fm fileExistsAtPath:url] == NO && 
+            [_fm createDirectoryAtURL:[NSURL fileURLWithPath:url] withIntermediateDirectories:YES attributes:nil error:&error] == NO) {
+            if (error) {
+                NSLog(@"%s, file does not exist in cloud: %@", __func__, url);
+            }
+        }
+
+        /*
+        error = nil;
+        // see if it exists in the cloud, otherwise we will need to create it.
+        [_fm setUbiquitous:YES 
+                 itemAtURL:[NSURL fileURLWithPath:url]
+            destinationURL:[self getCloudContainer] error:&error];
+        
+        if (error) {
+            NSLog(@"%s, %@", __func__, error);
+        }
+         */
+
+    }
+    
+    
+    return url;
+}
+
+- (void)listFilesInCloud:(NSString*)folder
+{
+    dispatch_async(dispatch_get_current_queue(), ^{
+           
+        NSError *error = nil;
+        
+        NSString *temp = [[CloudService sharedCloudServiceInstance] getCloudURL:folder willCreate:YES];
+        //NSURL *u = [NSURL fileURLWithPath:service.coreDataCloudContent isDirectory:YES];
+        NSURL *u = [NSURL fileURLWithPath:temp isDirectory:YES];
+        NSLog(@"url: %@", u);
+        NSArray *files = [_fm contentsOfDirectoryAtURL:u
+                            includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsRegularFileKey, nil] 
+                                               options:NSDirectoryEnumerationSkipsHiddenFiles 
+                                                 error:&error];
+        
+        if (error) {
+            NSLog(@"%s: %@", __func__, error);
+            return;
+        }
+        TRACE("%s, file count: %d\n", __func__, [files count]);
+        
+        NSNumber *aBool = nil;
+        NSNumber *isDownloaded = nil;
+        NSString *fileName = nil;
+        for (NSURL *f in files) {
+            [f getResourceValue:&aBool forKey:NSURLIsDirectoryKey error:&error];
+            if (aBool && ![aBool boolValue]) {
+                [f getResourceValue:&isDownloaded forKey:NSURLUbiquitousItemIsDownloadedKey error:&error];
+                [f getResourceValue:&fileName forKey:NSURLNameKey error:&error];
+                NSLog(@"file: %@, downloaded: %d, %@", f, [isDownloaded boolValue], fileName);
+                
+                if (isDownloaded != nil) {
+                    if (![isDownloaded boolValue]) {
+                        if ([[NSFileManager defaultManager] startDownloadingUbiquitousItemAtURL:f error:&error] == NO) {
+                            NSLog(@"faile to download: %@", error);
+                        }
+                        
+                    }/*
+                      else {
+                      NSString *localFile = [service.documentDirectory stringByAppendingPathComponent:fileName];
+                      TRACE("%s\n", [localFile UTF8String]);
+                      if ([fm copyItemAtURL:f toURL:[NSURL fileURLWithPath:localFile] error:&error] == NO) {
+                      NSLog(@"fail to copy: %@", error);
+                      }
+                      }*/
+                }
+            }
+        }
+        
+    });
+    
+}
+
+- (BOOL)isFilesInCloud
+{
+    // TODO: we will have to search cloud to this indication. 
+    // think abot asynchronous return.
+    return NO; //[self searchInCloud:GEO_CLOUD_IDC];
+    
+    //NSString *indicator = [[self.cloudContainer path] URLByAppendingPathComponent:GEO_CLOUD_IDC];
+    //return [_fm fileExistsAtPath:indicator isDirectory:NO];
+}
+
+- (void)setBaseSyncFlagInCloud
+{
+    // TODO: how to write a file in cloud. 
+}
+
+
+/*
+ copyToCloudSandbox:
+ Copy all file in the geojournal folder to the cloud sandbox.
+ it will eventually sync with the iCloud. 
+ */
+- (void)copyToCloudSandbox
+{
+    NSError *error = nil;
+    NSString *docsDir = [[GeoDefaults sharedGeoDefaultsInstance] geoDocumentPath];
+    
+    // Upgrade DB entries to copy to iCloud
+    [[GeoDatabase sharedGeoDatabaseInstance] upgradeDBForCloudReady];
+    
+    // TODO: see if the baseline is synced
+    [self searchInCloud:GEO_CLOUD_IDC delegate:checkBaselineSync];
+    
+    NSString *cloudGeoJournalDir = [[CloudService sharedCloudServiceInstance] getCloudURL:[GeoDefaults sharedGeoDefaultsInstance].UUID willCreate:YES];
+    TRACE("%s: cloud: %s\n", __func__, [cloudGeoJournalDir UTF8String]);
+    
+    // Copy the files to the cloud location
+    NSDirectoryEnumerator *dirEnum = [_fm enumeratorAtPath:docsDir];
+    
+    //TRACE("%s, count: %d\n", __func__, [[dirEnum allObjects] count]);
+    NSString *file;
+    while (file = [dirEnum nextObject]) {
+        
+        NSURL *localFile = [NSURL fileURLWithPath:[docsDir stringByAppendingPathComponent:file]];
+        NSURL *cloudFile = [NSURL fileURLWithPath:[cloudGeoJournalDir stringByAppendingPathComponent:file]];
+        TRACE("%s: %s\n", [[localFile absoluteString] UTF8String], [[cloudFile absoluteString] UTF8String]);
+#ifdef MOVE_TO_CLOUD
+        [_fm setUbiquitous:YES
+                 itemAtURL:[NSURL fileURLWithPath:localFile]
+            destinationURL:[NSURL fileURLWithPath:cloudFile] error:&error];
+#endif
+        if ([_fm copyItemAtURL:localFile toURL:cloudFile error:&error] != YES) {
+            NSLog(@"Fail to copy to the cloud location: %@", error);
+        }
+        
+    }
+    
+}
+
+#pragma -
 
 /*
  Multithread handling of cloud
@@ -197,6 +376,11 @@ static CloudService *sharedCloudService = nil;
     
     TRACE("%s, end\n", __func__);
     [pool release];
+}
+
+- (void)dealloc
+{
+    [cloudContainer release];
 }
 
 @end

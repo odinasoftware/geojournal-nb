@@ -11,6 +11,7 @@
 //#define	NO_ACTIVE_CATEGORY	@"None"
 //
 #define GEO_FOLDER_NAME				@"GeoJournal"
+#define GEO_DB_FOLDER_NAME          @"GeoJournalDB"
 #define GEO_FILE_EXT				@".geo"
 #define GEO_CLOUD_IDC               @"geojournal_idc_odinasoftware.geo"
 
@@ -45,7 +46,7 @@
 	BOOL					levelRestored;
     NSNumber                *isPrivate;
     KeychainItemWrapper     *passwordItem;
-    NSURL                   *cloudContainer;
+    
 	NSString                *UUID;
     NSNumber                *dbReadyForCloud;
 }
@@ -77,7 +78,7 @@
 @property (nonatomic)			BOOL		levelRestored;
 @property (nonatomic, retain)   NSNumber    *isPrivate;
 @property (nonatomic, retain)   KeychainItemWrapper       *passwordItem;
-@property (nonatomic, retain)   NSURL       *cloudContainer;
+
 @property (nonatomic, retain)   NSString    *UUID;
 @property (nonatomic, retain)   NSNumber    *dbReadyForCloud;
 
@@ -86,6 +87,7 @@
 @property (nonatomic) NSInteger	thirdLevel;
 
 + (GeoDefaults*)sharedGeoDefaultsInstance;
++ (NSString*)GetUUID;
 
 - (void)saveFontSize;
 - (void)initDefaultSettings;
@@ -99,8 +101,5 @@
 - (NSString*)getAbsoluteDocPath:(NSString*)lastComponent;
 - (NSInteger)getPasscode;
 - (void)setPasscode:(NSInteger)passcode;
-- (NSURL*)getCloudContainer;
-- (NSString*)getCloudGeoJournalContainer;
-- (NSString*)getCloudURL:(NSString*)lastComponent;
 
 @end
