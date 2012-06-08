@@ -22,6 +22,7 @@ static CloudService *sharedCloudService = nil;
 @implementation CloudService
 
 @synthesize cloudContainer;
+@synthesize metadataSearch;
 
 + (CloudService*)sharedCloudServiceInstance
 {
@@ -90,14 +91,14 @@ static CloudService *sharedCloudService = nil;
 // Method invoked when the initial query gathering is completed
 - (void)initalGatherComplete:sender;
 {
-    NSMetadataQuery *query = [sender object];
+    //NSMetadataQuery *query = [sender object];
     
-    TRACE("%s, %d\n", __func__, [query resultCount]);
+    TRACE("%s, %d\n", __func__, [self.metadataSearch resultCount]);
     
     // Stop the query, the single pass is completed.
-    [query stopQuery];
+    [self.metadataSearch stopQuery];
     
-    if ([query resultCount] == 0) {
+    if ([self.metadataSearch resultCount] == 0) {
         // No file exists. If local exists, then upload it.
         // Otherwise, there is no image. 
         
@@ -106,8 +107,8 @@ static CloudService *sharedCloudService = nil;
     // iterates over the content, printing the display name key for
     // each image
     NSInteger i=0;
-    for (i=0; i < [query resultCount]; i++) {
-        NSMetadataItem *theResult = [query resultAtIndex:i];
+    for (i=0; i < [self.metadataSearch resultCount]; i++) {
+        NSMetadataItem *theResult = [self.metadataSearch resultAtIndex:i];
         NSString *displayName = [theResult valueForAttribute:(NSString *)NSMetadataItemDisplayNameKey];
         TRACE("result at %d - %s\n", i, [displayName UTF8String]);
     }
@@ -117,51 +118,13 @@ static CloudService *sharedCloudService = nil;
     // When the Query is removed the query results are also lost.
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:NSMetadataQueryDidUpdateNotification
-                                                  object:query];
+                                                  object:self.metadataSearch];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:NSMetadataQueryDidFinishGatheringNotification
-                                                  object:query];
-    [query release];
+                                                  object:self.metadataSearch];
+    self.metadataSearch = nil;
 }
 
-
-- (void)searchInCloud:(NSString*)url delegate:(SEL)delegate
-{
-    TRACE("%s, url: %s\n", __func__, [url UTF8String]);
-    NSMetadataQuery *metadataSearch = [[NSMetadataQuery alloc] init];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, url];
-    [metadataSearch setPredicate:predicate];
-    
-    // Register the notifications for batch and completion updates
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(queryDidUpdate:)
-                                                 name:NSMetadataQueryDidUpdateNotification
-                                               object:metadataSearch];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(delegate:)
-                                                 name:NSMetadataQueryDidFinishGatheringNotification
-                                               object:metadataSearch];
-    
-    // Set the search scope. In this case it will search the User's home directory
-    // and the iCloud documents area
-    NSArray *searchScopes;
-    searchScopes=[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDocumentsScope,nil];
-    [metadataSearch setSearchScopes:searchScopes];
-    
-    // Configure the sorting of the results so it will order the results by the
-    // display name
-    /*
-     NSSortDescriptor *sortKeys=[[[NSSortDescriptor alloc] initWithKey:(id)kMDItemDisplayName
-     ascending:YES] autorelease];
-     [metadataSearch setSortDescriptors:[NSArray arrayWithObject:sortKeys]];
-     */
-    TRACE("metadata search: %d, gathering: %d, stopped: %d, count: %d\n", [metadataSearch isStarted], [metadataSearch isGathering], [metadataSearch isStopped], [metadataSearch resultCount]);
-    if ([metadataSearch startQuery] == NO) {
-        TRACE("%s, query failed.\n", __func__);
-    }
-    
-}
 
 #pragma Cloud Management
 - (NSURL*)getCloudContainer
@@ -283,26 +246,38 @@ static CloudService *sharedCloudService = nil;
     // TODO: how to write a file in cloud. 
 }
 
-
-/*
- copyToCloudSandbox:
- Copy all file in the geojournal folder to the cloud sandbox.
- it will eventually sync with the iCloud. 
- */
-- (void)copyToCloudSandbox
+- (void)putIndicator:(NSString*)cloudDir
 {
+    NSError *error = nil;
+    NSString *localIndicator = [[[GeoDefaults sharedGeoDefaultsInstance] geoDocumentPath] stringByAppendingPathComponent:GEO_CLOUD_IDC];
+    NSString *cloudIndicator = [cloudDir stringByAppendingPathComponent:GEO_CLOUD_IDC];
+    
+    NSString *content = [NSString stringWithString:GEO_CLOUD_IDC];
+    NSData *dataContent = [NSData dataWithBytes:(void*)[content UTF8String] length:[content length]];
+    if ([_fm createFileAtPath:localIndicator
+                     contents:dataContent 
+                   attributes:nil] == NO) {
+        NSLog(@"%s, can't create the cloud indicator.", __func__);
+        return;
+    }
+    
+    if ([_fm setUbiquitous:YES 
+                 itemAtURL:[NSURL fileURLWithPath:localIndicator] 
+            destinationURL:[NSURL fileURLWithPath:cloudIndicator] error:&error] != YES) {
+        NSLog(@"%s: fail to upload sync indicator: %@", __func__, error);
+    }
+    
+}
+
+- (void)uploadBaselineFiles
+{
+
     NSError *error = nil;
     NSString *docsDir = [[GeoDefaults sharedGeoDefaultsInstance] geoDocumentPath];
     
-    // Upgrade DB entries to copy to iCloud
-    [[GeoDatabase sharedGeoDatabaseInstance] upgradeDBForCloudReady];
-    
-    // TODO: see if the baseline is synced
-    [self searchInCloud:GEO_CLOUD_IDC delegate:checkBaselineSync];
-    
     NSString *cloudGeoJournalDir = [[CloudService sharedCloudServiceInstance] getCloudURL:[GeoDefaults sharedGeoDefaultsInstance].UUID willCreate:YES];
     TRACE("%s: cloud: %s\n", __func__, [cloudGeoJournalDir UTF8String]);
-    
+#if 0    
     // Copy the files to the cloud location
     NSDirectoryEnumerator *dirEnum = [_fm enumeratorAtPath:docsDir];
     
@@ -323,6 +298,104 @@ static CloudService *sharedCloudService = nil;
         }
         
     }
+#endif
+    // Everything is done, put the indicator.
+    [self putIndicator:cloudGeoJournalDir];
+}
+
+- (void)checkBaselineSync:(id)sender
+{
+    // TODO: see if we have the synced file.
+    // if it does not exist in there, then start baseline sync.
+        
+    TRACE("%s, %d\n", __func__, [self.metadataSearch resultCount]);
+    
+    // Stop the self.metadataSearch, the single pass is completed.
+    [self.metadataSearch stopQuery];
+    
+    if ([self.metadataSearch resultCount] == 0) {
+        // Start the baseline sync now.
+        [self uploadBaselineFiles];
+    }
+    else {
+        // TODO: We have the baseline synced. Now we need to determine which directories need to be donwloaded.
+        
+        // Process the content. In this case the application simply
+        // iterates over the content, printing the display name key for
+        // each image
+        NSInteger i=0;
+        for (i=0; i < [self.metadataSearch resultCount]; i++) {
+            NSMetadataItem *theResult = [self.metadataSearch resultAtIndex:i];
+            NSString *displayName = [theResult valueForAttribute:(NSString *)NSMetadataItemDisplayNameKey];
+            TRACE("result at %d - %s\n", i, [displayName UTF8String]);
+        }
+    }
+    
+    // Remove the notifications to clean up after ourselves.
+    // Also release the metadataQuery.
+    // When the Query is removed the query results are also lost.
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSMetadataQueryDidUpdateNotification
+                                                  object:self.metadataSearch];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NSMetadataQueryDidFinishGatheringNotification
+                                                  object:self.metadataSearch];
+    self.metadataSearch = nil;
+    
+}
+
+- (void)searchInCloud:(NSString*)url delegate:(SEL)delegate
+{
+    TRACE("%s, url: %s\n", __func__, [url UTF8String]);
+    NSMetadataQuery *meta = [[NSMetadataQuery alloc] init];
+    self.metadataSearch = meta;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, url];
+    [self.metadataSearch setPredicate:predicate];
+    
+    // Register the notifications for batch and completion updates
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(queryDidUpdate:)
+                                                 name:NSMetadataQueryDidUpdateNotification
+                                               object:metadataSearch];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:delegate
+                                                 name:NSMetadataQueryDidFinishGatheringNotification
+                                               object:metadataSearch];
+    
+    // Set the search scope. In this case it will search the User's home directory
+    // and the iCloud documents area
+    NSArray *searchScopes;
+    searchScopes=[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDataScope, nil];
+    [metadataSearch setSearchScopes:searchScopes];
+    
+    // Configure the sorting of the results so it will order the results by the
+    // display name
+    /*
+     NSSortDescriptor *sortKeys=[[[NSSortDescriptor alloc] initWithKey:(id)kMDItemDisplayName
+     ascending:YES] autorelease];
+     [metadataSearch setSortDescriptors:[NSArray arrayWithObject:sortKeys]];
+     */
+    //TRACE("metadata search: %d, gathering: %d, stopped: %d, count: %d\n", [metadataSearch isStarted], [metadataSearch isGathering], [metadataSearch isStopped], [metadataSearch resultCount]);
+    if ([self.metadataSearch startQuery] == NO) {
+        TRACE("%s, query failed.\n", __func__);
+    }
+    [meta release];
+}
+
+/*
+ copyToCloudSandbox:
+ Copy all file in the geojournal folder to the cloud sandbox.
+ it will eventually sync with the iCloud. 
+ */
+- (void)copyToCloudSandbox
+{
+    
+    // Upgrade DB entries to copy to iCloud
+    [[GeoDatabase sharedGeoDatabaseInstance] upgradeDBForCloudReady];
+    
+    // TODO: see if the baseline is synced
+    [self searchInCloud:GEO_CLOUD_IDC delegate:@selector(checkBaselineSync:)];
     
 }
 
@@ -381,6 +454,7 @@ static CloudService *sharedCloudService = nil;
 - (void)dealloc
 {
     [cloudContainer release];
+    [metadataSearch release];
 }
 
 @end

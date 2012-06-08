@@ -29,7 +29,7 @@ typedef enum {CLOUE_NONE, CLOUE_CHECKING, CLOUD_DOWNLOADING, CLOUD_UPLOADING} CL
     NSMutableArray          *urlList;
     NSMutableDictionary     *contextDict;
     NSMutableDictionary     *urlDict;
-    //NSMetadataQuery         *metadataSearch;
+    NSMetadataQuery         *metadataSearch;
     NSURL                   *cloudContainer;
         
 @private
@@ -37,7 +37,8 @@ typedef enum {CLOUE_NONE, CLOUE_CHECKING, CLOUD_DOWNLOADING, CLOUD_UPLOADING} CL
 
 }
 
-@property (nonatomic, retain)   NSURL       *cloudContainer;
+@property (nonatomic, retain)   NSURL               *cloudContainer;
+@property (nonatomic, retain)   NSMetadataQuery     *metadataSearch;
 
 + (CloudService*)sharedCloudServiceInstance;
 
@@ -49,5 +50,7 @@ typedef enum {CLOUE_NONE, CLOUE_CHECKING, CLOUD_DOWNLOADING, CLOUD_UPLOADING} CL
 - (BOOL)isFilesInCloud;
 - (void)copyToCloudSandbox;
 - (void)searchInCloud:(NSString*)url delegate:(SEL)delegate;
+- (void)checkBaselineSync:(id)sender;
+- (void)uploadBaselineFiles;
 
 @end
