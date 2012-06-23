@@ -36,6 +36,10 @@
 #define kIsPriviateKey                  @"IS_PRIVATE"
 #define kUUIDKey                        @"UUID_DEVICE"
 #define kDBReadyForCloudKey             @"DB_READY_FOR_CLOUD"
+#define kEnableCloudKey                 @"ENABLE_CLOUD"
+#define kAskCloudQuestionKey            @"ASK_CLOUD_QUESTION"
+
+#define UUID_LOC                        2
 
 static GeoDefaults	*sharedGeoDefaults = nil;
 
@@ -70,6 +74,7 @@ static GeoDefaults	*sharedGeoDefaults = nil;
 @synthesize passwordItem;
 @synthesize UUID;
 @synthesize dbReadyForCloud;
+@synthesize enableCloud;
 
 int getNumberFromIndex(int i)
 {
@@ -156,6 +161,8 @@ int getNumberFromIndex(int i)
     [passwordItem release];
     [UUID release];
     [dbReadyForCloud release];
+    [enableCloud release];
+    [askCloudQuestion release];
 
 	[super dealloc];
 }
@@ -167,6 +174,15 @@ int getNumberFromIndex(int i)
 	NSDictionary *appDefaults = nil;
 	
 	self.numberOfFileGenerated = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kNumberOfFileGeneragedKey];
+    
+    self.enableCloud = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kEnableCloudKey];
+    if (enableCloud == nil) {
+        NSNumber *temp = [[NSNumber alloc] initWithBool:YES];
+        self.enableCloud = temp; [temp release];
+    }
+    else {
+        self.enableCloud = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kEnableCloudKey];
+    }
 	if (self.numberOfFileGenerated == nil) {
 		NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"DefaultCategory" ofType:@"plist"];
 		NSArray *defaultCategory = [[NSArray alloc] initWithContentsOfFile:thePath];
@@ -212,7 +228,10 @@ int getNumberFromIndex(int i)
         temp = [[NSNumber alloc] initWithInt:1];
         self.isPrivate = temp;
         
-        //self.UUID = [GeoDefaults GetUUID];
+        //temp = [[NSNumber alloc] initWithBool:NO];
+        //self.askCloudQuestion = temp; [temp release];
+        
+        self.UUID = [GeoDefaults GetUUID];
         temp = [[NSNumber alloc] initWithInt:0];
         self.dbReadyForCloud = temp; [temp release];
 		
@@ -230,6 +249,10 @@ int getNumberFromIndex(int i)
 		
 		// No need to restore levels.
 		levelRestored = YES;
+        // If things has to be saved right away, we can do this here.
+        [self saveDefaultSettings];
+        //
+        [[NSUserDefaults standardUserDefaults] synchronize];
 	}
 	else {
 	
@@ -271,7 +294,9 @@ int getNumberFromIndex(int i)
 		self.isPrivate = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kIsPriviateKey];
         
         // get UUID
-        //self.UUID = (NSString*) [[NSUserDefaults standardUserDefaults] objectForKey:kUUIDKey];
+        self.UUID = (NSString*) [[NSUserDefaults standardUserDefaults] objectForKey:kUUIDKey];
+        
+        //self.askCloudQuestion = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kAskCloudQuestionKey];
         
         self.dbReadyForCloud = (NSNumber*) [[NSUserDefaults standardUserDefaults] objectForKey:kDBReadyForCloudKey];
         
@@ -306,12 +331,16 @@ int getNumberFromIndex(int i)
                    isPrivate, kIsPriviateKey,
                    //UUID, kUUIDKey,
                    dbReadyForCloud, kDBReadyForCloudKey,
+                   enableCloud, kEnableCloudKey,
+                   askCloudQuestion, kAskCloudQuestionKey,
 				   nil];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
-	[[NSUserDefaults standardUserDefaults] synchronize];
     
+        
+	
     
+    TRACE("%s, UUID: %s\n", __func__, [UUID UTF8String]);
 	applicationDocumentsDirectory = nil;
 	geoDocumentPath = nil;
 	fileManager = [NSFileManager defaultManager];
@@ -372,6 +401,41 @@ int getNumberFromIndex(int i)
 	return path;
 }
 
+- (NSString*)getAbsoluteDocPathWithUUID:(NSString*)lastComponent
+{
+	NSString *path = nil;
+	
+	if (lastComponent) {
+		path = [self.geoDocumentPath stringByAppendingPathComponent:lastComponent];
+	}
+    
+    NSArray *components = [path pathComponents];
+    
+    //TRACE("%s, image: %s\n", __func__, [imageLink UTF8String]);
+    
+    if ([components count] > UUID_LOC) {
+        int uuid_loc = [components count] - UUID_LOC;
+        NSString *possible_uuid = [components objectAtIndex:uuid_loc];
+        
+        if ([possible_uuid compare:UUID] == 0) {
+            // This is local file and the UUID component should be omitted in the actual location.
+            NSMutableArray *newPath = [[NSMutableArray alloc] initWithCapacity:[components count]-2];
+            
+            
+            for (int i=0; i<[components count]; ++i) {
+                if (i == uuid_loc) continue;
+                NSString *s = [components objectAtIndex:i];
+                [newPath addObject:s];
+            }
+            path = [NSString pathWithComponents:newPath];
+            TRACE("%s: new path: %s\n", __func__, [path UTF8String]);
+            [newPath release];
+        }
+    }
+
+	return path;
+}
+
 #pragma mark LEVEL SETTINGS
 
 - (NSInteger)firstLevel 
@@ -423,9 +487,6 @@ int getNumberFromIndex(int i)
 
 - (void)saveDefaultSettings
 {
-	NSNumber *initDone = [[NSNumber alloc] initWithInt:1];
-	self.defaultInitDone = initDone;
-	[initDone release];
 	
 	TRACE("%s, %s\n", __func__, [activeCategory UTF8String]);
 	[[NSUserDefaults standardUserDefaults] setObject:savedLocation forKey:kSavedLocationKey];
@@ -440,6 +501,8 @@ int getNumberFromIndex(int i)
     [[NSUserDefaults standardUserDefaults] setObject:isPrivate forKey:kIsPriviateKey];
     [[NSUserDefaults standardUserDefaults] setObject:UUID forKey:kUUIDKey];
     [[NSUserDefaults standardUserDefaults] setObject:dbReadyForCloud forKey:kDBReadyForCloudKey];
+    [[NSUserDefaults standardUserDefaults] setObject:enableCloud forKey:kEnableCloudKey];
+    [[NSUserDefaults standardUserDefaults] setObject:askCloudQuestion forKey:kAskCloudQuestionKey];
 }
 
 - (void)saveMapSettins
@@ -479,6 +542,17 @@ int getNumberFromIndex(int i)
 	[[NSUserDefaults standardUserDefaults] setObject:defaultFontSize forKey:kDefaultFontSizeKey];
 }
 
+- (NSNumber*)askCloudQuestion 
+{
+    return [NSNumber numberWithBool:YES];
+}
+
+- (void)dbInitDone 
+{
+    self.defaultInitDone = [NSNumber numberWithInt:1];
+    [[NSUserDefaults standardUserDefaults] setObject:defaultInitDone forKey:kDefaultInitDoneKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 #pragma mark -
 #pragma PASSCODE
 - (NSInteger)getPasscode

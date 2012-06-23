@@ -54,7 +54,7 @@ void saveImageToFile(UIImage *image, NSString *filename)
 	 */
 	// TODO: May alternatively write to photo album: UIImageWriteToSavedPhotosAlbum
 	//[UIImagePNGRepresentation(image) writeToFile:filename atomically:YES];
-	[UIImageJPEGRepresentation(image, 0.5) writeToFile:filename atomically:YES];
+	[UIImageJPEGRepresentation(image, 1.0) writeToFile:filename atomically:YES];
 	//UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil);
 }
 
@@ -238,6 +238,7 @@ NSString *getOrigFilename(NSString *filename)
 				[self.categoryArray addObject:category];
 			}
 		}
+        [[GeoDefaults sharedGeoDefaultsInstance] dbInitDone];
 	}
 }
 

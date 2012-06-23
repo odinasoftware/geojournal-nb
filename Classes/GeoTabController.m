@@ -56,6 +56,23 @@
  */
 
 
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    switch (buttonIndex) {
+        case 0:
+            [GeoDefaults sharedGeoDefaultsInstance].enableCloud = [NSNumber numberWithBool:YES];
+            break;
+            
+        default:
+            [GeoDefaults sharedGeoDefaultsInstance].enableCloud = [NSNumber numberWithBool:NO];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"iCloud" 
+                                                           message:@"You can enable iCloud sync in Connect tab." 
+                                                          delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+            break;
+    }
+}
 
 - (void)viewDidLoad 
 {
@@ -67,6 +84,15 @@
 		self.selectedIndex = 2;
 	}
 	 */
+    if ([[GeoDefaults sharedGeoDefaultsInstance].askCloudQuestion boolValue] == NO) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"iCloud" 
+                                                        message:@"iCloud has not been enabled. Do you enable now and sync your files?" 
+                                                       delegate:self 
+                                              cancelButtonTitle:@"Enable" otherButtonTitles:@"Not now", nil];
+        [alert show];
+        [alert release];
+        //[GeoDefaults sharedGeoDefaultsInstance].askCloudQuestion = [NSNumber numberWithBool:YES];
+    }
 }
 
 - (void)viewDidAppear

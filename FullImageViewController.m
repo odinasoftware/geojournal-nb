@@ -25,7 +25,7 @@ void *display_image_in_thread(void *arg)
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
 	image_holder *holder = (image_holder*) arg;
-	UIImage *image = [[UIImage alloc] initWithContentsOfFile:[[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPath:holder->file_name]];
+	UIImage *image = [[UIImage alloc] initWithContentsOfFile:[[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPathWithUUID:holder->file_name]];
 	holder->imageView.image = image;
 	[image release];
 	if (holder->activityView) {

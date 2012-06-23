@@ -20,7 +20,8 @@
 #import "GeoDefaults.h"
 #import "CloudService.h"
                                             
-#define UBIQUITY_CONTAINER_URL @"WV3CVJV89H.com.odinasoftware.igeojournal" 
+#define UBIQUITY_CONTAINER_URL          @"WV3CVJV89H.com.odinasoftware.igeojournal" 
+#define UBIQUITY_CONTENT_NAME_PREFIX    @"com.odinasoftware.igeojournal"
 
 /*
  * iCloud todos:
@@ -157,29 +158,11 @@ void remove_file(NSString *file)
 {
 	self = [super init];
 	if (self) {
+        _isCloudAvailable = NO;
 		journalDict = [[NSMutableDictionary alloc] init];
-        self.managedObjectContext = [self managedObjectContextInstance];
-        /*
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            NSError *error = nil;
-            UIDocument *doc = [[UIDocument alloc] initWithFileURL:[NSURL fileURLWithPath:[GeoDefaults sharedGeoDefaultsInstance].geoDocumentPath isDirectory:YES]];
-            NSFileManager *fileManager = [NSFileManager defaultManager];
-            
-            NSURL *cloudURL = [fileManager URLForUbiquityContainerIdentifier:nil];
-            NSString* cloudContent = [[cloudURL path] stringByAppendingPathComponent:@"GeoJournal"];
-            TRACE("%s, %s, %s\n", __func__, [[cloudURL absoluteString] UTF8String], [cloudContent UTF8String]);
-            [fileManager setUbiquitous:YES itemAtURL:doc.fileURL destinationURL:[NSURL fileURLWithPath:cloudContent] error:&error];
-            if (error) {
-                NSLog(@"%@", error);
-            }
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                TRACE("%s, folder sync done!\n", __func__);
-                //[[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
-            });
-        });
-         */
-	}
+        //self.managedObjectContext = [self managedObjectContextInstance:YES];
+        self.managedObjectContext = [self managedObjectContextInstance:[[GeoDefaults sharedGeoDefaultsInstance].enableCloud boolValue]];
+    }
 	
 	return self;
 }
@@ -287,35 +270,41 @@ void remove_file(NSString *file)
  Returns the managed object context for the application.
  If the context doesn't already exist, it is created and bound to the persistent store coordinator for the application.
  */
-- (NSManagedObjectContext *) managedObjectContextInstance {
+- (NSManagedObjectContext *) managedObjectContextInstance:(BOOL)cloud {
 	TRACE_HERE;
     if (managedObjectContext__ != nil) {
         return managedObjectContext__;
     }
 	
-
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (coordinator != nil) {
-        // Make life easier by adopting the new NSManagedObjectContext concurrency API
-        // the NSMainQueueConcurrencyType is good for interacting with views and controllers since
-        // they are all bound to the main thread anyway
-        NSManagedObjectContext* moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator:cloud];
+    if (cloud == YES && _isCloudAvailable == YES) {
         
-        [moc performBlockAndWait:^{
-            // even the post initialization needs to be done within the Block
-            [moc setPersistentStoreCoordinator: coordinator];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mergeChangesFrom_iCloud:) 
-                                                         name:NSPersistentStoreDidImportUbiquitousContentChangesNotification 
-                                                       object:coordinator];
-        }];
-        managedObjectContext__ = moc;
-
-#ifdef ORIGINAL_CODE
+        if (coordinator != nil) {
+            // Make life easier by adopting the new NSManagedObjectContext concurrency API
+            // the NSMainQueueConcurrencyType is good for interacting with views and controllers since
+            // they are all bound to the main thread anyway
+            NSManagedObjectContext* moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
+            
+            [moc performBlockAndWait:^{
+                // even the post initialization needs to be done within the Block
+                TRACE("%s: add merge observer.\n", __func__);
+                [moc setPersistentStoreCoordinator: coordinator];
+                [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mergeChangesFrom_iCloud:) 
+                                                             name:NSPersistentStoreDidImportUbiquitousContentChangesNotification 
+                                                           object:coordinator];
+            }];
+            managedObjectContext__ = moc;
+            
+        }
+    }
+    else {
+        //#ifdef ORIGINAL_CODE
         managedObjectContext__ = [[[NSManagedObjectContext alloc] init] retain];
         [managedObjectContext__ setPersistentStoreCoordinator: coordinator];
-#endif
+        //#endif
+        
     }
-
+    
     return managedObjectContext__;
 }
 
@@ -419,176 +408,125 @@ void remove_file(NSString *file)
     return managedObjectModel__;
 }
 
-/*
- - (void)checkMigration
- {
- NSError *error = nil;
- 
- NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinator];
- NSURL *sourceStoreURL = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
- stringByAppendingPathComponent: @"GeoJournal.sqlite"]];
- 
- NSURL *destStoreURL = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
- stringByAppendingPathComponent: @"GeoJournal2.sqlite"]];		
- 
- NSDictionary *sourceMetadata = [NSPersistentStoreCoordinator metadataForPersistentStoreOfType:NSSQLiteStoreType 
- URL:sourceStoreURL
- error:&error];
- NSString *path = [[NSBundle mainBundle] pathForResource:@"GeoJournal" ofType:@"mom"];
- NSURL *url = [NSURL fileURLWithPath:path];
- 
- NSManagedObjectModel *sourceModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:url];
- if (error) {
- NSLog(@"%s, %@", __func__, error);
- return;
- }
- 
- path = [[NSBundle mainBundle] pathForResource:@"GeoJournal 2" ofType:@"mom"];
- url = [NSURL fileURLWithPath:path];
- NSManagedObjectModel *destinationModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:url];
- BOOL pscCompatibile = [destinationModel isConfiguration:nil compatibleWithStoreMetadata:sourceMetadata];
- 
- if (pscCompatibile) {
- // no need to migrate
- TRACE("%s, No need to migrate.\n", __func__);
- return;
- }
- 
- NSDictionary *destMetadata = [NSPersistentStoreCoordinator metadataForPersistentStoreOfType:NSSQLiteStoreType 
- URL:destStoreURL 
- error:&error];
- 
- 
- NSManagedObjectModel *destModel = [NSManagedObjectModel mergedModelFromBundles:nil forStoreMetadata:destMetadata];
- if (error) {
- NSLog(@"%s, %@", __func__, error);
- return;
- }
- 
- NSMappingModel *mapping = [NSMappingModel mappingModelFromBundles:nil forSourceModel:sourceModel destinationModel:destModel];
- 
- NSMigrationManager *manager = [[NSMigrationManager alloc] initWithSourceModel:sourceModel destinationModel:destModel];
- 
- BOOL ok = [manager migrateStoreFromURL:sourceStoreURL 
- type:nil 
- options:nil
- withMappingModel:mapping
- toDestinationURL:destStoreURL 
- destinationType:nil 
- destinationOptions:nil
- error:&error];
- 
- if (ok) {
- NSLog(@"Migration succeeded.\n");
- }
- else {
- NSLog(@"Migration failed: %@", error);
- }
- 
- 
- }
- */
 
 /**
  Returns the persistent store coordinator for the application.
  If the coordinator doesn't already exist, it is created and the application's store added to it.
  */
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator {
+- (NSPersistentStoreCoordinator *)persistentStoreCoordinator:(BOOL)cloud {
 	NSError *error = nil;
     if (persistentStoreCoordinator__ != nil) {
         return persistentStoreCoordinator__;
     }
 	
     persistentStoreCoordinator__ = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel: [self managedObjectModel]];
-    
-    // prep the store path and bundle stuff here since NSBundle isn't totally thread safe
     NSPersistentStoreCoordinator* psc = persistentStoreCoordinator__;
+    
     NSURL *storeUrl = [NSURL fileURLWithPath: [[[GeoDefaults sharedGeoDefaultsInstance] applicationDocumentsDirectory] 
-                                        stringByAppendingPathComponent: @"GeoJournal.sqlite"]];
-    //NSString* bundleid = [[[NSBundle mainBundle] bundleIdentifier] lowercaseString];
-    //NSString *defaultStorePath = [[NSBundle mainBundle] pathForResource:@"GeoJournal" ofType:@"sqlite"];
-
-    // do this asynchronously since if this is the first time this particular device is syncing with preexisting
-    // iCloud content it may take a long long time to download
-    // CTODO: this has to be blocked call???
-    //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
-    {
-        NSString* coreDataCloudContent = [[CloudService sharedCloudServiceInstance] getCloudURL:GEO_DB_FOLDER_NAME willCreate:YES];
+                                               stringByAppendingPathComponent: @"GeoJournal.sqlite"]];
+    if (cloud == YES) {
+        // Getting UUID 
+        /* From iOS document.
+         The content name is used to identify the store across different devices so that 
+         transactions are synced consistently with the potentially many instances of that 
+         persistent store file across all the devices. For this reason, you should must 
+         make sure you provide a unique name for each store—for example, a UUID.
+         */
+        // Need to get UUIID. Currently it is used for identifying a device in the cloud too. 
+        // How can we reuse it? Since it is only available after or in converting the db to the cloud ready. 
+        // We should look at the default property or db to fetch it. 
         
-        
-        TRACE("%s, %s\n", __func__, [coreDataCloudContent UTF8String]);
-                
-        if (coreDataCloudContent) {
+        // do this asynchronously since if this is the first time this particular device is syncing with preexisting
+        // iCloud content it may take a long long time to download
+        // TODO: this has to be blocked call???
+        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+        {
+            NSString* coreDataCloudContent = [[CloudService sharedCloudServiceInstance] getCloudURL:GEO_DB_FOLDER_NAME willCreate:YES];
             
-            NSURL *cloudURL = [NSURL fileURLWithPath:coreDataCloudContent];
             
-            //  The API to turn on Core Data iCloud support here.
-            NSDictionary* options = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     @"com.odinasoftware.igeojournal", NSPersistentStoreUbiquitousContentNameKey, 
-                                     cloudURL, NSPersistentStoreUbiquitousContentURLKey, 
-                                     [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, 
-                                     [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption,nil];
+            TRACE("%s, %s\n", __func__, [coreDataCloudContent UTF8String]);
             
-            // Needed on iOS seed 3, but not Mac OS X
-            //[self workaround_weakpackages_9653904:options];
-             
-            [psc lock];
-            if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+            if (coreDataCloudContent) {
                 /*
-                 Replace this implementation with code to handle the error appropriately.
-                 
-                 abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
-                 
-                 Typical reasons for an error here include:
-                 * The persistent store is not accessible
-                 * The schema for the persistent store is incompatible with current managed object model
-                 Check the error message to determine what the actual problem was.
+                NSString *ubiquitousContentName = [[NSString alloc] initWithFormat:@"%@.%@", 
+                                                   UBIQUITY_CONTENT_NAME_PREFIX, 
+                                                   [GeoDefaults sharedGeoDefaultsInstance].UUID]; 
                  */
-                NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-                abort();
-            }    
-            [psc unlock];
-            
-            // tell the UI on the main thread we finally added the store and then
-            // post a custom notification to make your views do whatever they need to such as tell their
-            // NSFetchedResultsController to -performFetch again now there is a real store
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"asynchronously added persistent store!");
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
-            });
+                NSURL *cloudURL = [NSURL fileURLWithPath:coreDataCloudContent];
+                
+                //  The API to turn on Core Data iCloud support here.
+                NSDictionary* options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                         UBIQUITY_CONTENT_NAME_PREFIX, NSPersistentStoreUbiquitousContentNameKey, 
+                                         cloudURL, NSPersistentStoreUbiquitousContentURLKey, 
+                                         [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption, 
+                                         [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption,nil];
+                
+                // Needed on iOS seed 3, but not Mac OS X
+                //[self workaround_weakpackages_9653904:options];
+                
+                [psc lock];
+                if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+                    /*
+                     Replace this implementation with code to handle the error appropriately.
+                     
+                     abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. If it is not possible to recover from the error, display an alert panel that instructs the user to quit the application by pressing the Home button.
+                     
+                     Typical reasons for an error here include:
+                     * The persistent store is not accessible
+                     * The schema for the persistent store is incompatible with current managed object model
+                     Check the error message to determine what the actual problem was.
+                     */
+                    NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+                    abort();
+                }    
+                [psc unlock];
+                
+                _isCloudAvailable = YES;
+                // tell the UI on the main thread we finally added the store and then
+                // post a custom notification to make your views do whatever they need to such as tell their
+                // NSFetchedResultsController to -performFetch again now there is a real store
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    NSLog(@"asynchronously added persistent store!");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
+                });
+                
+                //[ubiquitousContentName release];
+            }
+            else {
+                // TODO: tell users that iCloud is not enabled. 
+                NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                         [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+                                         [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+                
+                NSError *error=nil;
+                
+                
+                if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+                    // Handle the error.
+                    NSLog(@"Error in persistent store: %@", error);
+                }   
+            }
         }
-        else {
-            // TODO: tell users that iCloud is not enabled. 
-            NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                                     [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
-                                     [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
-            
-            NSError *error=nil;
-            
-            
-            if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
-                // Handle the error.
-                NSLog(@"Error in persistent store: %@", error);
-            }   
-        }
-    }
-    //);
-
-	TRACE("%s, returning, db: %s\n", __func__, [[storeUrl absoluteString] UTF8String]);
-#ifdef ORIGINAL_CODE
-	NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-							 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
-							 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
-    
-	NSError *error=nil;
-    
-    
-    if (![self.persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
-        // Handle the error.
-		NSLog(@"Error in persistent store: %@", error);
-    }   
-#endif
+        //);
         
+        TRACE("%s, returning, db: %s\n", __func__, [[storeUrl absoluteString] UTF8String]);
+    }
+    else {
+        //#ifdef ORIGINAL_CODE
+        NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 [NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+                                 [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
+        
+        NSError *error=nil;
+        
+        
+        if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
+            // Handle the error.
+            NSLog(@"Error in persistent store: %@", error);
+        }   
+        //#endif
+    }
+    
     return persistentStoreCoordinator__;
 }
 
@@ -974,13 +912,7 @@ void remove_file(NSString *file)
                   
 - (void)upgradeDBForCloudReady
 {
-    if ([[GeoDefaults sharedGeoDefaultsInstance].dbReadyForCloud boolValue] && 
-        [GeoDefaults sharedGeoDefaultsInstance].UUID != NULL) {
-        TRACE("%s, db is ready for cloud.\n", __func__);
-        return;
-    }
- 
-    
+  
     TRACE("%s: UUID: %s\n", __func__, [[GeoDefaults sharedGeoDefaultsInstance].UUID UTF8String]);
     
     @try {

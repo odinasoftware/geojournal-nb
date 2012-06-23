@@ -441,7 +441,7 @@ int getNumberOfLinefeed(NSString *text) {
 	NSString *countString = nil;
 	
 	//self.imageForJournal.frame = CGRectMake(IMAGE_X, IMAGE_Y, IMAGE_WIDTH, IMAGE_HEIGHT);
-	NSString *pictureLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPath:self.entryForThisView.picture];
+	NSString *pictureLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPathWithUUID:self.entryForThisView.picture];
 	NSMutableArray *pictures = [[GeoDatabase sharedGeoDatabaseInstance] picturesForJournal:self.entryForThisView.picture];
 	
 	TRACE("%s, number of pictures: %d\n", __func__, [pictures count]);
@@ -655,7 +655,7 @@ int getNumberOfLinefeed(NSString *text) {
 {
 	NSError *error = nil;
 	
-	NSString *audioLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPath:self.entryForThisView.audio];
+	NSString *audioLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPathWithUUID:self.entryForThisView.audio];
 	
 	if (audioLink) {
 		if ([[NSFileManager defaultManager] fileExistsAtPath:audioLink] == YES) {

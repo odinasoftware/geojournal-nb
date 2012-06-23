@@ -216,6 +216,7 @@
 		}
 		
 		[self addIntroEntry];
+        [[GeoDefaults sharedGeoDefaultsInstance] dbInitDone];
 	}
 }
 

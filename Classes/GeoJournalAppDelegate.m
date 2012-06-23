@@ -153,18 +153,26 @@
 
 - (void)checkInSyncWithCloud
 {    
-    if ([[CloudService sharedCloudServiceInstance] isFilesInCloud] == NO) {
-        [[ProgressViewControllerHolder sharedStatusViewControllerInstance] showStatusView:self.tabBarController.view type:DEFAULT_PROGRESS_TYPE];
-        
+    // TODO: we do not have anything in the cloud, need to them into it. 
+    // TODO: check if this is cloud ready, the files has to be unique.
+    // enumerate it from the local and copy to the cloud sandbox.
+    if ([[GeoDefaults sharedGeoDefaultsInstance].dbReadyForCloud boolValue] == NO || 
+        [GeoDefaults sharedGeoDefaultsInstance].UUID == NULL) {
+        TRACE("%s, db is not ready for cloud.\n", __func__);
         dispatch_async(dispatch_get_current_queue(), ^{
-            // TODO: we do not have anything in the cloud, need to them into it. 
-            // TODO: check if this is cloud ready, the files has to be unique.
-            // enumerate it from the local and copy to the cloud sandbox.
+            [[ProgressViewControllerHolder sharedStatusViewControllerInstance] showStatusView:self.tabBarController.view type:CLOUD_READY_PROGRESS_TYPE];
+            // Upgrade DB entries to copy to iCloud
+            [[GeoDatabase sharedGeoDatabaseInstance] upgradeDBForCloudReady];
             
-            [[CloudService sharedCloudServiceInstance] copyToCloudSandbox];        
+            // At this point, we don't need to hold off user
+            [[ProgressViewControllerHolder sharedStatusViewControllerInstance] removeFromSuperview:CLOUD_READY_PROGRESS_TYPE];
         });
-        
     }
+
+    dispatch_async(dispatch_get_current_queue(), ^{
+        [[CloudService sharedCloudServiceInstance] copyToCloudSandbox];            
+    });
+
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
@@ -172,6 +180,7 @@
     _appLaunching = YES;
     TRACE_HERE;
 	[GeoDefaults sharedGeoDefaultsInstance];
+    [GeoDatabase sharedGeoDatabaseInstance];
     
 	// TODO: read the saved location and show it.
     // Add the tab bar controller's current view as a subview of the window
@@ -218,91 +227,12 @@
         [self startTabBarView];
     }
     // Check the cloud sync.
+    
     [self checkInSyncWithCloud];
-    [GeoDatabase sharedGeoDatabaseInstance];
 
     // This is only for test.
     //[[CloudService sharedCloudServiceInstance] listFilesInCloud:@"138D9BA5-21BF-4EB0-B3F7-A38D6A73229B"];
-    
-#if 0
-    dispatch_async(dispatch_get_current_queue(), ^{
-        /*
-        NSMetadataQuery *metadataSearch = [[NSMetadataQuery alloc] init];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K like %@", NSMetadataItemFSNameKey, @"*"];
-        [metadataSearch setPredicate:predicate];
-        
-        // Register the notifications for batch and completion updates
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(queryDidUpdate:)
-                                                     name:NSMetadataQueryDidUpdateNotification
-                                                   object:metadataSearch];
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(initalGatherComplete:)
-                                                     name:NSMetadataQueryDidFinishGatheringNotification
-                                                   object:metadataSearch];
-        
-        // Set the search scope. In this case it will search the User's home directory
-        // and the iCloud documents area
-        NSArray *searchScopes;
-        searchScopes=[NSArray arrayWithObjects:NSMetadataQueryUbiquitousDocumentsScope,nil];
-        [metadataSearch setSearchScopes:searchScopes];
-        
-        TRACE("%s, metasearch query: %p\n", __func__, metadataSearch);
-        [metadataSearch startQuery];
-         */
-        //[self searchInCloud:@"*"];
-        
-        NSFileManager *fm = [NSFileManager defaultManager];
-        NSError *error = nil;
-        
-        NSString *temp = [[CloudService sharedCloudServiceInstance] getCloudURL:@"138D9BA5-21BF-4EB0-B3F7-A38D6A73229B" willCreate:YES];
-        //NSURL *u = [NSURL fileURLWithPath:service.coreDataCloudContent isDirectory:YES];
-        NSURL *u = [NSURL fileURLWithPath:temp isDirectory:YES];
-        NSLog(@"url: %@", u);
-        NSArray *files = [fm contentsOfDirectoryAtURL:u
-                           includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsRegularFileKey, nil] 
-                                              options:NSDirectoryEnumerationSkipsHiddenFiles 
-                                                error:&error];
-        TRACE("%s, file count: %d\n", __func__, [files count]);
-
-        NSNumber *aBool = nil;
-        NSNumber *isDownloaded = nil;
-        NSString *fileName = nil;
-        for (NSURL *f in files) {
-            [f getResourceValue:&aBool forKey:NSURLIsDirectoryKey error:&error];
-            if (aBool && ![aBool boolValue]) {
-                [f getResourceValue:&isDownloaded forKey:NSURLUbiquitousItemIsDownloadedKey error:&error];
-                [f getResourceValue:&fileName forKey:NSURLNameKey error:&error];
-                NSLog(@"file: %@, downloaded: %d, %@", f, [isDownloaded boolValue], fileName);
-                
-                if (isDownloaded != nil) {
-                    if (![isDownloaded boolValue]) {
-                        if ([[NSFileManager defaultManager] startDownloadingUbiquitousItemAtURL:f error:&error] == NO) {
-                            NSLog(@"faile to download: %@", error);
-                        }
-                        
-                    }/*
-                    else {
-                        NSString *localFile = [service.documentDirectory stringByAppendingPathComponent:fileName];
-                        TRACE("%s\n", [localFile UTF8String]);
-                        if ([fm copyItemAtURL:f toURL:[NSURL fileURLWithPath:localFile] error:&error] == NO) {
-                            NSLog(@"fail to copy: %@", error);
-                        }
-                    }*/
-                }
-            }
-        }
-         
-        
-    });
-#endif
-    //[[CloudService sharedCloudServiceInstance] start];
-    //}
-	//CameraThread *thread = [CameraThread sharedCameraControllerInstance];
-	
-	//[thread start];
-	
+    	
 }
 
 #pragma PTPasscode

@@ -10,6 +10,7 @@
 #import "CloudFileService.h"
 #import "GeoDefaults.h"
 #import "GeoDatabase.h"
+#import "ProgressViewController.h"
 
 static CloudService *sharedCloudService = nil;
 
@@ -277,7 +278,7 @@ static CloudService *sharedCloudService = nil;
     
     NSString *cloudGeoJournalDir = [[CloudService sharedCloudServiceInstance] getCloudURL:[GeoDefaults sharedGeoDefaultsInstance].UUID willCreate:YES];
     TRACE("%s: cloud: %s\n", __func__, [cloudGeoJournalDir UTF8String]);
-#if 0    
+
     // Copy the files to the cloud location
     NSDirectoryEnumerator *dirEnum = [_fm enumeratorAtPath:docsDir];
     
@@ -298,7 +299,7 @@ static CloudService *sharedCloudService = nil;
         }
         
     }
-#endif
+
     // Everything is done, put the indicator.
     [self putIndicator:cloudGeoJournalDir];
 }
@@ -391,9 +392,6 @@ static CloudService *sharedCloudService = nil;
 - (void)copyToCloudSandbox
 {
     
-    // Upgrade DB entries to copy to iCloud
-    [[GeoDatabase sharedGeoDatabaseInstance] upgradeDBForCloudReady];
-    
     // TODO: see if the baseline is synced
     [self searchInCloud:GEO_CLOUD_IDC delegate:@selector(checkBaselineSync:)];
     
@@ -401,60 +399,13 @@ static CloudService *sharedCloudService = nil;
 
 #pragma -
 
-/*
- Multithread handling of cloud
- checking, uploading, and downloading.
- */
-- (void)main
-{
-    NSString    *url = nil;
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
-    TRACE_HERE;
-    CloudFileService *cloudFileService = [[CloudFileService alloc] init];
-    
-    NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] initWithFilePresenter:cloudFileService];
-    NSError *error = nil;
-        
-    /*
-     [coordinator coordinateReadingItemAtURL:[cloudFileService presentedItemURL]  options:0 error:&error byAccessor:^ (NSURL *newURL) {
-     TRACE("%s, new url: %s\n", __func__, [[newURL absoluteString] UTF8String]);
-     }];
-     
-     if (error) {
-     NSLog(@"%s, %@", __func__, error);
-     }
-     */
-    
-    [self searchInCloud:@"*"];
-    for (;;) {
-        /*
-        NSString *docsDir = cloudFileService.documentDirectory;
-        NSFileManager *localFileManager=[[NSFileManager alloc] init];
-        NSDirectoryEnumerator *dirEnum = [localFileManager enumeratorAtPath:docsDir];
-        
-        NSString *file;
-        while (file = [dirEnum nextObject]) {
-        
-            [self sendIt:file toCloud:cloudFileService];
-            
-
-        }
-        [localFileManager release];
-        */
-    
-        //("metadata search: %d, gathering: %d, stopped: %d, count: %d\n", [metadataSearch isStarted], [metadataSearch isGathering], [metadataSearch isStopped], [metadataSearch resultCount]);
-        sleep(3);
-    }
-    
-    TRACE("%s, end\n", __func__);
-    [pool release];
-}
 
 - (void)dealloc
 {
     [cloudContainer release];
     [metadataSearch release];
+    
+    [super dealloc];
 }
 
 @end

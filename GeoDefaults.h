@@ -41,6 +41,8 @@
 	NSMutableArray			*savedLocation;
 	NSNumber				*searchIndex;
 	NSNumber				*defaultInitDone;
+    NSNumber                *enableCloud;
+    NSNumber                *askCloudQuestion;
 	NSString				*searchString;
 	NSFileManager			*fileManager;
 	BOOL					levelRestored;
@@ -74,6 +76,8 @@
 @property (nonatomic, retain)	NSNumber	*searchIndex;
 @property (nonatomic, retain)	NSNumber	*defaultFontSize;
 @property (nonatomic, retain)	NSNumber	*defaultInitDone;
+@property (nonatomic, retain)   NSNumber    *enableCloud;
+@property (nonatomic, readonly)   NSNumber    *askCloudQuestion;
 @property (nonatomic, retain)	NSString	*searchString;
 @property (nonatomic)			BOOL		levelRestored;
 @property (nonatomic, retain)   NSNumber    *isPrivate;
@@ -101,5 +105,7 @@
 - (NSString*)getAbsoluteDocPath:(NSString*)lastComponent;
 - (NSInteger)getPasscode;
 - (void)setPasscode:(NSInteger)passcode;
+- (NSString*)getAbsoluteDocPathWithUUID:(NSString*)lastComponent;
+- (void)dbInitDone;
 
 @end

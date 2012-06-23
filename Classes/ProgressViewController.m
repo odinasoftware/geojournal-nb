@@ -105,6 +105,17 @@ static ProgressViewControllerHolder *sharedProgressViewController = nil;
     if ((self = [super init])) {
         view_type = type;
         TRACE("%s, %p view type: %d\n", __func__, self, view_type);
+        
+        switch (view_type) {
+            case DEFAULT_PROGRESS_TYPE:
+                self.statusLabel.text = @"Sync with iCloud ...";
+                break;
+            case CLOUD_READY_PROGRESS_TYPE:
+                self.statusLabel.text = @"Old version detected. Will need to convert to iCloud ready. It will take some time. Please wait ...";
+                break;
+            default:
+                break;
+        }
     }
     
     return self;

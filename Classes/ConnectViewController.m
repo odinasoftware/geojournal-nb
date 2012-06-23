@@ -17,10 +17,11 @@
 #import "PTPasscodeViewController.h"
 #import "KeychainItemWrapper.h"
 
-#define CONNECT_SECTIONS	2
+#define CONNECT_SECTIONS	3
 #define MAIL_INDEX			0
 #define FACEBOOK_INDEX		1
-#define PASSCODE_INDEX      2
+#define CLOUD_INDEX         2
+#define PASSCODE_INDEX      3
 
 #define kConnectObjectKey	@"object"
 #define kConnectHeaderKey	@"header"
@@ -30,8 +31,10 @@
 #define kSwitchButtonWidth		94.0
 #define kSwitchButtonHeight		27.0
 #define kSwitchButtonXOffset    10.0
+#define kSwitchButton1XOffset    10.0
 
 NSString *kDisplaySwitchCell_ID = @"SwitchCell_ID";
+NSString *kDisplaySwitchCell1_ID = @"PassCodeCell1_ID";
 NSString *kDisplayDateCell_ID = @"DisplayDateCell_ID";
 NSString *kSourceCell_ID = @"SourceCell_ID";
 
@@ -42,6 +45,7 @@ extern Boolean testReachability();
 @synthesize _tableView;
 @synthesize connectObjectArray;
 @synthesize switchCtrl;
+@synthesize cloudCtrl;
 
  // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -71,6 +75,11 @@ extern Boolean testReachability();
     UISwitch *s = [[UISwitch alloc] initWithFrame:frame];
     self.switchCtrl = s;
     [self.switchCtrl addTarget:self action:@selector(switchAction:) forControlEvents:UIControlEventValueChanged];
+    [s release];
+    
+    s = [[UISwitch alloc] initWithFrame:frame];
+    self.cloudCtrl = s;
+    [self.cloudCtrl addTarget:self action:@selector(cloudAction:) forControlEvents:UIControlEventValueChanged];
     [s release];
     
 	self.tabBarController.tabBar.selectedItem.title = @"Connect";
@@ -145,13 +154,24 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 {
 	// TODO: need to define table cells.
 	
-	NSString* identity = @"ConnectCell";
-	UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:identity];
+	NSString* identity = nil; 
+	UITableViewCell* cell = nil;
 	
 	TRACE("%s\n", __func__);
-	if (cell == nil) {
-		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identity] autorelease];
-	}
+    if (indexPath.section == MAIL_INDEX || indexPath.section == FACEBOOK_INDEX) {
+        identity = @"ConnectCell";
+        [tableView dequeueReusableCellWithIdentifier:identity];
+        if (cell == nil) {
+            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identity] autorelease];
+        }
+    }
+    else {
+        identity = @"SwitchCtrlCell";
+        [tableView dequeueReusableCellWithIdentifier:identity];
+        if (cell == nil) {
+            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identity] autorelease];
+        }
+    }
 	
 	if (indexPath.section == MAIL_INDEX) {
 		NSDictionary *dict = [connectObjectArray objectAtIndex:indexPath.section];
@@ -198,16 +218,29 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 
 		cell.accessoryType = UITableViewCellAccessoryNone;
 	}
+    else if (indexPath.section == CLOUD_INDEX) {
+        if ([indexPath row] == 0)
+        {
+                       
+            // this cell hosts the UISwitch control
+            cell.textLabel.text = @"iCloud:";
+            CGRect bound = cell.contentView.bounds;
+            DEBUG_RECT("cloud bound:", bound);
+            float x = bound.size.width-kSwitchButtonWidth-kSwitchButtonXOffset;
+            float y = (bound.size.height-kSwitchButtonHeight)/2;
+            TRACE("%s, x: %f, y: %f\n", __func__,x, y);
+            self.cloudCtrl.on = [[GeoDefaults sharedGeoDefaultsInstance].enableCloud boolValue];
+            self.cloudCtrl.frame = CGRectMake(x, y, kSwitchButtonWidth, kSwitchButtonHeight);
+            DEBUG_RECT("cloud: ", self.cloudCtrl.frame);
+            [cell.contentView addSubview:self.cloudCtrl];
+        }
+        
+    }
+
     else if (indexPath.section == PASSCODE_INDEX) {
         if ([indexPath row] == 0)
         {
-            cell = [_tableView dequeueReusableCellWithIdentifier:kDisplaySwitchCell_ID];
-            
-            if (cell == nil)
-            {
-                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:kDisplaySwitchCell_ID] autorelease];
-            }		
-
+          
             // this cell hosts the UISwitch control
             cell.textLabel.text = @"Passcode:";
             CGRect bound = cell.contentView.bounds;
@@ -220,7 +253,7 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
             DEBUG_RECT("switch: ", self.switchCtrl.frame);
             [cell.contentView addSubview:self.switchCtrl];
        }
-        
+       
     }
 	else {
 		NSLog(@"%s, index error: %d", __func__, indexPath.row);
@@ -255,6 +288,16 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
         [self.navigationController pushViewController:passcodeViewController animated:YES];
     }
 
+}
+
+- (void)cloudAction:(id)sender
+{
+    NSNumber *n = [[NSNumber alloc] initWithInt:self.cloudCtrl.on];
+    [GeoDefaults sharedGeoDefaultsInstance].enableCloud = n;
+    [n release];
+    
+    // TODO: enable cloud action 
+    
 }
 #pragma mark CALLBACK_API
 - (void)fbUserDidLogin
@@ -395,6 +438,7 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 	self.connectObjectArray = nil;
 	self._tableView = nil;
     self.switchCtrl = nil;
+    self.cloudCtrl = nil;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -408,6 +452,7 @@ In tableView:didSelectRowAtIndexPath: you should always deselect the currently s
 	[_tableView release];
 	[connectObjectArray release];
     [switchCtrl release];
+    [cloudCtrl release];
 	
     [super dealloc];
 }

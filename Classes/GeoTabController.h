@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 
-@interface GeoTabController : UITabBarController {
+@interface GeoTabController : UITabBarController <UIAlertViewDelegate> {
 	IBOutlet UITabBar *theTabBar;
 	
 	//@private

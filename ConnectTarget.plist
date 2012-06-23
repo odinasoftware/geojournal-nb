@@ -24,6 +24,16 @@
 	</dict>
 	<dict>
 		<key>object</key>
+		<string>iCloud   </string>
+		<key>header</key>
+		<string>Enable iCloud</string>
+		<key>footer</key>
+		<string>Set your iCloud setting here.</string>
+		<key>rows</key>
+		<string>1</string>
+	</dict>
+	<dict>
+		<key>object</key>
 		<string>Passcode</string>
 		<key>header</key>
 		<string>Passcode setting</string>

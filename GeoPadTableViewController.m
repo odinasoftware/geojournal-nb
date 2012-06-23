@@ -291,7 +291,7 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
     
     [chicago addContentsObject:journal];
 	//}
-	[[GeoDatabase sharedGeoDatabaseInstance] save];
+	//[[GeoDatabase sharedGeoDatabaseInstance] save];
 	//[GeoDefaults sharedGeoDefaultsInstance].testJournalCreated = [NSNumber numberWithBool:YES];
 	//}
 	
@@ -321,12 +321,14 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
 				
 				[category setName:categoryName];
 				
-				[[GeoDatabase sharedGeoDatabaseInstance] save];
 				[self.categoryArray addObject:category];
 			}
 		}
-		
+        // TODO: crash when it tried to access cloud.
+		//[[GeoDatabase sharedGeoDatabaseInstance] save];
 		[self addIntroEntry];
+        
+        [[GeoDefaults sharedGeoDefaultsInstance] dbInitDone];
 	}
 }
 

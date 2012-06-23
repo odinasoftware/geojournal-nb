@@ -32,7 +32,6 @@
 #define SITE_ID								@"PROSPECT-g2rm2l4o"
 #endif
 
-#define UUID_LOC                            2
 #define	BUTTON_WIDTH						100
 #define BUTTON_MARGIN						3
 #define BUTTON_HEIGHT						20
@@ -821,6 +820,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 		}
 		
 		[self addIntroEntry];
+        [[GeoDefaults sharedGeoDefaultsInstance] dbInitDone];
 	}
 }
 
@@ -1227,33 +1227,9 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	}
 #endif
 		
-	imageLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPath:journal.picture];
+	imageLink = [[GeoDefaults sharedGeoDefaultsInstance] getAbsoluteDocPathWithUUID:journal.picture];
     //NSString *cloudLink = [[GeoDefaults sharedGeoDefaultsInstance] getCloudURL:journal.picture];
     
-    NSArray *components = [imageLink pathComponents];
-    
-    TRACE("%s, image: %s\n", __func__, [imageLink UTF8String]);
-    //TRACE("clude: %s, %p\n", [cloudLink UTF8String], self);
-    
-    if ([components count] > UUID_LOC) {
-        int uuid_loc = [components count] - UUID_LOC;
-        NSString *possible_uuid = [components objectAtIndex:uuid_loc];
-        
-        if ([possible_uuid compare:[GeoDefaults sharedGeoDefaultsInstance].UUID] == 0) {
-            // This is local file and the UUID component should be omitted in the actual location.
-            NSMutableArray *newPath = [[NSMutableArray alloc] initWithCapacity:[components count]-2];
-            
-            
-            for (int i=0; i<[components count]; ++i) {
-                if (i == uuid_loc) continue;
-                NSString *s = [components objectAtIndex:i];
-                [newPath addObject:s];
-            }
-            imageLink = [NSString pathWithComponents:newPath];
-            TRACE("%s: new path: %s\n", __func__, [imageLink UTF8String]);
-        }
-    }
-     
     //[self searchInCloud:@"*"];
 	if (imageLink != nil) {
 		NSString *thumb = getThumbnailFilename(imageLink);
@@ -1266,7 +1242,7 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
             UIImage *small = getReducedImage(image, THUMBNAIL_RATIO);
             TRACE("%s: small ref count: %d\n", __func__, [small retainCount]);
             saveImageToFile(small, thumb);
-            [small release];
+            //[small release];
             [image release];
             
             

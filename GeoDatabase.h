@@ -52,11 +52,13 @@
 	// Journal entities
 	Journal							*journalEntity;
     NSMetadataQuery                 *metaQuery;
+    
+    @private
+    BOOL                            _isCloudAvailable;
 }
 
 @property (nonatomic, retain, readonly)	NSManagedObjectModel			*managedObjectModel;
 @property (nonatomic, retain)           NSManagedObjectContext			*managedObjectContext;
-@property (nonatomic, retain, readonly) NSPersistentStoreCoordinator	*persistentStoreCoordinator;
 @property (nonatomic, retain)           NSMetadataQuery                 *ubiquitousQuery;
 @property (nonatomic, retain, readonly) UIManagedDocument               *managedDocument;
 
@@ -93,7 +95,8 @@
 - (void)mergeChangesFrom_iCloud:(NSNotification *)notification;
 - (void)workaround_weakpackages_9653904:(NSDictionary*)options;
 - (void)pollnewfiles_weakpackages:(NSNotification*)note;
-- (NSManagedObjectContext*)managedObjectContextInstance;
+- (NSManagedObjectContext*)managedObjectContextInstance:(BOOL)cloud;
+- (NSPersistentStoreCoordinator*)persistentStoreCoordinator:(BOOL)cloud;
 - (void)upgradeDBForCloudReady;
 
 @end
