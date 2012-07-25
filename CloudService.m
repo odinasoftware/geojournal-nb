@@ -160,19 +160,6 @@ static CloudService *sharedCloudService = nil;
                 NSLog(@"%s, file does not exist in cloud: %@", __func__, url);
             }
         }
-
-        /*
-        error = nil;
-        // see if it exists in the cloud, otherwise we will need to create it.
-        [_fm setUbiquitous:YES 
-                 itemAtURL:[NSURL fileURLWithPath:url]
-            destinationURL:[self getCloudContainer] error:&error];
-        
-        if (error) {
-            NSLog(@"%s, %@", __func__, error);
-        }
-         */
-
     }
     
     
@@ -270,9 +257,31 @@ static CloudService *sharedCloudService = nil;
     
 }
 
+- (void)putLocalIndicator:(NSString*)folder
+{
+    // Put the indication that it has everything from the cloud.
+    NSString *localIndicator = [folder stringByAppendingPathComponent:GEO_LOCAL_DOWNLOAD_IDC];
+    NSString *content = [NSString stringWithString:GEO_LOCAL_DOWNLOAD_IDC];
+    NSData *dataContent = [NSData dataWithBytes:(void*)[content UTF8String] length:[content length]];
+    
+    if ([_fm createFileAtPath:localIndicator
+                     contents:dataContent 
+                   attributes:nil] == NO) {
+        NSLog(@"%s, can't create the local indicator.", __func__);
+        return;
+    }
+}
+
+- (BOOL)checkLocalIndicator:(NSString*)folder
+{
+    NSString *localIndicator = [folder stringByAppendingPathComponent:GEO_LOCAL_DOWNLOAD_IDC];
+    
+    return [_fm fileExistsAtPath:localIndicator];
+}
+
 - (void)uploadBaselineFiles
 {
-
+    int n = 0;
     NSError *error = nil;
     NSString *docsDir = [[GeoDefaults sharedGeoDefaultsInstance] geoDocumentPath];
     
@@ -280,32 +289,162 @@ static CloudService *sharedCloudService = nil;
     TRACE("%s: cloud: %s\n", __func__, [cloudGeoJournalDir UTF8String]);
 
     // Copy the files to the cloud location
-    NSDirectoryEnumerator *dirEnum = [_fm enumeratorAtPath:docsDir];
+    //[_fm enumeratorAtPath:docsDir];
+    NSArray *keys = [[NSArray alloc] initWithObjects:NSURLIsRegularFileKey, nil];
+    NSDirectoryEnumerator *dirEnum = [_fm enumeratorAtURL:[NSURL fileURLWithPath:docsDir] 
+                               includingPropertiesForKeys:keys 
+                                                  options:NSDirectoryEnumerationSkipsSubdirectoryDescendants errorHandler:nil];
     
     //TRACE("%s, count: %d\n", __func__, [[dirEnum allObjects] count]);
-    NSString *file;
+    // TODO: the local files should only include its own files. 
+    // TODO: how do we know that we don't need to upload.
+    // There's some case that we don't even need to upload anything. 
+    NSURL *file;
     while (file = [dirEnum nextObject]) {
-        
-        NSURL *localFile = [NSURL fileURLWithPath:[docsDir stringByAppendingPathComponent:file]];
-        NSURL *cloudFile = [NSURL fileURLWithPath:[cloudGeoJournalDir stringByAppendingPathComponent:file]];
-        TRACE("%s: %s\n", [[localFile absoluteString] UTF8String], [[cloudFile absoluteString] UTF8String]);
+        //NSURL *localFile = [NSURL fileURLWithPath:file]; //[docsDir stringByAppendingPathComponent:file]];
+        NSDictionary *attrs = [_fm attributesOfItemAtPath:[file path] error:&error];
+        if ([(NSString*)[attrs objectForKey:NSFileType] compare:NSFileTypeDirectory] != 0) {
+            
+            NSURL *cloudFile = [NSURL fileURLWithPath:[cloudGeoJournalDir stringByAppendingPathComponent:[file lastPathComponent]]];
+            TRACE("%s: %s\n", [[file absoluteString] UTF8String], [[cloudFile absoluteString] UTF8String]);
 #ifdef MOVE_TO_CLOUD
-        [_fm setUbiquitous:YES
-                 itemAtURL:[NSURL fileURLWithPath:localFile]
-            destinationURL:[NSURL fileURLWithPath:cloudFile] error:&error];
+            [_fm setUbiquitous:YES
+                     itemAtURL:[NSURL fileURLWithPath:localFile]
+                destinationURL:[NSURL fileURLWithPath:cloudFile] error:&error];
 #endif
-        if ([_fm copyItemAtURL:localFile toURL:cloudFile error:&error] != YES) {
-            NSLog(@"Fail to copy to the cloud location: %@", error);
+            if ([_fm copyItemAtURL:file toURL:cloudFile error:&error] != YES) {
+                NSLog(@"Fail to copy to the cloud location: %@", error);
+            }
+            n++;
         }
-        
+        else {
+            TRACE("%s, directory will not be synced: %s\n", __func__, [[file absoluteString] UTF8String]);
+        }
     }
+                                    
+    [keys release];
+                
+    if (n > 0) {
+        // Everything is done, put the indicator.
+        [self putIndicator:cloudGeoJournalDir];
+    }
+}
 
-    // Everything is done, put the indicator.
-    [self putIndicator:cloudGeoJournalDir];
+- (NSString*)getRemoteBaseline:(NSString*)path
+{
+    NSString *remote_uuid = nil;
+#define LOCATION_INC_NUM 2
+    NSArray *components = [path pathComponents];
+    int c = [components count];
+    
+    if (c > LOCATION_INC_NUM) {
+        if ([GEO_CLOUD_IDC compare:[components objectAtIndex:c-1]] == 0) {
+            
+            //if ([[GeoDefaults sharedGeoDefaultsInstance].UUID compare:[components objectAtIndex:c-2]] != 0) {
+                remote_uuid = [components objectAtIndex:c-2];
+            //}
+        }
+    }
+    
+    return remote_uuid;
+}
+
+/*
+ /private/var/mobile/Library/Mobile Documents/WV3CVJV89H~com~odinasoftware~container~igeojournal/GeoJournal/138D9BA5-21BF-4EB0-B3F7-A38D6A73229B/geojournal_idc_odinasoftware.geo
+ */
+- (void)downloadFromCloud:(NSString*)path
+{
+    TRACE("%s, path: %s\n", __func__, [path UTF8String]);
+
+    NSError *error = nil;
+    
+    NSString *temp = [[CloudService sharedCloudServiceInstance] getCloudURL:path willCreate:NO];
+    if (temp == nil) {
+        TRACE("%s, can't get the cloud folder.\n", __func__);
+        return;
+    }
+    //NSURL *u = [NSURL fileURLWithPath:service.coreDataCloudContent isDirectory:YES];
+    NSURL *u = [NSURL fileURLWithPath:temp isDirectory:YES];
+    NSLog(@"url: %@", u);
+    NSArray *files = [_fm contentsOfDirectoryAtURL:u
+                        includingPropertiesForKeys:[NSArray arrayWithObjects:NSURLIsRegularFileKey, nil] 
+                                           options:NSDirectoryEnumerationSkipsHiddenFiles 
+                                             error:&error];
+    
+    if (error) {
+        NSLog(@"%s: %@", __func__, error);
+        return;
+    }
+    TRACE("%s, file count: %d\n", __func__, [files count]);
+    
+    NSNumber *aBool = nil;
+    NSNumber *isDownloaded = nil;
+    NSString *fileName = nil;
+    BOOL bShouldRunAgain = NO;
+    NSString *docsDir = [[GeoDefaults sharedGeoDefaultsInstance] geoDocumentPath];
+    
+    BOOL directory = NO;
+    NSString *folder = [docsDir stringByAppendingPathComponent:path];
+    
+    if ([self checkLocalIndicator:folder] == YES) {
+        TRACE("%s, local has everything.\n", __func__);
+        return;
+    }
+    
+    if ([_fm fileExistsAtPath:folder isDirectory:&directory] == NO) {
+        error = nil;
+        [_fm createDirectoryAtPath:folder withIntermediateDirectories:YES attributes:nil error:&error];
+        if (error) {
+            NSLog(@"%s, %@", __func__, error);
+        }
+    }
+    
+    // TODO: how does it know it finished downloading.
+    for (NSURL *f in files) {
+        [f getResourceValue:&aBool forKey:NSURLIsDirectoryKey error:&error];
+        if (aBool && ![aBool boolValue]) {
+            [f getResourceValue:&isDownloaded forKey:NSURLUbiquitousItemIsDownloadedKey error:&error];
+            [f getResourceValue:&fileName forKey:NSURLNameKey error:&error];
+            NSLog(@"file: %@, downloaded: %d, %@", f, [isDownloaded boolValue], fileName);
+            
+            if (isDownloaded != nil) {
+                if (![isDownloaded boolValue]) {
+                    if ([[NSFileManager defaultManager] startDownloadingUbiquitousItemAtURL:f error:&error] == NO) {
+                        NSLog(@"faile to download: %@", error);
+                    }
+                    bShouldRunAgain = YES;
+                } // TODO: when to copy to the local sandbox from the cloud container.
+                else {
+                    NSURL *localFile = [NSURL fileURLWithPath:[folder stringByAppendingPathComponent:fileName]];
+                    TRACE("%s\n", [[localFile absoluteString] UTF8String]);
+                    if ([_fm copyItemAtURL:f toURL:localFile error:&error] == NO) {
+                        NSLog(@"fail to copy: %@", error);
+                    }
+                }
+            }
+        }
+    }
+    
+    if (bShouldRunAgain == NO) {
+        // The file copy has been done. 
+        [self putLocalIndicator:folder];
+    }
+    
+#define MAX_TRY_DOWNLOAD    3
+    static int runTimes = 0;
+    if (bShouldRunAgain == YES && runTimes < MAX_TRY_DOWNLOAD) {
+        runTimes++;
+        TRACE("%s, %d\n", __func__, runTimes);
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+            [self downloadFromCloud:path];
+        });
+    }
 }
 
 - (void)checkBaselineSync:(id)sender
 {
+    BOOL bUploadFiles = NO;
+    NSString *path = nil;
     // TODO: see if we have the synced file.
     // if it does not exist in there, then start baseline sync.
         
@@ -314,9 +453,12 @@ static CloudService *sharedCloudService = nil;
     // Stop the self.metadataSearch, the single pass is completed.
     [self.metadataSearch stopQuery];
     
+    // TODO: If there is no indicator, it means that none has been synced, so we need to put the files of local directory. 
+    // If there is anything in there, we need to check that it is for itself or from other device and start donwloading the files.
+    
     if ([self.metadataSearch resultCount] == 0) {
         // Start the baseline sync now.
-        [self uploadBaselineFiles];
+        bUploadFiles = YES;
     }
     else {
         // TODO: We have the baseline synced. Now we need to determine which directories need to be donwloaded.
@@ -324,11 +466,31 @@ static CloudService *sharedCloudService = nil;
         // Process the content. In this case the application simply
         // iterates over the content, printing the display name key for
         // each image
+        // TODO: let's say we find that the indicator. How to download it?
+        // Can we download it sequentially or download in chunk parallel. 
+        
+        // Let's assum that we have something to upload
+        bUploadFiles = YES;
         NSInteger i=0;
         for (i=0; i < [self.metadataSearch resultCount]; i++) {
             NSMetadataItem *theResult = [self.metadataSearch resultAtIndex:i];
-            NSString *displayName = [theResult valueForAttribute:(NSString *)NSMetadataItemDisplayNameKey];
-            TRACE("result at %d - %s\n", i, [displayName UTF8String]);
+            //NSString *displayName = [theResult valueForAttribute:(NSString *)NSMetadataItemDisplayNameKey];
+            NSString *pathName = [ theResult valueForAttribute:(NSString*)NSMetadataItemPathKey];
+            
+            if ((path = [self getRemoteBaseline:pathName]) != nil) {
+                if (path && [path compare:[GeoDefaults sharedGeoDefaultsInstance].UUID] == 0) {
+                    // We already upload the files, we don't need to upload them.
+                    bUploadFiles = NO;
+                }
+                else {
+                    // We need to download files
+                    // TODO: how do we know that we don't need to download files.
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^ {
+                        [self downloadFromCloud:path];
+                    });
+                }
+            }
+            TRACE("result at %d - %s\n", i, [pathName UTF8String]);
         }
     }
     
@@ -343,6 +505,12 @@ static CloudService *sharedCloudService = nil;
                                                   object:self.metadataSearch];
     self.metadataSearch = nil;
     
+    if (bUploadFiles == YES) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{            
+            [self uploadBaselineFiles];
+        });
+    }
+
 }
 
 - (void)searchInCloud:(NSString*)url delegate:(SEL)delegate

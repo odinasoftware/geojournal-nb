@@ -23,8 +23,11 @@
 
 @interface PadEntryViewController : JournalEntryViewCommon {
 
-
+@private
+    UIInterfaceOrientation  _toOrientation;
 }
+
+- (IBAction)popUpPrevView:(id)sender;
 
 
 @end

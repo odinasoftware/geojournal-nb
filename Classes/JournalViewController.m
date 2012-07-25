@@ -349,7 +349,13 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	
 	//self.addCategoryController = nil;
     // observe the app delegate telling us when it's finished asynchronously setting up the persistent store
-    [self reloadFetchedResults:nil];
+    //[self reloadFetchedResults:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(reloadFetchedResults:) 
+                                                 name:@"RefetchAllDatabaseData" 
+                                               object:nil];
+    
 }
 
 - (void)generateDateArray
@@ -737,6 +743,8 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 
 - (void)addIntroEntry
 {
+    // TODO: intro should be disappeared after the initial content is inserted.
+    
 	//if ([[GeoDefaults sharedGeoDefaultsInstance].testJournalCreated boolValue] == NO) {
 	GCategory *chicago = [self getCategory:@"Daily Journal"];
 	//NSString *path = [[NSBundle mainBundle] pathForResource:@"JournalTest" ofType:@"plist"];
@@ -748,14 +756,32 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	//path = [[NSBundle mainBundle] pathForResource:@"1074077865" ofType:@"aif"];
 	//NSData *audioData = [[NSData alloc] initWithContentsOfFile:path];
 	
-	NSString *imageFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".png"];
+    // Move these files to help directory
+	NSString *imageFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueSupportFilenameWithExt:@".png"];
 	NSString *thumbFileName = getThumbnailFilename(imageFileName);
 	//NSString *audioFileName = [[GeoDefaults sharedGeoDefaultsInstance] getUniqueFilenameWithExt:@".aif"];
 	
 	NSFileManager *manager = [NSFileManager defaultManager];
-	
-	[manager createFileAtPath:imageFileName contents:imageData attributes:nil];
-	[manager createFileAtPath:thumbFileName contents:thumb attributes:nil];
+	NSError *error = nil;
+    
+    [manager createDirectoryAtPath:[imageFileName stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&error];
+    if ([manager createFileAtPath:imageFileName contents:imageData attributes:nil] == NO) {
+        NSLog(@"%s, fail to create the file %s\n", __func__, [imageFileName UTF8String]);
+    }
+    if (error) {
+        NSLog(@"%s, %@", __func__,error);
+    }
+	//[manager createFileAtPath:imageFileName contents:imageData attributes:nil];
+
+    error = nil;
+    [manager createDirectoryAtPath:[thumbFileName stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&error];
+    if ([manager createFileAtPath:thumbFileName contents:thumb attributes:nil] == NO) {
+        NSLog(@"%s, fail to create the file %s\n", __func__, [thumbFileName UTF8String]);
+    }
+    if (error) {
+        NSLog(@"%s, %@", __func__,error);
+    }
+
 	//[manager createFileAtPath:audioFileName contents:audioData attributes:nil];
 	
 	[imageData release];
@@ -763,16 +789,14 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	[thumb release];
 	[thumbFileName release];
 	
-	//for (NSDictionary *d in testJournal) {
-		Journal *journal = [GeoDatabase sharedGeoDatabaseInstance].journalEntity; 
+    Journal *journal = [GeoDatabase sharedGeoDatabaseInstance].journalEntity; 
+
+    NSString *support_path = [[NSString alloc] initWithFormat:@"%@/%@", GEO_SUPPORT_FOLDER_NAME, [imageFileName lastPathComponent]];
+    [journal setPicture:support_path];
+    TRACE("Picture: %s\n", [imageFileName UTF8String]);
+    [support_path release];
 		
-		//[journal setAudio:[audioFileName lastPathComponent]];
-		//TRACE("Audio: %s\n", [audioFileName UTF8String]);
-		
-		[journal setPicture:[imageFileName lastPathComponent]];
-		TRACE("Picture: %s\n", [imageFileName UTF8String]);
-		
-	[journal setText:@"Thank you for choosing iGeoJournal. iGeoJournal is your one stop application. We are planning many updates ahead. The first upcoming update is synching with Picasa web album. For more detailed information, please visit http://odinasoftware.com.\n\nUse iGeoJournal for your travel, your daily journal, or your restaurant review, iGeoJournal will be perfect companion for you. Enjoy!"]; 
+	[journal setText:@"Thank you for choosing iGeoJournal. iGeoJournal is your one stop application. Now iCloud sync is enabled.\n\nUse iGeoJournal for your travel, or your daily journal, iGeoJournal will be perfect companion for you. Enjoy!"]; 
 	[journal setTitle:@"Welcome to iGeoJournal."];
 		
 		[journal setCreationDate:[NSDate date]];
@@ -957,6 +981,29 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 	self.editCategoryController = controller;
 	[controller release];
 	
+#if FB_NAV_TEST
+    //[self.view addSubview:controller.view];
+    [self.view sendSubviewToBack:self.editCategoryController.view];
+    
+    CGRect destination = self.navigationController.view.frame;
+    
+    if (destination.origin.x > 0) {
+        destination.origin.x = 0;
+    } else {
+        destination.origin.x += 230.0;
+    }
+    
+    [UIView animateWithDuration:0.25 animations:^{
+        
+        self.navigationController.view.frame = destination;        
+        
+    } completion:^(BOOL finished) {
+        
+        self.view.userInteractionEnabled = !(destination.origin.x > 0);
+        
+    }];
+#endif
+    
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	[UIView beginAnimations:nil context:context];
 	[UIView setAnimationTransition: UIViewAnimationTransitionFlipFromLeft forView:self.view cache:YES];
@@ -1602,6 +1649,8 @@ void GET_COORD_IN_PROPORTION(CGSize size, UIImage *image, float *atX, float *atY
 - (void)viewDidUnload {
 	// Release any retained subviews of the main view.
 	// e.g. self.myOutlet = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
 	TRACE_HERE;
 	self._journalView = nil;
 	self.journalController = nil;

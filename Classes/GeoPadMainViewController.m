@@ -61,17 +61,22 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    TRACE("%s, top: %s\n", __func__, [NSStringFromClass([self.topViewController class]) UTF8String]);
+    TRACE("%s, top: %s, view: %p\n", __func__, [NSStringFromClass([self.topViewController class]) UTF8String], self.view);
     //Class = [self.topViewController class];
-    
     //[self addButtons];
+    
+    /*
     if (self.topViewController == nil) {
 		GeoPadTableViewController *aViewController = [[GeoPadTableViewController alloc] initWithNibName:@"GeoPadTableViewController" bundle:nil];
         
-		[self pushViewController:aViewController animated:YES];
+		//[self pushViewController:aViewController animated:YES];
+        [self.view addSubview:aViewController.view];
 		[aViewController release];
 	}
+     */
     self.navigationBarHidden = YES;
+    self.view.autoresizesSubviews = YES;
+    self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     /*
     UIImage *listImage = [UIImage imageNamed:@"list.png"];
     CGFloat width = self.view.frame.size.width;
@@ -136,12 +141,6 @@
     // e.g. self.myOutlet = nil;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    // Return YES for supported orientations
-	return YES;
-}
-
 - (IBAction)displayShowOptions:(id)sender
 {
     ShowDisplayOptionController *controller = [[ShowDisplayOptionController alloc] initWithNibName:@"ShowDisplayOptionController" bundle:nil];
@@ -196,5 +195,31 @@
     }
 }
 #pragma -
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    // Return YES for supported orientations
+    TRACE_HERE;
+	return YES;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    TRACE_HERE;
+    DEBUG_RECT("view: ", self.view.frame);
+    DEBUG_RECT("bounds: ", self.view.bounds);
+    DEBUG_POINT("center: ", self.view.center);
+
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    TRACE_HERE;
+    DEBUG_RECT("view: ", self.view.frame);
+
+    DEBUG_RECT("bounds: ", self.view.bounds);
+    DEBUG_POINT("center: ", self.view.center);
+
+}
 
 @end

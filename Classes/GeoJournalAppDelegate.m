@@ -26,6 +26,7 @@
 #import "CloudService.h"
 #import "CloudFileService.h"
 #import "ProgressViewController.h"
+#import "GeoPadTableViewController.h"
 
 #define	CONNECT_CONTROLLER_INDEX	2
 
@@ -35,6 +36,7 @@
 @synthesize tabBarController;
 //@synthesize splitController;
 @synthesize padMainController;
+@synthesize padTableController;
 
 - (void)startTabBarView
 {
@@ -151,28 +153,47 @@
     
 }
 
-- (void)checkInSyncWithCloud
-{    
+- (void)startSyncWithCloud:(NSNotification*)note 
+{
     // TODO: we do not have anything in the cloud, need to them into it. 
     // TODO: check if this is cloud ready, the files has to be unique.
     // enumerate it from the local and copy to the cloud sandbox.
-    if ([[GeoDefaults sharedGeoDefaultsInstance].dbReadyForCloud boolValue] == NO || 
-        [GeoDefaults sharedGeoDefaultsInstance].UUID == NULL) {
-        TRACE("%s, db is not ready for cloud.\n", __func__);
-        dispatch_async(dispatch_get_current_queue(), ^{
-            [[ProgressViewControllerHolder sharedStatusViewControllerInstance] showStatusView:self.tabBarController.view type:CLOUD_READY_PROGRESS_TYPE];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // XXX: Using the main queue, which is serial, we practically are waiting for DB is initialized.
+        //dispatch_async(dispatch_get_main_queue(), ^{
+        if ([[GeoDefaults sharedGeoDefaultsInstance].dbReadyForCloud boolValue] == NO || 
+            [GeoDefaults sharedGeoDefaultsInstance].UUID == NULL) {
+            TRACE("%s, db is not ready for cloud.\n", __func__);
+            
             // Upgrade DB entries to copy to iCloud
             [[GeoDatabase sharedGeoDatabaseInstance] upgradeDBForCloudReady];
-            
-            // At this point, we don't need to hold off user
-            [[ProgressViewControllerHolder sharedStatusViewControllerInstance] removeFromSuperview:CLOUD_READY_PROGRESS_TYPE];
-        });
-    }
-
-    dispatch_async(dispatch_get_current_queue(), ^{
-        [[CloudService sharedCloudServiceInstance] copyToCloudSandbox];            
+        }
+        
+        [[CloudService sharedCloudServiceInstance] copyToCloudSandbox];       
+        
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
     });
+    
+    // TODO: why it has to be in the main thread???
+    //[[CloudService sharedCloudServiceInstance] copyToCloudSandbox];   
+}
 
+- (void)checkInSyncWithCloud
+{    
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(startSyncWithCloud:) 
+                                                 name:@"RefetchAllDatabaseData" 
+                                               object:nil];
+             
+}
+
+- (UIView*)getRootView
+{
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+        return padMainController.view;//self.tabBarController.view;
+    else {
+        return self.tabBarController.view;
+    }
 }
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
@@ -180,7 +201,6 @@
     _appLaunching = YES;
     TRACE_HERE;
 	[GeoDefaults sharedGeoDefaultsInstance];
-    [GeoDatabase sharedGeoDatabaseInstance];
     
 	// TODO: read the saved location and show it.
     // Add the tab bar controller's current view as a subview of the window
@@ -206,7 +226,13 @@
         
         //controller.delegate = tableView;
         //controller.viewControllers = [NSArray arrayWithObjects:tableView, child, nil];
-        [window addSubview:padMainController.view];
+        
+        //[window addSubview:padMainController.view];
+        [window addSubview:padTableController.view];
+        TRACE("window: %p\n", window);
+        TRACE("padMainController.view; %p\n", padMainController.view);
+        DEBUG_RECT("pad main view: ", padMainController.view.frame);
+        DEBUG_RECT("windows: ", window.frame);
         //[window makeKeyAndVisible];
         //[controller release];
       
@@ -227,7 +253,7 @@
         [self startTabBarView];
     }
     // Check the cloud sync.
-    
+    [GeoDatabase sharedGeoDatabaseInstance];
     [self checkInSyncWithCloud];
 
     // This is only for test.

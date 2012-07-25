@@ -139,7 +139,13 @@ TRACE("%s point: x: %f, y: %f\n", string, origin.x, origin.y)
 
 #define GET_DISTANCE(a, b)						\
 	sqrt(pow(a.x-b.x, 2.0) + pow(a.y-b.y, 2.0))
+
+#define MAKE_CENTER_FRAME(f, w)                  \
+    CGRectMake(w.size.width/2.0-f.size.width/2.0, \
+        w.size.height/2.0-f.size.height/2.0,    \
+        f.size.width, f.size.height)
     
+#define degreesToRadian(x) (M_PI * (x) / 180.0)
 
 typedef enum {PRESS_NONE, PRESS_BEGIN, PRESS_CANCEL, PRESS_DRAG, PRESS_END} PRESS_STATUS;
 

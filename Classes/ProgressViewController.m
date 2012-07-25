@@ -120,20 +120,73 @@ static ProgressViewControllerHolder *sharedProgressViewController = nil;
     
     return self;
 }
-/*
+
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        CGRect frame = CGRectMake(0.0, 0.0, screenRect.size.width, screenRect.size.height);
+        self.view.frame = frame;
+        
+        self.innerRectangle.frame = MAKE_CENTER_FRAME(self.innerRectangle.frame, screenRect);
+        self.cancelButton.frame = CGRectMake(self.innerRectangle.frame.origin.x-15.0, 
+                                             self.innerRectangle.frame.origin.y-15.0, 
+                                             self.cancelButton.frame.size.width, 
+                                             self.cancelButton.frame.size.height);
+    }
+    
+    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+    [[NSNotificationCenter defaultCenter] addObserver: self 
+                                             selector:@selector(deviceOrientationDidChange:) 
+                                                 name:UIDeviceOrientationDidChangeNotification object: nil];
 }
-*/
 
-/*
+- (void)deviceOrientationDidChange:(NSNotification *)notification {
+    TRACE_HERE;
+    //Obtaining the current device orientation
+    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    
+    //Ignoring specific orientations
+    
+    //[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(relayoutLayers) object:nil];
+    //Responding only to changes in landscape or portrait
+    
+    CGAffineTransform xform = CGAffineTransformMakeRotation(M_PI/2.0);
+    self.innerRectangle.transform = xform;
+
+    //CGPoint point = [self.view convertPoint:self.cancelButton.frame.origin toView:self.view];
+    //self.cancelButton.frame = CGRectMake(point.x, point.y, self.cancelButton.frame.size.width, self.cancelButton.frame.size.height);
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    TRACE_HERE;
+    
+    if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation)) {
+    
+    }
+    else if (UIInterfaceOrientationIsLandscape(toInterfaceOrientation)) {
+        CGRect screenRect = [[UIScreen mainScreen] bounds];
+        CGRect frame = CGRectMake(0.0, 0.0, screenRect.size.width, screenRect.size.height);
+        self.view.frame = frame;
+        
+        self.innerRectangle.frame = MAKE_CENTER_FRAME(self.innerRectangle.frame, screenRect);
+        self.cancelButton.frame = CGRectMake(self.innerRectangle.frame.origin.x-15.0, 
+                                             self.innerRectangle.frame.origin.y-15.0, 
+                                             self.cancelButton.frame.size.width, 
+                                             self.cancelButton.frame.size.height);
+    }
+}
+
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return YES;
+    //return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
-*/
+
 
 #pragma mark BUTTON ACTIONS
 -(IBAction)cancelDownloading:(id)sender

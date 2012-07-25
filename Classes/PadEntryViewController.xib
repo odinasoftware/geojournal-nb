@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.iPad.XIB" version="8.00">
 	<data>
-		<int key="IBDocument.SystemTarget">1280</int>
-		<string key="IBDocument.SystemVersion">10K549</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1938</string>
-		<string key="IBDocument.AppKitVersion">1038.36</string>
-		<string key="IBDocument.HIToolboxVersion">461.00</string>
+		<int key="IBDocument.SystemTarget">1296</int>
+		<string key="IBDocument.SystemVersion">11E53</string>
+		<string key="IBDocument.InterfaceBuilderVersion">2182</string>
+		<string key="IBDocument.AppKitVersion">1138.47</string>
+		<string key="IBDocument.HIToolboxVersion">569.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-			<string key="NS.object.0">933</string>
+			<string key="NS.object.0">1181</string>
 		</object>
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>IBUIView</string>
@@ -39,8 +39,28 @@
 			</object>
 			<object class="IBUIView" id="766721923">
 				<reference key="NSNextResponder"/>
-				<int key="NSvFlags">292</int>
+				<int key="NSvFlags">274</int>
 				<array class="NSMutableArray" key="NSSubviews">
+					<object class="IBUIToolbar" id="982892541">
+						<reference key="NSNextResponder" ref="766721923"/>
+						<int key="NSvFlags">258</int>
+						<string key="NSFrameSize">{768, 44}</string>
+						<reference key="NSSuperview" ref="766721923"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="125814818"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<bool key="IBUIOpaque">NO</bool>
+						<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
+						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+						<array class="NSMutableArray" key="IBUIItems">
+							<object class="IBUIBarButtonItem" id="891128102">
+								<string key="IBUITitle">Back</string>
+								<string key="targetRuntimeIdentifier">IBIPadFramework</string>
+								<int key="IBUIStyle">1</int>
+								<reference key="IBUIToolbar" ref="982892541"/>
+							</object>
+						</array>
+					</object>
 					<object class="IBUIToolbar" id="256663656">
 						<reference key="NSNextResponder" ref="766721923"/>
 						<int key="NSvFlags">266</int>
@@ -157,7 +177,6 @@
 								</object>
 								<nil key="IBUIHighlightedColor"/>
 								<int key="IBUIBaselineAdjustment">1</int>
-								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 								<float key="IBUIMinimumFontSize">10</float>
 								<int key="IBUINumberOfLines">0</int>
 								<object class="IBUIFontDescription" key="IBUIFontDescription">
@@ -169,6 +188,7 @@
 									<double key="NSSize">17</double>
 									<int key="NSfFlags">16</int>
 								</object>
+								<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 							</object>
 							<object class="IBUIView" id="404502046">
 								<reference key="NSNextResponder" ref="125814818"/>
@@ -327,7 +347,6 @@
 										</object>
 										<nil key="IBUIHighlightedColor"/>
 										<int key="IBUIBaselineAdjustment">1</int>
-										<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 										<float key="IBUIMinimumFontSize">10</float>
 										<int key="IBUITextAlignment">1</int>
 										<object class="IBUIFontDescription" key="IBUIFontDescription" id="221771838">
@@ -341,6 +360,7 @@
 											<double key="NSSize">11</double>
 											<int key="NSfFlags">16</int>
 										</object>
+										<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 									</object>
 									<object class="IBUILabel" id="927828527">
 										<reference key="NSNextResponder" ref="559306579"/>
@@ -357,11 +377,11 @@
 										<reference key="IBUITextColor" ref="33008767"/>
 										<nil key="IBUIHighlightedColor"/>
 										<int key="IBUIBaselineAdjustment">1</int>
-										<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 										<float key="IBUIMinimumFontSize">10</float>
 										<int key="IBUITextAlignment">1</int>
 										<reference key="IBUIFontDescription" ref="221771838"/>
 										<reference key="IBUIFont" ref="953772968"/>
+										<bool key="IBUIAdjustsFontSizeToFit">NO</bool>
 									</object>
 									<object class="IBUILabel" id="99684591">
 										<reference key="NSNextResponder" ref="559306579"/>
@@ -433,7 +453,7 @@
 								</object>
 							</object>
 						</array>
-						<string key="NSFrame">{{0, 20}, {768, 916}}</string>
+						<string key="NSFrame">{{0, 44}, {768, 916}}</string>
 						<reference key="NSSuperview" ref="766721923"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="404502046"/>
@@ -442,10 +462,10 @@
 						<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 					</object>
 				</array>
-				<string key="NSFrame">{{0, 20}, {768, 1004}}</string>
+				<string key="NSFrameSize">{768, 1004}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
-				<reference key="NSNextKeyView" ref="125814818"/>
+				<reference key="NSNextKeyView" ref="982892541"/>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">3</int>
 					<bytes key="NSWhite">MQA</bytes>
@@ -454,9 +474,6 @@
 					</object>
 				</object>
 				<bool key="IBUIClearsContextBeforeDrawing">NO</bool>
-				<object class="IBUISimulatedStatusBarMetrics" key="IBUISimulatedStatusBarMetrics">
-					<int key="IBUIStatusBarStyle">2</int>
-				</object>
 				<string key="targetRuntimeIdentifier">IBIPadFramework</string>
 			</object>
 		</array>
@@ -638,6 +655,14 @@
 					</object>
 					<int key="connectionID">61</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchEventConnection" key="connection">
+						<string key="label">popUpPrevView:</string>
+						<reference key="source" ref="891128102"/>
+						<reference key="destination" ref="841351856"/>
+					</object>
+					<int key="connectionID">69</int>
+				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<array key="orderedObjects">
@@ -664,6 +689,7 @@
 						<array class="NSMutableArray" key="children">
 							<reference ref="125814818"/>
 							<reference ref="256663656"/>
+							<reference ref="982892541"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -835,6 +861,19 @@
 						<reference key="object" ref="114310134"/>
 						<reference key="parent" ref="256663656"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">67</int>
+						<reference key="object" ref="982892541"/>
+						<array class="NSMutableArray" key="children">
+							<reference ref="891128102"/>
+						</array>
+						<reference key="parent" ref="766721923"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">68</int>
+						<reference key="object" ref="891128102"/>
+						<reference key="parent" ref="982892541"/>
+					</object>
 				</array>
 			</object>
 			<dictionary class="NSMutableDictionary" key="flattenedProperties">
@@ -868,6 +907,8 @@
 				<string key="53.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="54.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="67.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="68.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="7.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="8.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="9.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
@@ -876,7 +917,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">61</int>
+			<int key="maxID">69</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -889,7 +930,7 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
-					<string key="className">PadEntryViewController</string>
+					<string key="className">JournalEntryViewCommon</string>
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="decreaseFont:">id</string>
@@ -898,6 +939,8 @@
 						<string key="goNext:">id</string>
 						<string key="goPrev:">id</string>
 						<string key="increaseFont:">id</string>
+						<string key="playButtonPressed:">UIButton</string>
+						<string key="progressSliderMoved:">UISlider</string>
 						<string key="removeEntry:">id</string>
 						<string key="showFullImage:">id</string>
 					</dictionary>
@@ -925,6 +968,14 @@
 						<object class="IBActionInfo" key="increaseFont:">
 							<string key="name">increaseFont:</string>
 							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="playButtonPressed:">
+							<string key="name">playButtonPressed:</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
+						<object class="IBActionInfo" key="progressSliderMoved:">
+							<string key="name">progressSliderMoved:</string>
+							<string key="candidateClassName">UISlider</string>
 						</object>
 						<object class="IBActionInfo" key="removeEntry:">
 							<string key="name">removeEntry:</string>
@@ -1046,6 +1097,25 @@
 					</dictionary>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/JournalEntryViewCommon.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">PadEntryViewController</string>
+					<string key="superclassName">JournalEntryViewCommon</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">popUpPrevView:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">popUpPrevView:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">popUpPrevView:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/PadEntryViewController.h</string>
 					</object>
 				</object>
@@ -1053,6 +1123,10 @@
 		</object>
 		<int key="IBDocument.localizationMode">0</int>
 		<string key="IBDocument.TargetRuntimeIdentifier">IBIPadFramework</string>
+		<object class="NSMutableDictionary" key="IBDocument.PluginDeclaredDependencyDefaults">
+			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaTouchPlugin.iPhoneOS</string>
+			<real value="1296" key="NS.object.0"/>
+		</object>
 		<bool key="IBDocument.PluginDeclaredDependenciesTrackSystemTargetVersion">YES</bool>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
@@ -1063,6 +1137,6 @@
 			<string key="play-button2.png">{20, 20}</string>
 			<string key="right-arrow.png">{15, 15}</string>
 		</dictionary>
-		<string key="IBCocoaTouchPluginVersion">933</string>
+		<string key="IBCocoaTouchPluginVersion">1181</string>
 	</data>
 </archive>

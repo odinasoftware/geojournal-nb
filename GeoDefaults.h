@@ -14,6 +14,8 @@
 #define GEO_DB_FOLDER_NAME          @"GeoJournalDB"
 #define GEO_FILE_EXT				@".geo"
 #define GEO_CLOUD_IDC               @"geojournal_idc_odinasoftware.geo"
+#define GEO_LOCAL_DOWNLOAD_IDC      @"geojournal_idc_local_download.geo"
+#define GEO_SUPPORT_FOLDER_NAME     @"SUPPORT"
 
 @class KeychainItemWrapper;
 
@@ -107,5 +109,7 @@
 - (void)setPasscode:(NSInteger)passcode;
 - (NSString*)getAbsoluteDocPathWithUUID:(NSString*)lastComponent;
 - (void)dbInitDone;
+- (void)dbCloudReady;
+- (NSString*)getUniqueSupportFilenameWithExt:(NSString*)ext;
 
 @end

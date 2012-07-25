@@ -13,12 +13,14 @@
 @class ImageArrayScrollController;
 @class GeoSplitViewController;
 @class GeoPadMainViewController;
+@class GeoPadTableViewController;
 
 @interface GeoJournalAppDelegate : NSObject <UIApplicationDelegate, UITabBarControllerDelegate, PTPasscodeViewControllerDelegate> {
     UIWindow                    *window;
     GeoTabController            *tabBarController;
     //GeoSplitViewController    *splitController;
     GeoPadMainViewController    *padMainController;
+    GeoPadTableViewController   *padTableController;
 	BOOL                        _inBackground;
     BOOL                        _appLaunching;
     
@@ -32,11 +34,13 @@
 @property (nonatomic, assign) IBOutlet GeoTabController         *tabBarController;
 //@property (nonatomic, assign) IBOutlet GeoSplitViewController   *splitController;
 @property (nonatomic, assign) IBOutlet GeoPadMainViewController *padMainController;
+@property (nonatomic, assign) GeoPadTableViewController *padTableController;
 
 - (void)getFBExtendedPermission:(id)object;
 - (void)getFBUserName:(id)object;
 - (void)notifyLoggedin:(id)object;
 - (void)saveAppSettings;
 - (void)startLoadingImageArray:(ImageArrayScrollController*)controller;
+- (UIView*)getRootView;
 
 @end

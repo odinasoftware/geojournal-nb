@@ -9,6 +9,7 @@
 
 #include <pthread.h>
 
+#import "GeoJournalAppDelegate.h"
 #import "GeoDatabase.h"
 #import "GeoDefaults.h"
 #import "MailRecipients.h"
@@ -19,6 +20,7 @@
 #import "Pictures.h"
 #import "GeoDefaults.h"
 #import "CloudService.h"
+#import "ProgressViewController.h"
                                             
 #define UBIQUITY_CONTAINER_URL          @"WV3CVJV89H.com.odinasoftware.igeojournal" 
 #define UBIQUITY_CONTENT_NAME_PREFIX    @"com.odinasoftware.igeojournal"
@@ -414,7 +416,6 @@ void remove_file(NSString *file)
  If the coordinator doesn't already exist, it is created and the application's store added to it.
  */
 - (NSPersistentStoreCoordinator *)persistentStoreCoordinator:(BOOL)cloud {
-	NSError *error = nil;
     if (persistentStoreCoordinator__ != nil) {
         return persistentStoreCoordinator__;
     }
@@ -439,14 +440,22 @@ void remove_file(NSString *file)
         // do this asynchronously since if this is the first time this particular device is syncing with preexisting
         // iCloud content it may take a long long time to download
         // TODO: this has to be blocked call???
-        //dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^
+        //dispatch_async(dispatch_get_main_queue(), ^
         {
             NSString* coreDataCloudContent = [[CloudService sharedCloudServiceInstance] getCloudURL:GEO_DB_FOLDER_NAME willCreate:YES];
             
             
             TRACE("%s, %s\n", __func__, [coreDataCloudContent UTF8String]);
             
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[ProgressViewControllerHolder sharedStatusViewControllerInstance] showStatusView:[(GeoJournalAppDelegate*)[[UIApplication sharedApplication] delegate] getRootView] 
+                                                                                         type:CLOUD_READY_PROGRESS_TYPE];
+            });
+            
             if (coreDataCloudContent) {
+                
+                //[[ProgressViewControllerHolder sharedStatusViewControllerInstance] showStatusView:[(GeoJournalAppDelegate*)[[UIApplication sharedApplication] delegate] getRootView] type:CLOUD_READY_PROGRESS_TYPE];
                 /*
                 NSString *ubiquitousContentName = [[NSString alloc] initWithFormat:@"%@.%@", 
                                                    UBIQUITY_CONTENT_NAME_PREFIX, 
@@ -463,7 +472,7 @@ void remove_file(NSString *file)
                 
                 // Needed on iOS seed 3, but not Mac OS X
                 //[self workaround_weakpackages_9653904:options];
-                
+                NSError *error = nil;
                 [psc lock];
                 if (![psc addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeUrl options:options error:&error]) {
                     /*
@@ -482,14 +491,9 @@ void remove_file(NSString *file)
                 [psc unlock];
                 
                 _isCloudAvailable = YES;
-                // tell the UI on the main thread we finally added the store and then
-                // post a custom notification to make your views do whatever they need to such as tell their
-                // NSFetchedResultsController to -performFetch again now there is a real store
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSLog(@"asynchronously added persistent store!");
-                    [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
-                });
                 
+                // At this point, we don't need to hold off user
+                //[[ProgressViewControllerHolder sharedStatusViewControllerInstance] removeFromSuperview:CLOUD_READY_PROGRESS_TYPE];
                 //[ubiquitousContentName release];
             }
             else {
@@ -506,8 +510,19 @@ void remove_file(NSString *file)
                     NSLog(@"Error in persistent store: %@", error);
                 }   
             }
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+            [[ProgressViewControllerHolder sharedStatusViewControllerInstance] removeFromSuperview:CLOUD_READY_PROGRESS_TYPE];
+            });
+            // tell the UI on the main thread we finally added the store and then
+            // post a custom notification to make your views do whatever they need to such as tell their
+            // NSFetchedResultsController to -performFetch again now there is a real store
+            dispatch_async(dispatch_get_main_queue(), ^{
+                TRACE("---> asynchronously added persistent store! DB is ready.");
+                [[NSNotificationCenter defaultCenter] postNotificationName:@"RefetchAllDatabaseData" object:self userInfo:nil];
+            });
         }
-        //);
+        );
         
         TRACE("%s, returning, db: %s\n", __func__, [[storeUrl absoluteString] UTF8String]);
     }
@@ -587,29 +602,32 @@ void remove_file(NSString *file)
 - (NSMutableArray*)categoryArray
 {
 	if (categoryArray == nil) {
-		NSFetchRequest *request = [[NSFetchRequest alloc] init];
-		NSEntityDescription *entity = [NSEntityDescription entityForName:@"Category" inManagedObjectContext:self.managedObjectContext];
-		[request setEntity:entity];
-		
-		NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"creationDate" ascending:YES];
-		NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
-		[request setSortDescriptors:sortDescriptors];
-		[sortDescriptors release];
-		[sortDescriptor release];
-		
-		NSError *error;
-		NSMutableArray* mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
-		if (mutableFetchResults == nil) {
-			// Handle the error.
-			NSLog(@"%s, %@", __func__, error);
-		}
-		
-		
-		categoryArray = mutableFetchResults;
-		[categoryArray retain];
-		
-		[mutableFetchResults release];
-		[request release];
+        //dispatch_async(dispatch_get_main_queue(), ^{
+            NSFetchRequest *request = [[NSFetchRequest alloc] init];
+            NSEntityDescription *entity = [NSEntityDescription entityForName:@"Category" inManagedObjectContext:self.managedObjectContext];
+            [request setEntity:entity];
+            
+            NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"creationDate" ascending:YES];
+            NSArray *sortDescriptors = [[NSArray alloc] initWithObjects:sortDescriptor, nil];
+            [request setSortDescriptors:sortDescriptors];
+            [sortDescriptors release];
+            [sortDescriptor release];
+            
+            NSError *error;
+            NSMutableArray* mutableFetchResults = [[self.managedObjectContext executeFetchRequest:request error:&error] mutableCopy];
+            if (mutableFetchResults == nil) {
+                // Handle the error.
+                NSLog(@"%s, %@", __func__, error);
+            }
+            
+            
+            categoryArray = mutableFetchResults;
+            [categoryArray retain];
+            
+            [mutableFetchResults release];
+            [request release];
+            
+        //});
 	}
 	
 	return categoryArray;
@@ -893,7 +911,9 @@ void remove_file(NSString *file)
 
     NSString *actual=NULL;
     NSArray *components = [filename pathComponents];
-    if (([components count] > 1) && ([GeoDefaults sharedGeoDefaultsInstance].UUID == NULL)) {
+    if (([components count] > 1) && 
+        ([GeoDefaults sharedGeoDefaultsInstance].UUID == NULL) &&
+        ([(NSString*)[components objectAtIndex:0] compare:GEO_SUPPORT_FOLDER_NAME] != 0)) {
         // Must have UUID
         [GeoDefaults sharedGeoDefaultsInstance].UUID = [components objectAtIndex:0];
         TRACE("%s: UUID: %s\n", [filename UTF8String], [[GeoDefaults sharedGeoDefaultsInstance].UUID UTF8String]);
@@ -996,10 +1016,10 @@ void remove_file(NSString *file)
            
         }
         
-        [self save];
+        if ([mutableFetchResults count] > 0)
+            [self save];
         
-        NSNumber *on = [NSNumber numberWithBool:TRUE];
-        [GeoDefaults sharedGeoDefaultsInstance].dbReadyForCloud = on;
+        [[GeoDefaults sharedGeoDefaultsInstance] dbCloudReady];
     }
 	@catch (NSException * e) {
 		NSLog(@"%s, %@", __func__, [e reason]);

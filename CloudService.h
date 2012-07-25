@@ -52,5 +52,6 @@ typedef enum {CLOUE_NONE, CLOUE_CHECKING, CLOUD_DOWNLOADING, CLOUD_UPLOADING} CL
 - (void)searchInCloud:(NSString*)url delegate:(SEL)delegate;
 - (void)checkBaselineSync:(id)sender;
 - (void)uploadBaselineFiles;
+- (NSString*)getRemoteBaseline:(NSString*)path;
 
 @end

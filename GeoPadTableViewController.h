@@ -25,6 +25,9 @@
     NSMutableArray              *categoryArray;
     GCategory                   *selectedCategory;
     PadEntryViewController      *_journalView;
+    CGRect                      _frame;
+    BOOL                        _isRotated;
+    BOOL                        _shouldRotate;
     
     // Toobar support   
     UIBarButtonItem             *categoryBar;

@@ -136,55 +136,285 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
     NSString *thePath = [[NSBundle mainBundle]  pathForResource:@"DefaultCategory" ofType:@"plist"];
 	defaultCategory = [[NSArray alloc] initWithContentsOfFile:thePath];
 	
-    [self reloadFetchedResults:nil];
+    //[self reloadFetchedResults:nil];
+    //self.view.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleWidth | 
+    //UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleHeight |
+    //UIViewAutoresizingFlexibleBottomMargin;
+    self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    DEBUG_RECT("pad table view in load: ", self.view.frame);
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(reloadFetchedResults:) 
+                                                 name:@"RefetchAllDatabaseData" 
+                                               object:nil];
+
+    UIView *p = self.view.superview;
+    TRACE("%s, view: %p, superview: %p, nav: %p\n", __func__, self.view, self.view.superview, self.navigationController.view);
+    DEBUG_RECT("view: ", self.view.frame);
+    DEBUG_RECT("parent view: ", p.frame);
+    DEBUG_RECT("bounds: ", self.view.bounds);
+    DEBUG_POINT("center: ", self.view.center);
+    DEBUG_RECT("table: ", self.tableView.frame);
+    UIWindow *w = [UIApplication sharedApplication].delegate.window;
+    DEBUG_RECT("window: ", w.frame);
+    TRACE(">>>>>>>>>>>>>>>>>\n");
+    _isRotated = NO;
+    _shouldRotate = YES;
+    
+    PadEntryViewController *controller = nil;
+    
+    if (self._journalView == nil) {
+        controller = [[PadEntryViewController alloc] initWithNibName:@"PadEntryViewController" bundle:nil];
+        self._journalView = controller;
+        [controller release];
+    }
+
+    [self addChildViewController:self._journalView];
+    //[[NSNotificationCenter defaultCenter] addObserver: self 
+    //                                         selector:@selector(deviceOrientationDidChange:) 
+    //                                             name:UIDeviceOrientationDidChangeNotification object: nil];
+}
+
+- (void)deviceOrientationDidChange:(NSNotification *)notification {
+    TRACE_HERE;
+    //Obtaining the current device orientation
+    UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    
+    char *orientation_string;
+
+    switch (orientation) {
+        case UIInterfaceOrientationPortrait:
+            orientation_string = "UIInterfaceOrientationPortrait";
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            orientation_string = "UIInterfaceOrientationLandscapeLeft";
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            orientation_string = "UIInterfaceOrientationLandscapeRight";
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            orientation_string = "UIInterfaceOrientationPortraitUpsideDown";
+            break;
+        case UIDeviceOrientationUnknown:
+            orientation_string = "Unknown";
+            break;
+        default:
+            break;
+    }
+
+    TRACE("%s: orientation: %s\n", __func__, orientation_string);
+    
+    UIInterfaceOrientation current_orientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
+    if (orientation == UIDeviceOrientationUnknown || current_orientation == orientation)
+        return;
+    
+    //[[UIApplication sharedApplication] setStatusBarOrientation:orientation animated:YES];
+    //Ignoring specific orientations
+    
+    //[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(relayoutLayers) object:nil];
+    //Responding only to changes in landscape or portrait
+    
+    //CGAffineTransform xform = CGAffineTransformMakeRotation(M_PI/2.0);
+    //self.view.transform = xform;
+    
+    
+    //CGPoint point = [self.view convertPoint:self.cancelButton.frame.origin toView:self.view];
+    //self.cancelButton.frame = CGRectMake(point.x, point.y, self.cancelButton.frame.size.width, self.cancelButton.frame.size.height);
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
     //self.toolbar = nil;
     self.tableView = nil;
     self.journalArray = nil;
     self._dateArray = nil;
+    self._journalView = nil;
     //self.titleLabel = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+
+    DEBUG_RECT("before parent view: ", self.view.superview.frame);
+    if (_isRotated == YES)
+        self.view.superview.frame = _frame;
     
+    TRACE("super: %p, %p\n", self.view.superview, self.navigationController.view);
+    TRACE(">>>>>>>>> (%s) <<<<<<<<<<<<< \n", __func__);
+    DEBUG_RECT("view: ", self.view.frame);
+    DEBUG_RECT("parent view: ", self.view.superview.frame);
+    DEBUG_RECT("bounds: ", self.view.bounds);
+    DEBUG_RECT("nav view: ", self.navigationController.view.frame);
+    TRACE(">>>>>>>>>>>>>>>>>\n");
+
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    
+    TRACE_HERE;
     [super viewDidAppear:animated];
     self.navigationController.navigationBarHidden = YES;
+    self._journalView = NULL;
+    
+    UIView *p = self.view.superview;
+    UIView *pp = self.view.superview.superview;
+    UIView *ppp = self.view.superview.superview.superview;
+    p.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    pp.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    ppp.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    TRACE("%s, superview: %p, super super: %p, %p\n", __func__, p, pp, ppp);
+    TRACE("rotation: %x, %x, %x\n", p.autoresizingMask, pp.autoresizingMask, ppp.autoresizingMask);
+    self.view.superview.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    self.navigationController.view.autoresizesSubviews = YES;
+    self.view.superview.superview.autoresizesSubviews = YES;
+    TRACE(">>>>>>>>> (%s) <<<<<<<<<<<<< \n", __func__);
+    DEBUG_RECT("view: ", self.view.frame);
+    DEBUG_RECT("parent view: ", p.frame);
+    DEBUG_RECT("bounds: ", self.view.bounds);
+    DEBUG_RECT("nav view: ", self.navigationController.view.frame);
+    TRACE(">>>>>>>>>>>>>>>>>\n");
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+    TRACE_HERE;
     [super viewWillDisappear:animated];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
+    TRACE_HERE;
     [super viewDidDisappear:animated];
 }
 
+#pragma ROTATION
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
-	return YES;
+    TRACE_HERE;
+	return YES; //_shouldRotate;
+}
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    
+    self.view.frame = CGRectMake(0.0, 0.0, self.view.frame.size.width, self.view.frame.size.height);
+    DEBUG_RECT("view: ", self.view.frame);
+    
+    char *orientation;
+    CGRect frame;
+    switch (toInterfaceOrientation) {
+        case UIInterfaceOrientationPortrait:
+            orientation = "UIInterfaceOrientationPortrait";
+            frame = CGRectMake(0.0, 00.0, 768.0, 1004.0);
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            orientation = "UIInterfaceOrientationLandscapeLeft";
+            frame = CGRectMake(00.0, 0.0, 748.0, 1024.0);
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            orientation = "UIInterfaceOrientationLandscapeRight";
+            frame = CGRectMake(0.0, 00.0, 748.0, 1024.0);
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            orientation = "UIInterfaceOrientationPortraitUpsideDown";
+            frame = CGRectMake(0.0, 00.0, 768.0, 1004.0);
+            break;
+        default:
+            break;
+    }
+    
+    TRACE(">>>>>>>>> (%s, %s) <<<<<<<<<<<\n", __func__, orientation);
+    NSLog(@"p: %@, pp: %@, ppp: %@, pppp: %@", self.view.superview.class, 
+          self.view.superview.superview.class, 
+          self.view.superview.superview.superview.class,
+          self.view.superview.superview.superview.superview.class);
+    _frame = self.view.frame;
+    _isRotated = YES;
+    UIView *p = self.view.superview;
+    DEBUG_RECT("before parent view: ", p.frame);
+    //self.view.superview.frame = frame;
+    TRACE("%s, superview: %p\n", __func__, p);
+    DEBUG_RECT("view: ", self.view.frame);
+    DEBUG_RECT("parent view: ", p.frame);
+    DEBUG_RECT("bounds: ", self.view.bounds);
+    DEBUG_POINT("center: ", self.view.center);
+    //DEBUG_RECT("table: ", self.tableView.frame);
+    UIWindow *w = [UIApplication sharedApplication].delegate.window;
+    DEBUG_RECT("w: ", w.frame);
+    DEBUG_RECT("nav: ", self.navigationController.view.frame);
+    TRACE(">>>>>>>>>>>>>>>>>\n");
+    if (_journalView) {
+        [_journalView willRotateToInterfaceOrientation:toInterfaceOrientation duration:duration];
+    }
 }
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
+    
     TRACE_HERE;
+    float y_margin = 768.0;
+    float x_margin = 1024.0;
+    
+    char *orientation;
+    switch (fromInterfaceOrientation) {
+        case UIInterfaceOrientationPortrait:
+            orientation = "UIInterfaceOrientationPortrait";
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            orientation = "UIInterfaceOrientationLandscapeLeft";
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            orientation = "UIInterfaceOrientationLandscapeRight";
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            orientation = "UIInterfaceOrientationPortraitUpsideDown";
+            break;
+        default:
+            break;
+    }
+    
+    UIView *p = self.view.superview;
+    
+    y_margin = y_margin - p.frame.size.width;
+    x_margin = x_margin - p.frame.size.height;
+    
+    if (y_margin > 0) {
+        x_margin = y_margin;
+        y_margin = -x_margin;
+    }
+    else if (x_margin > 0) {
+        y_margin = x_margin;
+        x_margin = -y_margin;
+    }
+    
+    //self.view.frame = CGRectMake(0.0, 0.0, //x_margin, self.view.frame.origin.y+y_margin, 
+    //                             self.view.frame.size.width, self.view.frame.size.height);
+    //self.view.superview.frame = CGRectMake(0.0, 0.0, self.view.superview.frame.size.width+x_margin, self.view.superview.frame.size.height+y_margin);
+    TRACE(">>>>>>>>> (%s, %s) <<<<<<<<<<<<\n", __func__, orientation);
+    TRACE("superview: %p\n", p);
+    DEBUG_RECT("view: ", self.view.frame);
+    DEBUG_RECT("parent view: ", p.frame);
+    DEBUG_RECT("bounds: ", self.view.bounds);
+    DEBUG_POINT("center: ", self.view.center);
+    //DEBUG_RECT("table: ", self.tableView.frame);
+    UIWindow *w = [UIApplication sharedApplication].delegate.window;
+    DEBUG_RECT("w: ", w.frame);
+    DEBUG_RECT("nav: ", self.navigationController.view.frame);
+    TRACE(">>>>>>>>>>>>>>>>>\n");
     [self.tableView reloadData];
+    if (_journalView) {
+        [_journalView didRotateFromInterfaceOrientation:fromInterfaceOrientation];
+    }
 }
+
+#pragma -
 
 - (void)generateDateArray
 {
@@ -713,10 +943,13 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
 - (void)tableView:(UITableView *)tableview didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Navigation logic may go here. Create and push another view controller.
-    PadEntryViewController *controller = [[PadEntryViewController alloc] initWithNibName:@"PadEntryViewController" bundle:nil];
+    PadEntryViewController *controller = nil;
     
-    self._journalView = controller;
-    [controller release];
+    if (self._journalView == nil) {
+        controller = [[PadEntryViewController alloc] initWithNibName:@"PadEntryViewController" bundle:nil];
+        self._journalView = controller;
+        [controller release];
+    }
     
     if (indexPath.section >= [self._dateArray count]) {
         NSLog(@"%s, index error: %d", __func__, indexPath.section);
@@ -731,12 +964,16 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
     //self._journalView.hidesBottomBarWhenPushed = YES;
     self._journalView.indexForThis = actualIndex;
     [GeoDefaults sharedGeoDefaultsInstance].thirdLevel = actualIndex;
-    [self.navigationController pushViewController:self._journalView animated:YES];
+    
+    _shouldRotate = NO;
+    //[self.navigationController pushViewController:self._journalView animated:YES];
+    [self.view addSubview:self._journalView.view];
     //[[[UIApplication sharedApplication].delegate navigationController] pushViewController:self._journalView animated:YES];
     //[self presentViewController:self._journalView animated:YES completion:nil];
     //[tableview addSubview:self._journalView.view];
 
-    TRACE("%s, %p\n", __func__, self.navigationController);
+    //controller.view.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    TRACE("%s, 0x%x\n", __func__, self.navigationController.view.autoresizingMask);
     [tableview deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -780,12 +1017,14 @@ CGFloat PAD_DESC_RECT_HEIGHT(UIViewController* s) {
 }
 #pragma -
 
+
 - (void)dealloc {
     //[toolbar release];
     [tableView release];
     [journalArray release];
     [_dateArray release];
     //[titleLabel release];
+    [_journalView release];
     
     [super dealloc];
 }	

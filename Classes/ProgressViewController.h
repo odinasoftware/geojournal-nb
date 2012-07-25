@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum {DEFAULT_PROGRESS_TYPE, CLOUD_READY_PROGRESS_TYPE} status_view_type_t;
+typedef enum {DEFAULT_PROGRESS_TYPE, CLOUD_READY_PROGRESS_TYPE, CLOUD_DOWNLOADING_FILES, CLOUD_UPLOADING_FILES} status_view_type_t;
 
 @interface ProgressViewController : UIViewController <UIAlertViewDelegate> {
 	IBOutlet	UIView						*innerRectangle;

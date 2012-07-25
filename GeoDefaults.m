@@ -380,13 +380,28 @@ int getNumberFromIndex(int i)
 - (NSString*)getUniqueFilenameWithExt:(NSString*)ext 
 {
 	NSString *e = (ext==nil?GEO_FILE_EXT:ext);
-	NSString *str =  [[NSString alloc] initWithFormat:@"%d%@", random(), e];
+	NSString *str =  [[NSString alloc] initWithFormat:@"%d-%d%@", random(), [self.numberOfFileGenerated intValue], e];
 	NSInteger i = [numberOfFileGenerated intValue];
 	NSNumber *n = [[NSNumber alloc] initWithInt:i+1];
 	self.numberOfFileGenerated = n;
 	[n release];
 	
 	NSString *path = [self.geoDocumentPath stringByAppendingPathComponent:str];
+	[str release];
+	return path;
+}
+
+- (NSString*)getUniqueSupportFilenameWithExt:(NSString*)ext 
+{
+	NSString *e = (ext==nil?GEO_FILE_EXT:ext);
+	NSString *str =  [[NSString alloc] initWithFormat:@"%d-%d%@", random(), [self.numberOfFileGenerated intValue], e];
+	NSInteger i = [numberOfFileGenerated intValue];
+	NSNumber *n = [[NSNumber alloc] initWithInt:i+1];
+	self.numberOfFileGenerated = n;
+	[n release];
+	
+	NSString *path = [self.geoDocumentPath stringByAppendingPathComponent:GEO_SUPPORT_FOLDER_NAME];
+    path = [path stringByAppendingPathComponent:str];
 	[str release];
 	return path;
 }
@@ -551,6 +566,13 @@ int getNumberFromIndex(int i)
 {
     self.defaultInitDone = [NSNumber numberWithInt:1];
     [[NSUserDefaults standardUserDefaults] setObject:defaultInitDone forKey:kDefaultInitDoneKey];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+- (void)dbCloudReady
+{
+    self.dbReadyForCloud = [NSNumber numberWithInt:1];
+    [[NSUserDefaults standardUserDefaults] setObject:dbReadyForCloud forKey:kDBReadyForCloudKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 #pragma mark -

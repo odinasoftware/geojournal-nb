@@ -114,12 +114,161 @@ extern NSString *getPrinterableDate(NSDate *date, NSInteger *day);
 		fontSize = DEFAULT_FONT_SIZE;
 	}
     self.navigationController.navigationBarHidden = NO;
+    self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     //self.toolbar.userInteractionEnabled = YES;
     //UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:nil];
     //[self.toolbar setItems:self.toolbar.items];
     DEBUG_RECT("Scroll View:", self.scrollView.frame);
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    // XXX: When this is disappeared, it need to tell this is hidden,
+    // so it won't show up.
+    self.navigationController.navigationBarHidden = YES;
+}
 
+#pragma ROTATION_EVENT
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    TRACE_HERE;
+    double rotation = 0.0;
+    double sign = 1.0;
+    char *orientation;
+    CGRect frame;
+    switch (toInterfaceOrientation) {
+        case UIInterfaceOrientationPortrait:
+            orientation = "UIInterfaceOrientationPortrait";
+            frame = CGRectMake(0.0, 00.0, 768.0, 1004.0);
+            //if (fromInterfaceOrientation ==UIInterfaceOrientationLandscapeLeft)
+            sign = 1.0;
+            rotation = degreesToRadian(360);
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            orientation = "UIInterfaceOrientationLandscapeLeft";
+            frame = CGRectMake(0.0, 0.0, 748.0, 1024.0);
+            //if (fromInterfaceOrientation == UIInterfaceOrientationPortrait)
+            sign = -1.0;
+            rotation = degreesToRadian(90);
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            orientation = "UIInterfaceOrientationLandscapeRight";
+            frame = CGRectMake(0.0, 00.0, 748.0, 1024.0);
+            //if (fromInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown)
+            sign = 1.0;
+            rotation = degreesToRadian(90);
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            orientation = "UIInterfaceOrientationPortraitUpsideDown";
+            frame = CGRectMake(0.0, 00.0, 768.0, 1004.0);
+            //if (fromInterfaceOrientation == UIInterfaceOrientationLandscapeRight)
+            sign = 1.0;
+            rotation = degreesToRadian(180);
+            break;
+        default:
+            break;
+    }
+    
+    
+    if (rotation > 0.0) {
+        rotation = sign * rotation;
+        CGAffineTransform xform = CGAffineTransformMakeRotation(rotation);
+        //self.navigationController.navigationBar.transform = xform;
+        //self.view.transform = xform;
+        //self.navigationController.view.transform = xform;
+        //[UIView commitAnimations];
+    }
+    //self.view.frame = frame;
+    //self.navigationController.navigationBar.frame = CGRectMake(20, 0, 44, 1024.0 /*self.navigationController.navigationBar.frame.size.height*/);
+    TRACE("%s: %s, %f\n", __func__, orientation, rotation);    
+    //self.view.superview.transform = xform;
+    _toOrientation = toInterfaceOrientation;
+
+}
+
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    TRACE_HERE;
+    //if(UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation])) {
+    //    TRACE("OK, detect");
+    //}
+    // TODO: the roation is based on the original view always. 
+    //_toOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+    double rotation = 0.0;
+    double sign = 1.0;
+    char *orientation;
+    CGRect frame;
+    switch (_toOrientation) {
+        case UIInterfaceOrientationPortrait:
+            orientation = "UIInterfaceOrientationPortrait";
+            frame = CGRectMake(0.0, 00.0, 768.0, 1004.0);
+            //if (fromInterfaceOrientation ==UIInterfaceOrientationLandscapeLeft)
+                //sign = 1.0;
+            //rotation = degreesToRadian(180);
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            orientation = "UIInterfaceOrientationLandscapeLeft";
+            frame = CGRectMake(00.0, 0.0, 748.0, 1024.0);
+            //if (fromInterfaceOrientation == UIInterfaceOrientationPortrait)
+            sign = -1.0;
+            rotation = degreesToRadian(90);
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            orientation = "UIInterfaceOrientationLandscapeRight";
+            frame = CGRectMake(0.0, 00.0, 748.0, 1024.0);
+            //if (fromInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown)
+            sign = 1.0;
+            rotation = degreesToRadian(90);
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            orientation = "UIInterfaceOrientationPortraitUpsideDown";
+            frame = CGRectMake(0.0, 00.0, 768.0, 1004.0);
+            //if (fromInterfaceOrientation == UIInterfaceOrientationLandscapeRight)
+            sign = -1.0;
+            rotation = degreesToRadian(90);
+            break;
+        default:
+            break;
+    }
+
+    /*
+    if (rotation > 0.0) {
+        rotation = sign * rotation;
+        CGAffineTransform xform = CGAffineTransformMakeRotation(rotation);
+        self.navigationController.navigationBar.transform = xform;
+        self.view.transform = xform;
+        [UIView commitAnimations];
+    }
+    */
+    
+    
+    TRACE("%s: %s, %f\n", __func__, orientation, rotation);
+    
+    UIView *p = self.view.superview;
+    //self.view.superview.frame = frame;
+    TRACE("===============\n");
+    TRACE("%s, superview: %p\n", __func__, p);
+    DEBUG_RECT("entry view: ", self.view.frame);
+    DEBUG_RECT("entry parent view: ", p.frame);
+    DEBUG_RECT("entry bounds: ", self.view.bounds);
+    DEBUG_POINT("ebtrt center: ", self.view.center);
+    //DEBUG_RECT("table: ", self.tableView.frame);
+    UIWindow *w = [UIApplication sharedApplication].delegate.window;
+    DEBUG_RECT("entry window: ", w.frame);
+    DEBUG_RECT("navigationBar: ", self.navigationController.navigationBar.frame);
+    TRACE("===============\n");
+}
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
+    // Return YES for supported orientations
+    TRACE_HERE;
+    return YES;
+}
+#pragma -
+
+- (IBAction)popUpPrevView:(id)sender
+{
+    [self.view removeFromSuperview];
+}
 
 @end
