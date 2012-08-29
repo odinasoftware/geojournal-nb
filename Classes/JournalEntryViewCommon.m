@@ -1204,6 +1204,7 @@ int getNumberOfLinefeed(NSString *text) {
 
 #pragma Rotation
 #if 0
+// Should be overridden by the child class.
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     // Return YES for supported orientations
@@ -1215,28 +1216,7 @@ int getNumberOfLinefeed(NSString *text) {
 {
 	TRACE_HERE;
     
-    DEBUG_RECT("hori:", self.view.frame);
-    
-    if (fromInterfaceOrientation == UIInterfaceOrientationPortrait ||
-        fromInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
-        
-        HorizontalViewController *controller = [[HorizontalViewController alloc] initWithNibName:@"HorizontalViewController" bundle:nil];
-        
-        UINavigationController *nav = self.navigationController;
-        nav.navigationBarHidden = YES;
-        controller.hidesBottomBarWhenPushed = YES;
-        controller.view.frame = CGRectMake(0.0, 0.0, 480.0, 320.0);
-        [nav pushViewController:controller animated:NO];
-        [controller release];
-        
-    }
-    else {
-        
-        UINavigationController *nav = self.navigationController;
-        nav.navigationBarHidden = NO;
-        [nav popViewControllerAnimated:NO];
-        
-    }
+    DEBUG_RECT("entry after rotation: ", self.view.frame);
     
 }
 #endif

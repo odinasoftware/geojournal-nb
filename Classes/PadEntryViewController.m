@@ -21,6 +21,8 @@
 #import "HorizontalViewController.h"
 
 #define BOTTOM_MARGIN			80
+#define ORIG_WIDTH              768
+#define ORIG_HEIGHT             1024
 
 extern NSString *getTitle(NSString *content);
 extern NSString *getThumbnailFilename(NSString *filename);
@@ -101,7 +103,7 @@ extern NSString *getPrinterableDate(NSDate *date, NSInteger *day);
 	self.navigationItem.rightBarButtonItem = item;
     [item release];
 	
-	_frameRect = self.imageFrameView.frame;
+    _frameRect = self.imageFrameView.frame;
 	_imageRect = self.imageForJournal.frame;
 	_containerViewRect = self.containerView.frame;
 	_creationDateLabelRect = self.creationDateLabel.frame;
@@ -113,13 +115,44 @@ extern NSString *getPrinterableDate(NSDate *date, NSInteger *day);
 	if (fontSize < DEFAULT_FONT_SIZE) {
 		fontSize = DEFAULT_FONT_SIZE;
 	}
-    self.navigationController.navigationBarHidden = NO;
-    self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
+    //self.navigationController.navigationBarHidden = NO;
+    //self.view.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight);
     //self.toolbar.userInteractionEnabled = YES;
     //UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:nil];
     //[self.toolbar setItems:self.toolbar.items];
+    char *orientation;
+    switch (self.interfaceOrientation) {
+        case UIInterfaceOrientationPortrait:
+            orientation = "UIInterfaceOrientationPortrait";
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            orientation = "UIInterfaceOrientationLandscapeLeft";
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            orientation = "UIInterfaceOrientationLandscapeRight";
+            break;
+        case UIInterfaceOrientationPortraitUpsideDown:
+            orientation = "UIInterfaceOrientationPortraitUpsideDown";
+            break;
+        default:
+            break;
+    }
+    
+    TRACE(">>>>>>>>>>>> %s >>>>>>>>>>: %s\n", __func__, orientation);
+    DEBUG_RECT("view: ", self.view.frame);
+    DEBUG_RECT("view: ", self.view.superview.frame);
     DEBUG_RECT("Scroll View:", self.scrollView.frame);
+    
+    //if (self.interfaceOrientation == UIInterfaceOrientationLandscapeLeft  || 
+    //    self.interfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+    //    TRACE("Will change frame to landscape.\n");
+        
+    //}
+    
+    self.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, ORIG_WIDTH, ORIG_HEIGHT);
 }
+
+
 
 - (void)viewWillDisappear:(BOOL)animated
 {
@@ -269,6 +302,11 @@ extern NSString *getPrinterableDate(NSDate *date, NSInteger *day);
 - (IBAction)popUpPrevView:(id)sender
 {
     [self.view removeFromSuperview];
+}
+
+- (void)viewDidUnload {
+    [super viewDidUnload];
+    TRACE_HERE;
 }
 
 @end
