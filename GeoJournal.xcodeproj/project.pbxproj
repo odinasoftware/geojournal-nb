@@ -58,6 +58,7 @@
 		1937EDCD1052DD7C002790B2 /* CameraThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 1937EDCC1052DD7C002790B2 /* CameraThread.m */; };
 		195810C41014A98300D0C029 /* info-button.png in Resources */ = {isa = PBXBuildFile; fileRef = 195810C31014A98300D0C029 /* info-button.png */; };
 		19586A20149D2CCF00938951 /* Gear.png in Resources */ = {isa = PBXBuildFile; fileRef = 19586A1F149D2CCF00938951 /* Gear.png */; };
+		196E1F771604DC3000A80332 /* EditText.m in Sources */ = {isa = PBXBuildFile; fileRef = 196E1F761604DC3000A80332 /* EditText.m */; };
 		1975EB8912649467009A65F6 /* GeoJournal.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1975EB8812649467009A65F6 /* GeoJournal.xcdatamodeld */; };
 		198952E812B3D8E500DD1FF1 /* StatusViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 198952E712B3D8E500DD1FF1 /* StatusViewController.m */; };
 		1989531312B3DB0A00DD1FF1 /* StatusViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1989531212B3DB0A00DD1FF1 /* StatusViewController.xib */; };
@@ -129,6 +130,10 @@
 		19A786611019EB100096F033 /* prev.png in Resources */ = {isa = PBXBuildFile; fileRef = 19A7865F1019EB100096F033 /* prev.png */; };
 		19A7B09010B6FC9C002E0015 /* intro.png in Resources */ = {isa = PBXBuildFile; fileRef = 19A7B08F10B6FC9C002E0015 /* intro.png */; };
 		19A7B09210B6FD03002E0015 /* intro_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 19A7B09110B6FD03002E0015 /* intro_small.png */; };
+		19A8B5131616832700C31F01 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 19A8B5121616832700C31F01 /* Default@2x.png */; };
+		19A8B5151616834400C31F01 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 19A8B5141616834400C31F01 /* Default-568h@2x.png */; };
+		19A8B5171617808200C31F01 /* igeojournal icon 57x57.png in Resources */ = {isa = PBXBuildFile; fileRef = 19A8B5161617808200C31F01 /* igeojournal icon 57x57.png */; };
+		19A8B5191617809400C31F01 /* igeojournal icon 114x114.png in Resources */ = {isa = PBXBuildFile; fileRef = 19A8B5181617809400C31F01 /* igeojournal icon 114x114.png */; };
 		19AA23121062E57500DA42D8 /* AudioView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19AA23111062E57500DA42D8 /* AudioView.xib */; };
 		19AB3D0C10174AB60056756D /* ItineraryMark.m in Sources */ = {isa = PBXBuildFile; fileRef = 19AB3D0B10174AB60056756D /* ItineraryMark.m */; };
 		19AB3D3E101788A90056756D /* JournalTest.plist in Resources */ = {isa = PBXBuildFile; fileRef = 19AB3D3D101788A90056756D /* JournalTest.plist */; };
@@ -196,12 +201,14 @@
 		19E378DC14B8F09500F392F1 /* 1_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 19E378D914B8F09500F392F1 /* 1_small.png */; };
 		19E378DD14B8F09500F392F1 /* 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 19E378DA14B8F09500F392F1 /* 1.png */; };
 		19E7EFC11427656C00DAAEB7 /* KeychainItemWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 19E7EFC01427656C00DAAEB7 /* KeychainItemWrapper.m */; };
+		19F1C25115FF5F7E006FB529 /* PadEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19F1C24F15FF5F7C006FB529 /* PadEditViewController.m */; };
+		19F1C25215FF5F7E006FB529 /* PadEditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19F1C25015FF5F7D006FB529 /* PadEditViewController.xib */; };
 		19F21BF81533D4F700A9920D /* FBDialog.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 19F21BEB1533D4F600A9920D /* FBDialog.bundle */; };
 		19F21BF91533D4F700A9920D /* libfacebook_ios_sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F21BF11533D4F600A9920D /* libfacebook_ios_sdk.a */; };
 		19F6262F1003A7D700278FA0 /* left-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 19F6262C1003A7D700278FA0 /* left-arrow.png */; };
 		19F626301003A7D700278FA0 /* right-arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 19F6262D1003A7D700278FA0 /* right-arrow.png */; };
 		19F8763E1090951A003628D4 /* EditText.xib in Resources */ = {isa = PBXBuildFile; fileRef = 19F8763D1090951A003628D4 /* EditText.xib */; };
-		19F876481090972E003628D4 /* EditText.m in Sources */ = {isa = PBXBuildFile; fileRef = 19F876471090972E003628D4 /* EditText.m */; };
+		19F876481090972E003628D4 /* EditTextCommon.m in Sources */ = {isa = PBXBuildFile; fileRef = 19F876471090972E003628D4 /* EditTextCommon.m */; };
 		1D3623260D0F684500981E51 /* GeoJournalAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* GeoJournalAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		28AD73880D9D96C1002E5188 /* MainWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28AD73870D9D96C1002E5188 /* MainWindow.xib */; };
@@ -285,6 +292,8 @@
 		1937EDCC1052DD7C002790B2 /* CameraThread.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraThread.m; sourceTree = "<group>"; };
 		195810C31014A98300D0C029 /* info-button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "info-button.png"; sourceTree = "<group>"; };
 		19586A1F149D2CCF00938951 /* Gear.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Gear.png; sourceTree = "<group>"; };
+		196E1F751604DC3000A80332 /* EditText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditText.h; sourceTree = "<group>"; };
+		196E1F761604DC3000A80332 /* EditText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditText.m; sourceTree = "<group>"; };
 		19744DED13C8FDC500D0D6F6 /* iGeoJournal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = iGeoJournal.entitlements; sourceTree = "<group>"; };
 		1975EB8A1264946F009A65F6 /* GeoJournal 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; name = "GeoJournal 2.xcdatamodel"; path = "../GeoJournal.xcdatamodeld/GeoJournal 2.xcdatamodel"; sourceTree = "<group>"; };
 		198952E612B3D8E500DD1FF1 /* StatusViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatusViewController.h; sourceTree = "<group>"; };
@@ -391,6 +400,10 @@
 		19A7865F1019EB100096F033 /* prev.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = prev.png; sourceTree = "<group>"; };
 		19A7B08F10B6FC9C002E0015 /* intro.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = intro.png; sourceTree = "<group>"; };
 		19A7B09110B6FD03002E0015 /* intro_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = intro_small.png; sourceTree = "<group>"; };
+		19A8B5121616832700C31F01 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		19A8B5141616834400C31F01 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		19A8B5161617808200C31F01 /* igeojournal icon 57x57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "igeojournal icon 57x57.png"; sourceTree = "<group>"; };
+		19A8B5181617809400C31F01 /* igeojournal icon 114x114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "igeojournal icon 114x114.png"; sourceTree = "<group>"; };
 		19AA23111062E57500DA42D8 /* AudioView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AudioView.xib; sourceTree = "<group>"; };
 		19AB3D0A10174AB60056756D /* ItineraryMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItineraryMark.h; sourceTree = "<group>"; };
 		19AB3D0B10174AB60056756D /* ItineraryMark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItineraryMark.m; sourceTree = "<group>"; };
@@ -477,6 +490,9 @@
 		19E378DA14B8F09500F392F1 /* 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 1.png; sourceTree = "<group>"; };
 		19E7EFBF1427656C00DAAEB7 /* KeychainItemWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainItemWrapper.h; sourceTree = "<group>"; };
 		19E7EFC01427656C00DAAEB7 /* KeychainItemWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeychainItemWrapper.m; sourceTree = "<group>"; };
+		19F1C24E15FF5F7B006FB529 /* PadEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PadEditViewController.h; sourceTree = "<group>"; };
+		19F1C24F15FF5F7C006FB529 /* PadEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PadEditViewController.m; sourceTree = "<group>"; };
+		19F1C25015FF5F7D006FB529 /* PadEditViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PadEditViewController.xib; path = Classes/PadEditViewController.xib; sourceTree = "<group>"; };
 		19F21BE91533D4F600A9920D /* Facebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Facebook.h; sourceTree = "<group>"; };
 		19F21BEA1533D4F600A9920D /* FBConnect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBConnect.h; sourceTree = "<group>"; };
 		19F21BEB1533D4F600A9920D /* FBDialog.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FBDialog.bundle; sourceTree = "<group>"; };
@@ -495,8 +511,8 @@
 		19F6262C1003A7D700278FA0 /* left-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "left-arrow.png"; sourceTree = "<group>"; };
 		19F6262D1003A7D700278FA0 /* right-arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "right-arrow.png"; sourceTree = "<group>"; };
 		19F8763D1090951A003628D4 /* EditText.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EditText.xib; sourceTree = "<group>"; };
-		19F876461090972E003628D4 /* EditText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditText.h; sourceTree = "<group>"; };
-		19F876471090972E003628D4 /* EditText.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditText.m; sourceTree = "<group>"; };
+		19F876461090972E003628D4 /* EditTextCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditTextCommon.h; sourceTree = "<group>"; };
+		19F876471090972E003628D4 /* EditTextCommon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EditTextCommon.m; sourceTree = "<group>"; };
 		1D3623240D0F684500981E51 /* GeoJournalAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoJournalAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* GeoJournalAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoJournalAppDelegate.m; sourceTree = "<group>"; };
 		1D6058910D05DD3D006BFB54 /* iGeoJournal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iGeoJournal.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -642,8 +658,8 @@
 				19CC4AD910227B010062CB52 /* HorizontalViewController.m */,
 				19A3749A102E3F6F00DFF866 /* SearchNavigationController.h */,
 				19A3749B102E3F6F00DFF866 /* SearchNavigationController.m */,
-				19F876461090972E003628D4 /* EditText.h */,
-				19F876471090972E003628D4 /* EditText.m */,
+				19F876461090972E003628D4 /* EditTextCommon.h */,
+				19F876471090972E003628D4 /* EditTextCommon.m */,
 				19DE6C0412AE5AE100251003 /* ImageFrameView.h */,
 				19DE6C0512AE5AE100251003 /* ImageFrameView.m */,
 				190EB039144DA5C60082F696 /* GeoSplitTableController.h */,
@@ -666,6 +682,10 @@
 				19D14D73151FC6EB00884654 /* ProgressViewController.m */,
 				193233A314C678BA00E06B2A /* JournalEntryViewCommon.h */,
 				193233A414C678BB00E06B2A /* JournalEntryViewCommon.m */,
+				19F1C24E15FF5F7B006FB529 /* PadEditViewController.h */,
+				19F1C24F15FF5F7C006FB529 /* PadEditViewController.m */,
+				196E1F751604DC3000A80332 /* EditText.h */,
+				196E1F761604DC3000A80332 /* EditText.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -794,6 +814,7 @@
 		19EFD32515A5B7100023906F /* XIBs */ = {
 			isa = PBXGroup;
 			children = (
+				19F1C25015FF5F7D006FB529 /* PadEditViewController.xib */,
 				1996E44414781CBF005E0F78 /* GeoPadMainView.xib */,
 				191BCD70149069AD00636580 /* PadMapViewController.xib */,
 				19AC10331449F9ED007B24B8 /* GeoSplitViewController.xib */,
@@ -857,6 +878,10 @@
 		29B97314FDCFA39411CA2CEA /* GeoJournal */ = {
 			isa = PBXGroup;
 			children = (
+				19A8B5181617809400C31F01 /* igeojournal icon 114x114.png */,
+				19A8B5161617808200C31F01 /* igeojournal icon 57x57.png */,
+				19A8B5141616834400C31F01 /* Default-568h@2x.png */,
+				19A8B5121616832700C31F01 /* Default@2x.png */,
 				19F21BE81533D4F600A9920D /* facebook-ios-sdk */,
 				19CB560B14EBE69D001FC28D /* Cloud */,
 				19CB560414E4C1D1001FC28D /* MobileCoreServices.framework */,
@@ -993,7 +1018,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0420;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "GeoJournal" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -1125,6 +1150,11 @@
 				19E378DD14B8F09500F392F1 /* 1.png in Resources */,
 				19D14D70151FC6D900884654 /* ProgressViewController.xib in Resources */,
 				19F21BF81533D4F700A9920D /* FBDialog.bundle in Resources */,
+				19F1C25215FF5F7E006FB529 /* PadEditViewController.xib in Resources */,
+				19A8B5131616832700C31F01 /* Default@2x.png in Resources */,
+				19A8B5151616834400C31F01 /* Default-568h@2x.png in Resources */,
+				19A8B5171617808200C31F01 /* igeojournal icon 57x57.png in Resources */,
+				19A8B5191617809400C31F01 /* igeojournal icon 114x114.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1185,7 +1215,7 @@
 				19A3749C102E3F6F00DFF866 /* SearchNavigationController.m in Sources */,
 				1937ECFD1052B751002790B2 /* FacebookConnect.m in Sources */,
 				1937EDCD1052DD7C002790B2 /* CameraThread.m in Sources */,
-				19F876481090972E003628D4 /* EditText.m in Sources */,
+				19F876481090972E003628D4 /* EditTextCommon.m in Sources */,
 				1934FAC3125223AA003C0DC5 /* ImageArrayScrollController.m in Sources */,
 				1934FAC4125223AA003C0DC5 /* SlideImageView.m in Sources */,
 				1934FAC5125223AA003C0DC5 /* ImageContainer.m in Sources */,
@@ -1212,6 +1242,8 @@
 				19CB561D14EBE900001FC28D /* CloudService.m in Sources */,
 				19CB562314F95653001FC28D /* CloudFileService.m in Sources */,
 				19D14D74151FC6EB00884654 /* ProgressViewController.m in Sources */,
+				19F1C25115FF5F7E006FB529 /* PadEditViewController.m in Sources */,
+				196E1F771604DC3000A80332 /* EditText.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1255,7 +1287,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = GeoJournal_Prefix.pch;
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
@@ -1265,7 +1297,7 @@
 				);
 				PRODUCT_NAME = iGeoJournal;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Distribution;
 		};
@@ -1290,7 +1322,7 @@
 					../three20/Build/Products/three20,
 				);
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
@@ -1302,7 +1334,7 @@
 				PRODUCT_NAME = iGeoJournal;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -1324,7 +1356,7 @@
 					../three20/Build/Products/three20,
 				);
 				INFOPLIST_FILE = "GeoJournal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../Quattro SDK 3/QuattroWirelessLib3.0.1-os3.0/QuattroWirelessLib\"",
@@ -1335,7 +1367,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = iGeoJournal;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

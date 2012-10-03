@@ -14,7 +14,7 @@
 #import "GeoDatabase.h"
 #import "GeoSession.h"
 #import "JournalViewController.h"
-#import "EditText.h"
+#import "PadEditViewController.h"
 #import "ImageArrayScrollController.h"
 #import "FullImageViewController.h"
 #import "StatusViewController.h"
@@ -33,7 +33,7 @@ extern void *display_image_in_thread(void *arg);
 extern NSString *getPrinterableDate(NSDate *date, NSInteger *day);
 
 @implementation PadEntryViewController
-
+//@synthesize editTextController;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
@@ -302,6 +302,24 @@ extern NSString *getPrinterableDate(NSDate *date, NSInteger *day);
 - (IBAction)popUpPrevView:(id)sender
 {
     [self.view removeFromSuperview];
+}
+
+- (IBAction)editText:(id)sender
+{
+    
+	PadEditViewController *section = [[PadEditViewController alloc] initWithNibName:@"PadEditViewController" bundle:nil];
+	section.text = self.entryForThisView.text;
+	//UINavigationController* nc = [[UINavigationController alloc] initWithRootViewController:section];
+	self.editTextController = section;
+	[section release];
+    
+	//nc.navigationBar.tintColor = [UIColor colorWithRed:0.0286 green:0.6062 blue:0.3575 alpha:1.0]; // green
+	//nc.navigationBar.tintColor = [UIColor colorWithRed:0.6745 green:0.1020 blue:0.1529 alpha:1.0]; // read
+	//nc.navigationBar.tintColor = [UIColor colorWithRed:1.0 green:0.97 blue:0.60 alpha:1.0]; // yellow
+	
+	[self.view addSubview:section.view];
+	//[nc release];		
+	
 }
 
 - (void)viewDidUnload {

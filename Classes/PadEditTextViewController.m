@@ -1,18 +1,18 @@
 //
-//  EditText.m
+//  PadEditTextViewController.m
 //  GeoJournal
 //
-//  Created by Jae Han on 9/15/12.
+//  Created by Jae Han on 9/4/12.
 //  Copyright (c) 2012 Home. All rights reserved.
 //
 
-#import "EditText.h"
+#import "PadEditTextViewController.h"
 
-@interface EditText ()
+@interface PadEditTextViewController ()
 
 @end
 
-@implementation EditText
+@implementation PadEditTextViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

@@ -21,7 +21,7 @@
 #import "HorizontalViewController.h"
 
 @implementation JournalEntryViewController
-
+//@synthesize editTextController;
 
 
 @end

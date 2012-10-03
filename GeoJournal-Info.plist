@@ -10,9 +10,20 @@
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFiles</key>
 	<array>
-		<string>Icon.png</string>
-		<string>Icon-high.png</string>
+		<string>igeojournal icon 57x57.png</string>
+		<string>igeojournal icon 114x114.png</string>
 	</array>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>igeojournal icon 57x57.png</string>
+				<string>igeojournal icon 114x114.png</string>
+			</array>
+		</dict>
+	</dict>
 	<key>CFBundleIdentifier</key>
 	<string>com.odinasoftware.igeojournal</string>
 	<key>CFBundleInfoDictionaryVersion</key>

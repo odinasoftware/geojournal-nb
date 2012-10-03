@@ -12,6 +12,10 @@
 
 @interface JournalEntryViewController : JournalEntryViewCommon {
 
+    @protected
+    //EditText					*editTextController;
 }
+
+//@property (nonatomic, retain) EditText					*editTextController;
 
 @end

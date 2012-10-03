@@ -18,7 +18,7 @@
 #import "GeoSplitTableController.h"
 
 @class Journal;
-@class EditText;
+@class EditTextCommon;
 @class JournalViewController;
 @class ImageArrayScrollController;
 
@@ -72,7 +72,7 @@ OpenFullViewDelegate, SelectImageDelegate, SubstitutableDetailViewController> {
 	CGRect						_locationLabelRect;
 	CGRect						_textForJournalRect;
 	CGRect						_stretchButtonRect;
-	EditText					*editTextController;
+	EditTextCommon				*editTextController;
 	NSInteger					fontSize;
 	UIImage						*zoomIn;
 	UIImage						*zoomOut;
@@ -115,7 +115,7 @@ OpenFullViewDelegate, SelectImageDelegate, SubstitutableDetailViewController> {
 @property (nonatomic, retain) UIBarButtonItem			*increaseFontButton;
 @property (nonatomic, retain) UIBarButtonItem			*decreaseFontButton;
 @property (nonatomic, retain) UIToolbar					*toolbar;
-@property (nonatomic, retain) EditText					*editTextController;
+@property (nonatomic, retain) EditTextCommon			*editTextController;
 @property (nonatomic, retain) UIImagePickerController	*cameraController;
 @property (nonatomic, retain) UIImage					*addedPicture;
 @property (nonatomic, retain) UIImage					*thumbPicture;

@@ -18,16 +18,20 @@
 #import "JournalEntryViewCommon.h"
 
 @class Journal;
-@class EditText;
+@class PadEditViewController;
 @class JournalViewController;
 
 @interface PadEntryViewController : JournalEntryViewCommon {
 
-@private
+    @protected
+    //PadEditViewController			*editTextController;
+    
+    @private
     UIInterfaceOrientation  _toOrientation;
 }
 
 - (IBAction)popUpPrevView:(id)sender;
 
+//@property (nonatomic, retain) PadEditViewController			*editTextController;
 
 @end
